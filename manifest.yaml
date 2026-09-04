@@ -1,0 +1,12 @@
+specVersion: "1"
+id: lax-56
+leanVersion: "v4.30.0"
+mathlibVersion: "c5ea00351c28e24afc9f0f84379aa41082b1188f"
+title: "Large Finite Point Sets Have 4 Collinear Points or a 6-Clique"
+authors:
+  - name: "Édouard Bonnet"
+    github: "EdouardBonnet"
+bibEntries:
+  - '@misc{Bonnet2026, author = {\''Edouard Bonnet}, title = {Large Finite Point Sets Have 4 Collinear Points or a 6-Clique}, year = {2026}}'
+  - '@misc{HujterKisfaludiBak2014, author = {B\''alint Hujter and S\''andor Kisfaludi-Bak}, title = {5 Colorable Visibility Graphs Have Bounded Size or 4 Collinear Points}, year = {2014}, eprint = {1410.7273}, archivePrefix = {arXiv}}'
+  - '@article{PopielarzSahasrabudheSnyder2018, author = {Kamil Popielarz and Julian Sahasrabudhe and Richard Snyder}, title = {A Stability Theorem for Maximal K_{r+1}-free Graphs}, journal = {Journal of Combinatorial Theory, Series B}, volume = {132}, pages = {236--257}, year = {2018}}'
