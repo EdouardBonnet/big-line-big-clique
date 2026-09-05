@@ -7,6 +7,16 @@ authors:
   - name: "Édouard Bonnet"
     github: "EdouardBonnet"
 bibEntries:
-  - '@misc{Bonnet2026, author = {\''Edouard Bonnet}, title = {Large Finite Point Sets Have 4 Collinear Points or a 6-Clique}, year = {2026}}'
-  - '@misc{HujterKisfaludiBak2014, author = {B\''alint Hujter and S\''andor Kisfaludi-Bak}, title = {5 Colorable Visibility Graphs Have Bounded Size or 4 Collinear Points}, year = {2014}, eprint = {1410.7273}, archivePrefix = {arXiv}}'
-  - '@article{PopielarzSahasrabudheSnyder2018, author = {Kamil Popielarz and Julian Sahasrabudhe and Richard Snyder}, title = {A Stability Theorem for Maximal K_{r+1}-free Graphs}, journal = {Journal of Combinatorial Theory, Series B}, volume = {132}, pages = {236--257}, year = {2018}}'
+  - '@misc{Bonnet2026, author = {\''Edouard Bonnet}, title = {Large Finite Point
+    Sets Have 4 Collinear Points or a 6-Clique}, year = {2026}}'
+  - '@misc{HujterKisfaludiBak2014, author = {B\''alint Hujter and S\''andor
+    Kisfaludi-Bak}, title = {5 Colorable Visibility Graphs Have Bounded Size or
+    4 Collinear Points}, year = {2014}, eprint = {1410.7273}, archivePrefix =
+    {arXiv}}'
+  - '@article{PopielarzSahasrabudheSnyder2018, author = {Kamil Popielarz and
+    Julian Sahasrabudhe and Richard Snyder}, title = {A Stability Theorem for
+    Maximal K_{r+1}-free Graphs}, journal = {Journal of Combinatorial Theory,
+    Series B}, volume = {132}, pages = {236--257}, year = {2018}}'
+issue:
+  repositoryId: 1320232165
+  number: 56
