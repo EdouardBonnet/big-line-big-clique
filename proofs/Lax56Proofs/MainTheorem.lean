@@ -10,12 +10,13 @@ open Lax56Proofs.NumericalBounds
 ---
 conclusion: Lax56.MainTheorem.large_point_set_four_collinear_or_visible_six
 assumptions:
-  - Lax56.HujterKisfaludiBak.visibilityGraph_not_fiveColorable
+  - Lax56.HujterKisfaludiBak.exists_emptyConvexHexagon
 ---
 Every finite set of at least $10^{11055931}$ points in the real plane has
 four distinct collinear points or six points which are pairwise visible with
-respect to the entire set.  This formalizes the full argument of the paper;
-the two named combinatorial inputs are isolated as the next proof stage.
+respect to the entire set. The visibility-colouring and vertex-removal
+stability inputs are proved in this package. The remaining external input
+is the empty-convex-hexagon bound $h(6) \le 463$.
 -/
 theorem large_point_set_four_collinear_or_visible_six
     (P : Finset Point) (hP : 10 ^ 11055931 ≤ P.card) :

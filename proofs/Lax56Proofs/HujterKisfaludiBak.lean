@@ -12,9 +12,10 @@ input, including the blocker cases of cardinalities 10, 11 and 12, is proved
 in the `Lax56Proofs.HKB*` modules.
 -/
 
-namespace Lax56.HujterKisfaludiBak
+namespace Lax56Proofs.HujterKisfaludiBak
 
 open Lax56.Geometry
+open Lax56.HujterKisfaludiBak
 open Lax56Proofs.Blockers
 open Lax56Proofs.HKBBlocking
 open Lax56Proofs.HKBColouring
@@ -155,4 +156,4 @@ theorem visibilityGraph_not_fiveColorable
   · exact no_twelve_hexBlockers hfour' hh hhP hside
       (by simpa [B] using htwelve) col hproper
 
-end Lax56.HujterKisfaludiBak
+end Lax56Proofs.HujterKisfaludiBak

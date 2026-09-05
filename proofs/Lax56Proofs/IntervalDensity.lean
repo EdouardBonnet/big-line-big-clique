@@ -59,7 +59,7 @@ theorem blockGraph_not_colorable_five
   intro hc
   have hcard : 2311 ≤ (blockSet P s m hs).card := by
     simpa using hm
-  rcases Lax56.HujterKisfaludiBak.visibilityGraph_not_fiveColorable
+  rcases Lax56Proofs.HujterKisfaludiBak.visibilityGraph_not_fiveColorable
       (blockSet P s m hs) hcard with hcol | hncol
   · exact hfour (hasFourCollinear_mono (blockSet_subset P s m hs) hcol)
   · apply hncol
