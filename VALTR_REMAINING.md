@@ -27,6 +27,18 @@ explicit external axiom in the main proof.
   minimality when no more vertices are deleted than inserted
   (`ValtrSplice.convexPosition_splice_of_edge_supports` and
   `ValtrSplice.not_minimal_of_supported_splice`).
+- The one-sector bound of two outer points, and both the convexity and
+  supporting inequalities of the replacement in the two-sector nonconvex
+  endpoint case (`ValtrSectorBounds` and `ValtrSectors.two_sector_chain_support`).
+- Uniqueness of the line crossing and radial fan triangle, including cyclic
+  wrap-around (`ValtrCyclic`).
+- The cap identity for every consecutive vertex block, and existence of a
+  next-layer vertex inside every consecutive five-vertex cap of a
+  hexagon-free set with nonempty interior (`ValtrPolygon`).
+- The private-region counting that excludes `|A| = |B| + 2`, forces
+  `|A| = |B| + 1`, and chooses distinct private representatives with exactly
+  one extra point, conditional on the sector-run cardinality bounds
+  (`ValtrRuns`).
 
 ## Exact current obstacle: the supporting inequalities for the replacement
 
@@ -56,8 +68,13 @@ turn u v w ≥ 0   for every vertex w of H,     -- hchain
 turn u v a ≥ 0   for every retained a ∈ R.    -- hcross
 ```
 
-Deriving these inequalities from the nested layers, the radial choices of
-the `cᵢ`, sector exclusion, and the two endpoint conditions remains unproved.
+For `t = 2`, both groups of inequalities are now proved from the two strict
+endpoint-triangle inclusions and sector exclusion. The three necessary
+triangle-exclusion hypotheses follow because retained outer vertices lie
+outside the inner hull. The resulting minimality contradiction also compiles.
+
+For arbitrary `t`, deriving the inequalities from the nested layers, the radial
+choices of the `cᵢ`, sector exclusion, and the endpoint conditions remains unproved.
 In particular, convexity of `C` alone does not supply `hcross`, since the
 retained vertices are outside `conv(C)`. A detailed supporting-line argument
 for these inequalities is the most useful next informal input.
@@ -73,8 +90,10 @@ because the entire replacement set lies in the original hull.
 This is the current obstacle, not the final outstanding line of the theorem.
 Also remaining are the full selection of `cᵢ` in layer `C`, Observations 3
 and 4 and the associated missing-sector coverage, the other branches of
-the sector-run induction, the counting of runs/private regions, and the
-final change-of-interior-point argument with `d′`.
+the sector-run induction, geometric identification of the private regions,
+and the final chain replacement and radial-order argument with `d′`.
+The private-region cardinality calculation and extraction of a next-layer
+vertex from a five-vertex cap are now separately proved.
 
 None of these statements has been added as a new axiom or represented by
 `sorry`. The only nonstandard assumption of the main proof remains the

@@ -51,7 +51,10 @@ import Lax56Proofs.ValtrCaps
 import Lax56Proofs.ValtrCounting
 import Lax56Proofs.ValtrCyclic
 import Lax56Proofs.ValtrExtension
+import Lax56Proofs.ValtrPolygon
 import Lax56Proofs.ValtrReduction
+import Lax56Proofs.ValtrRuns
+import Lax56Proofs.ValtrSectorBounds
 import Lax56Proofs.ValtrSectors
 import Lax56Proofs.ValtrSplice
 import Lax56Proofs.WeightedPairs

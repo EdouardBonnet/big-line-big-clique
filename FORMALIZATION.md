@@ -32,11 +32,29 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   and verification of convexity and emptiness of the resulting hexagon.
 - `ValtrSectors.lean` and `ValtrCyclic.lean`: convex sectors, enlargement when
   the interior apex moves toward its base, and coverage of exterior ambient
-  points by radial sectors, including the cyclic wrap-around.
+  points by radial sectors, including the cyclic wrap-around. Also proved:
+  uniqueness of a line crossing, unique radial-fan triangles, preservation
+  of cyclic order under rotation, and the two-sector chain's convexity and
+  supporting inequalities in the nonconvex endpoint case.
 - `ValtrSplice.lean`: a chain-splicing criterion from explicit supporting-edge
   inequalities, and the resulting cardinality/minimality contradiction.
-  Those inequalities are hypotheses here; deriving them from Valtr's sector
-  configuration is **not yet proved**. See [the precise gap](VALTR_REMAINING.md).
+  For arbitrary-length chains those inequalities remain hypotheses.
+- `ValtrSectorBounds.lean`: the single-sector bound of two outer vertices,
+  and the nonconvex endpoint branch of the two-sector run bound, including
+  the geometric supporting inequalities rather than assuming them.
+- `ValtrPolygon.lean`: supporting-half-plane and consecutive-cap identities
+  for arbitrary polygon sizes. In a hexagon-free set with nonempty interior,
+  every consecutive five-vertex cap contains a vertex of the next layer.
+  This proves the vertex-extraction step for Valtr's final pentagon.
+- `ValtrRuns.lean`: the private-region counting that forces `|A| = |B| + 1`
+  once the geometric sector-run bounds are supplied, and selection of
+  private representatives with exactly one extra outer point.
+
+The arbitrary-length sector-run geometry is **not yet proved**. See
+[the precise gap](VALTR_REMAINING.md).
+
+The already completed downstream reduction consists of:
+
 - `ValtrReduction.lean`: the contradiction `216 ≤ 215` after the four-layer
   lemma empties the fourth layer.
 - `EmptyHexagon.lean`: the resulting labelled empty-hexagon theorem, with

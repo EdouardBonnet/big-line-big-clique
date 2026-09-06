@@ -130,4 +130,26 @@ theorem not_minimal_of_supported_splice {S R : Finset Point}
   rw [heq] at hv
   exact (Finset.mem_sdiff.mp (hmem 0)).2 hv
 
+/-- Clockwise version of the replacement criterion, matching the order
+in Valtr's paper. Reversing the chain changes every supporting sign. -/
+theorem not_minimal_of_supported_splice_clockwise {S R : Finset Point}
+    (hgen : ¬HasThreeCollinear S) (hR : R ⊆ extremeLayer S)
+    {m : ℕ} (v : Fin (m + 2) → Point) (hinj : Function.Injective v)
+    (hmem : ∀ i, v i ∈ inner S)
+    (hchain : ∀ i : Fin (m + 1), ∀ j,
+      turn (v i.castSucc) (v i.succ) (v j) ≤ 0)
+    (hcross : ∀ i : Fin (m + 1), ∀ p ∈ R,
+      turn (v i.castSucc) (v i.succ) p ≤ 0)
+    (hremoved : (extremeLayer S \ R).card ≤ m + 2) : ¬MinimalOuter S := by
+  apply not_minimal_of_supported_splice hgen hR (fun i ↦ v i.rev)
+    (hinj.comp Fin.rev_injective) (fun i ↦ hmem i.rev) _ _ hremoved
+  · intro i j
+    dsimp only
+    rw [Fin.rev_castSucc, Fin.rev_succ, turn_swap_first]
+    exact neg_nonneg.mpr (hchain i.rev j.rev)
+  · intro i p hp
+    dsimp only
+    rw [Fin.rev_castSucc, Fin.rev_succ, turn_swap_first]
+    exact neg_nonneg.mpr (hcross i.rev p hp)
+
 end Lax56Proofs.ValtrSplice
