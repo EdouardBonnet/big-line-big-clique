@@ -63,9 +63,25 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
 - `ValtrRuns.lean`: the private-region counting that forces `|A| = |B| + 1`
   once the geometric sector-run bounds are supplied, and selection of
   private representatives with exactly one extra outer point.
+- `ValtrCyclicRuns.lean` and `ValtrRunReduction.lean`: the cyclic counting
+  is connected to the actual sectors. Given the run bound, it forces all
+  sectors to be defined, the outer cardinality, private points, and
+  exhaustion of the third layer.
+- `ValtrRadialOrder.lean`: the selected apices inherit the cyclic order of
+  their fan triangles, including partial selections and cyclic wrap-around.
+- `ValtrMaximum.lean`, `ValtrProjective.lean`, and `ValtrLocalSupport.lean`:
+  the supplied scalar maximum principle, its projective determinant
+  interpretation, the local neighbor-hull relations, both endpoint
+  viewpoints, and the empty-triangle support arguments.
+- `ValtrRunSupport.lean` and `ValtrRunSetup.lean`: the full arbitrary-length
+  nonconvex-endpoint chain replacement, constructed from the actual cyclic
+  apex data and applied to the finite sector union. Neither the chain
+  supports nor the local hull containments remain hypotheses of that
+  application.
 
-The arbitrary-length sector-run geometry is **not yet proved**. See
-[the precise gap](VALTR_REMAINING.md).
+The nonconvex-endpoint branch is now proved. The convex-endpoint counting
+branch, private-region geometry, and final replacement with `d′` are
+**not yet proved**. See [the remaining gaps](VALTR_REMAINING.md).
 
 The already completed downstream reduction consists of:
 

@@ -63,7 +63,7 @@ explicit external axiom in the main proof.
   one extra point, conditional on the sector-run cardinality bounds
   (`ValtrRuns`).
 
-## Exact current obstacle: the supporting inequalities for the replacement
+## Closed gap: the supporting inequalities for the replacement
 
 Use Valtr's configuration in a finite general-position set with no empty
 hexagon: a minimal outer layer `A` and successive layers `B, C, D`, a fixed
@@ -91,29 +91,49 @@ turn u v w ≥ 0   for every vertex w of H,     -- hchain
 turn u v a ≥ 0   for every retained a ∈ R.    -- hcross
 ```
 
-For `t = 2`, both groups of inequalities are now proved from the two strict
-endpoint-triangle inclusions and sector exclusion. The three necessary
-triangle-exclusion hypotheses follow because retained outer vertices lie
-outside the inner hull. The resulting minimality contradiction also compiles.
+For every `t ≥ 2`, both groups of inequalities are now proved. The key
+local relation places each `cᵢ` in the hull of its two chain neighbors and
+the two base vertices. From an exterior viewpoint, a positive affine
+height functional turns oriented-edge signs into comparisons of real
+projective coordinates. The scalar maximum principle propagates any
+ascent until it either encounters a removed sector or contradicts an
+endpoint condition. Strict supporting functionals handle the two endpoint
+viewpoints, and the empty base triangles handle the end edges against `C`.
 
-For arbitrary `t`, deriving the inequalities from the nested layers, the radial
-choices of the `cᵢ`, sector exclusion, and the endpoint conditions remains unproved.
-In particular, convexity of `C` alone does not supply `hcross`, since the
-retained vertices are outside `conv(C)`. A detailed supporting-line argument
-for these inequalities is the most useful next informal input.
+`ValtrRunSetup.not_minimal_of_nonconvex_run_card_le` constructs the entire
+configuration from the actual cyclic layers and apex data and proves the
+minimality contradiction from `|A ∩ U| ≤ t + 2`. It does not take `hchain`,
+`hcross`, or the local neighbor-hull relations as hypotheses.
 
-With these inequalities and the counting input `|A ∩ U| ≤ t + 2`, the new
-Lean splice theorem already handles the
-outer vertices, both chain endpoints, closed boundaries, cardinality, and
-the contradiction with minimality. Retained outer vertices remain extreme
-because the entire replacement set lies in the original hull.
+The supporting modules are `ValtrMaximum`, `ValtrProjective`,
+`ValtrLocalSupport`, `ValtrRunSupport`, and `ValtrRunSetup`.
+`ValtrRadialOrder` proves cyclic order of partial apex selections.
+`ValtrCyclicRuns` and `ValtrRunReduction` connect the assumed run bound
+to the actual sector counting and all-sectors conclusions.
+
+## Next geometric gap: the convex-endpoint branch
+
+For a clockwise run `S₁,...,Sₜ`, set
+
+```
+W = (A ∩ S₁) \ (S₂ ∪ ... ∪ Sₜ).
+```
+
+When `b₁,c₁,c₂,b₂` is a strictly convex quadrilateral in that order,
+Valtr's proof asserts `|W| ≤ 1`, using an empty pentagon formed from two
+points of `W` and applying Observation 2 with `c₂`. The detailed
+four-sector justification for this invocation is not yet formalized.
+The existing `convex_quad_side_card_le_one` proves a restricted version
+with an explicit separating-side condition; it does not yet prove the
+full claim about `W`. An informal expansion has been requested.
 
 ## Other parts of the four-layer argument still to formalize
 
 This is the current obstacle, not the final outstanding line of the theorem.
-Also remaining are the other branches of the sector-run induction,
-including the private-part separating-side condition, geometric identification of the private regions,
-and the final chain replacement and radial-order argument with `d′`.
+Also remaining are completion of the sector-run induction, geometric
+identification of the private regions, and the final chain replacement
+and matching argument with `d′`. Radial order of the apices themselves is
+now proved, but the final matching argument is not yet assembled.
 The private-region cardinality calculation and extraction of a next-layer
 vertex from a five-vertex cap are now separately proved.
 
