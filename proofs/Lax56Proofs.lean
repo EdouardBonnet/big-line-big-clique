@@ -49,5 +49,9 @@ import Lax56Proofs.Telescoping
 import Lax56Proofs.VertexRemovalStability
 import Lax56Proofs.ValtrCaps
 import Lax56Proofs.ValtrCounting
+import Lax56Proofs.ValtrCyclic
+import Lax56Proofs.ValtrExtension
 import Lax56Proofs.ValtrReduction
+import Lax56Proofs.ValtrSectors
+import Lax56Proofs.ValtrSplice
 import Lax56Proofs.WeightedPairs

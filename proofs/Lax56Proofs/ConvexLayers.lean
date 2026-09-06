@@ -213,4 +213,71 @@ theorem exists_minimal_polygon (P : Finset Point) (k : ℕ)
       ⟨hsub, fun heq ↦ haY (heq.symm ▸ haS)⟩)
   exact (not_lt_of_ge (hmin Y hYc)) hlt
 
+@[simp] theorem remainder_add (P : Finset Point) (i j : ℕ) :
+    remainder P (i + j) = remainder (remainder P i) j := by
+  induction j with
+  | zero => rfl
+  | succ j ih =>
+    change inner (remainder P (i + j)) = inner (remainder (remainder P i) j)
+    rw [ih]
+
+theorem remainder_subset_inner (P : Finset Point) (n : ℕ) :
+    remainder P (n + 1) ⊆ inner P := by
+  induction n with
+  | zero => exact Finset.Subset.refl _
+  | succ n ih => exact (inner_subset _).trans ih
+
+/-- A later layer contains none of the vertices removed at an earlier step. -/
+theorem layer_disjoint {P : Finset Point} {i j : ℕ} (hij : i < j) :
+    Disjoint (layer P i) (layer P j) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_lt hij
+  apply Finset.disjoint_left.mpr
+  intro p hpi hpj
+  have hp : p ∈ inner (remainder P i) := by
+    apply remainder_subset_inner (remainder P i) n
+    have h := extremeLayer_subset _ hpj
+    simpa only [layer, remainder_add, Nat.add_assoc] using h
+  exact (Finset.mem_sdiff.mp hp).2 hpi
+
+/-- Minimality strictly bounds every different convex-position subset. -/
+theorem card_lt_outer_of_convexPosition {S X : Finset Point}
+    (hmin : MinimalOuter S) (hXS : X ⊆ S) (hX : ConvexPosition X)
+    (hne : X ≠ extremeLayer S) : X.card < (extremeLayer S).card := by
+  by_contra h
+  exact hne (hmin X hXS hX (Nat.le_of_not_gt h))
+
+/-- In particular every non-outer layer has fewer vertices than a nonempty
+minimal outer layer. This is the cardinality contradiction used by Valtr. -/
+theorem layer_card_lt_outer {S : Finset Point} (hmin : MinimalOuter S)
+    (hS : S.Nonempty) {n : ℕ} (hn : 0 < n) :
+    (layer S n).card < (extremeLayer S).card := by
+  apply card_lt_outer_of_convexPosition hmin
+    ((extremeLayer_subset _).trans (remainder_hullClosedIn S n).1)
+    (extremeLayer_convexPosition _) _
+  intro heq
+  have hd := layer_disjoint (P := S) hn
+  change Disjoint (extremeLayer S) (extremeLayer (remainder S n)) at hd
+  rw [heq] at hd
+  have he : extremeLayer S = ∅ := disjoint_self.mp hd
+  exact hS.ne_empty ((extremeLayer_eq_empty_iff S).mp he)
+
+/-- Valtr's Observation 1 in a boundary-safe form: after excluding the
+outer vertices and the closed hull of the fourth layer, only layers two
+and three can remain. No general-position assumption is needed. -/
+theorem mem_middle_layers_of_not_mem_fourth_hull {S : Finset Point} {p : Point}
+    (hp : p ∈ S) (hpouter : p ∉ extremeLayer S)
+    (hpfourth : p ∉ convexHull ℝ (layer S 3 : Set Point)) :
+    p ∈ layer S 1 ∨ p ∈ layer S 2 := by
+  by_cases hpone : p ∈ layer S 1
+  · exact Or.inl hpone
+  by_cases hptwo : p ∈ layer S 2
+  · exact Or.inr hptwo
+  have hpfirst : p ∈ remainder S 1 := Finset.mem_sdiff.mpr ⟨hp, hpouter⟩
+  have hpsecond : p ∈ remainder S 2 := Finset.mem_sdiff.mpr ⟨hpfirst, hpone⟩
+  have hpthird : p ∈ remainder S 3 := Finset.mem_sdiff.mpr ⟨hpsecond, hptwo⟩
+  apply (hpfourth _).elim
+  change p ∈ convexHull ℝ (extremeLayer (remainder S 3) : Set Point)
+  rw [convexHull_extremeLayer]
+  exact subset_convexHull ℝ _ hpthird
+
 end Lax56Proofs.ConvexLayers

@@ -27,6 +27,16 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   hexagon bridge, and the supporting-half-plane description of a hexagon.
 - `ValtrCaps.lean` and `ValtrCounting.lean`: construction of consecutive
   six-vertex caps and the inequality `|outer| ≤ 6 |next| + 5`.
+- `ValtrExtension.lean`: Valtr's empty-pentagon extension (Observation 2),
+  including the exact four-sector hypothesis, finite empty-triangle selection,
+  and verification of convexity and emptiness of the resulting hexagon.
+- `ValtrSectors.lean` and `ValtrCyclic.lean`: convex sectors, enlargement when
+  the interior apex moves toward its base, and coverage of exterior ambient
+  points by radial sectors, including the cyclic wrap-around.
+- `ValtrSplice.lean`: a chain-splicing criterion from explicit supporting-edge
+  inequalities, and the resulting cardinality/minimality contradiction.
+  Those inequalities are hypotheses here; deriving them from Valtr's sector
+  configuration is **not yet proved**. See [the precise gap](VALTR_REMAINING.md).
 - `ValtrReduction.lean`: the contradiction `216 ≤ 215` after the four-layer
   lemma empties the fourth layer.
 - `EmptyHexagon.lean`: the resulting labelled empty-hexagon theorem, with
@@ -37,6 +47,9 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
 The new elementary proofs use only Lean's standard logical axioms
 `propext`, `Classical.choice`, and `Quot.sound`. There are no `sorry` proofs,
 SAT calls, or `native_decide` proofs in the convex-layer development.
+
+The new four-layer preparatory lemmas do not discharge the four-layer axiom
+and are not used to claim that the main theorem is now assumption-free.
 
 ## Constants
 
