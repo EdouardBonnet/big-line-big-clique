@@ -1,18 +1,21 @@
 import Lax56Proofs.HKBFinalCases
 import Lax56Proofs.HKBHexCardBound
+import Lax56Proofs.EmptyHexagon
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic
 
 /-!
 The direct Hujter--Kisfaludi--Bak visibility-colouring theorem.
 
-The only geometric input left external is `exists_emptyConvexHexagon`, the
-published upper bound for the empty-hexagon number.  Everything after that
-input, including the blocker cases of cardinalities 10, 11 and 12, is proved
-in the `Lax56Proofs.HKB*` modules.
+The empty-hexagon input is derived in `Lax56Proofs.EmptyHexagon` from Valtr's
+four-layer lemma, the only geometric input still external. Everything after
+that input, including the blocker cases of cardinalities 10, 11 and 12, is
+proved in the `Lax56Proofs.HKB*` modules.
 -/
 
 namespace Lax56Proofs.HujterKisfaludiBak
+
+set_option exponentiation.threshold 512
 
 open Lax56.Geometry
 open Lax56.HujterKisfaludiBak
@@ -25,10 +28,10 @@ open Lax56Proofs.HKBGeometry
 open Lax56Proofs.HKBHexFinalGeometry
 open Lax56Proofs.HKBHexGeometry
 
-/-- Every set of at least 2311 points either has four collinear points or
+/-- Every set of at least `5 * 2^428 + 1` points either has four collinear points or
 its visibility graph is not five-colourable. -/
 theorem visibilityGraph_not_fiveColorable
-    (P : Finset Point) (hP : 2311 ≤ P.card) :
+    (P : Finset Point) (hP : 5 * 2 ^ 428 + 1 ≤ P.card) :
     HasFourCollinear P ∨ ¬(visibilityGraph P).Colorable 5 := by
   classical
   by_cases hfour' : HasFourCollinear P
@@ -37,13 +40,13 @@ theorem visibilityGraph_not_fiveColorable
   intro hcolourable
   obtain ⟨C⟩ := hcolourable
   have hPtype : Fintype.card P = P.card := Fintype.card_coe P
-  have hpigeon : Fintype.card (Fin 5) * 462 < Fintype.card P := by
+  have hpigeon : Fintype.card (Fin 5) * 2 ^ 428 < Fintype.card P := by
     simp only [Fintype.card_fin, hPtype]
     omega
   obtain ⟨c, hc⟩ :=
     Fintype.exists_lt_card_fiber_of_mul_lt_card (f := C) hpigeon
   let fibre : Finset P := Finset.univ.filter (fun x ↦ C x = c)
-  have hcfibre : 462 < fibre.card := by
+  have hcfibre : 2 ^ 428 < fibre.card := by
     simpa [fibre] using hc
   let qEmbed : P ↪ Point :=
     ⟨fun x ↦ (x : Point), by
@@ -51,7 +54,7 @@ theorem visibilityGraph_not_fiveColorable
       apply Subtype.ext
       exact hxy⟩
   let Q : Finset Point := fibre.map qEmbed
-  have hQcard : 463 ≤ Q.card := by
+  have hQcard : 2 ^ 428 + 1 ≤ Q.card := by
     have hcardMap : Q.card = fibre.card := by
       simp [Q]
     omega
@@ -73,7 +76,7 @@ theorem visibilityGraph_not_fiveColorable
     simpa [fibre] using hxc
   have hQgeneral : ¬HasThreeCollinear Q :=
     noThreeCollinear_of_constantColour hQP hfour' C c hQcolour
-  obtain ⟨hex, hempty⟩ := exists_emptyConvexHexagon Q hQcard hQgeneral
+  obtain ⟨hex, hempty⟩ := Lax56Proofs.EmptyHexagon.exists_emptyConvexHexagon Q hQcard hQgeneral
   have hh : StrictConvexHexagon hex := hempty.1
   have hhQ : ∀ i, hex i ∈ Q := hempty.2.1
   have hhP : ∀ i, hex i ∈ P := fun i ↦ hQP (hhQ i)

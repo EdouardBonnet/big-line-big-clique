@@ -4,13 +4,13 @@ import Lax56.Geometry
 
 /-!
 ---
-title: The empty-hexagon input to the Hujter--Kisfaludi-Bak theorem
+title: The unoptimized empty-hexagon bound
 type: definition
 ---
-This module isolates the geometric input that is external to the
-Hujter--Kisfaludi-Bak blocking argument: the upper bound `h(6) ≤ 463` for the
-empty convex hexagon number.  The visibility-colouring theorem itself is
-proved in `Lax56Proofs.HujterKisfaludiBak`.
+This module states the upper bound `h(6) ≤ 2^428 + 1` and the ordered hexagon
+definitions used by the blocking argument. The bound is proved in
+`Lax56Proofs.EmptyHexagon` from Valtr's four-layer lemma. The visibility-colouring
+theorem is proved in `Lax56Proofs.HujterKisfaludiBak`.
 -/
 
 namespace Lax56.HujterKisfaludiBak
@@ -35,10 +35,12 @@ def EmptyConvexHexagon (P : Finset Point) (h : Fin 6 → Point) : Prop :=
     (∀ i, h i ∈ P) ∧
     ∀ p ∈ P, p ∈ convexHull ℝ (Set.range h) → p ∈ Set.range h
 
-/-- The currently external geometric input, in an ordered form convenient for
-the blocking proof.  This is precisely the bound `h(6) ≤ 463`. -/
+/-- The deliberately unoptimized Valtr bound `h(6) ≤ 2^428 + 1`, via 216
+points in convex position. Its proof in `Lax56Proofs.EmptyHexagon` depends
+only on the explicitly isolated four-layer lemma. This concept declaration
+is a theorem specification, not the input used directly by the main proof. -/
 axiom exists_emptyConvexHexagon
-    (P : Finset Point) (hP : 463 ≤ P.card)
+    (P : Finset Point) (hP : 2 ^ 428 + 1 ≤ P.card)
     (hgeneral : ¬HasThreeCollinear P) :
     ∃ h : Fin 6 → Point, EmptyConvexHexagon P h
 

@@ -7,6 +7,10 @@ authors:
   - name: "Édouard Bonnet"
     github: "EdouardBonnet"
 bibEntries:
+  - '@incollection{Valtr2008, author = {Pavel Valtr}, title = {On Empty
+    Hexagons}, booktitle = {Surveys on Discrete and Computational Geometry:
+    Twenty Years Later}, series = {Contemporary Mathematics}, volume = {453},
+    pages = {433--441}, publisher = {American Mathematical Society}, year = {2008}}'
   - '@misc{Bonnet2026, author = {\''Edouard Bonnet}, title = {Large Finite Point
     Sets Have 4 Collinear Points or a 6-Clique}, year = {2026}}'
   - '@misc{HujterKisfaludiBak2014, author = {B\''alint Hujter and S\''andor

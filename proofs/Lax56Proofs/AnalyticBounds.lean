@@ -4,6 +4,8 @@ import Mathlib.Tactic
 
 namespace Lax56Proofs.AnalyticBounds
 
+set_option exponentiation.threshold 512
+
 open scoped BigOperators
 open Lax56.Geometry
 open Lax56Proofs.IntervalDensity

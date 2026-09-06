@@ -5,6 +5,8 @@ import Mathlib.Tactic
 
 namespace Lax56Proofs.SlidingWindows
 
+set_option exponentiation.threshold 512
+
 open scoped BigOperators
 open SimpleGraph
 open Lax56.Geometry

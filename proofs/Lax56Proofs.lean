@@ -1,5 +1,11 @@
 import Lax56Proofs.AnalyticBounds
 import Lax56Proofs.Blockers
+import Lax56Proofs.ConvexLayers
+import Lax56Proofs.CupsCaps
+import Lax56Proofs.CupsCapsGeometry
+import Lax56Proofs.CyclicOrder
+import Lax56Proofs.EmptyHexagon
+import Lax56Proofs.ErdosSzekeres
 import Lax56Proofs.FiniteIntervals
 import Lax56Proofs.HKBAffineMirror
 import Lax56Proofs.HKBBlocking
@@ -41,4 +47,7 @@ import Lax56Proofs.PotentialLower
 import Lax56Proofs.SlidingWindows
 import Lax56Proofs.Telescoping
 import Lax56Proofs.VertexRemovalStability
+import Lax56Proofs.ValtrCaps
+import Lax56Proofs.ValtrCounting
+import Lax56Proofs.ValtrReduction
 import Lax56Proofs.WeightedPairs

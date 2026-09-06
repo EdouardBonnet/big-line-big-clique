@@ -6,18 +6,21 @@ import Mathlib.Tactic
 
 namespace Lax56Proofs.IntervalDensity
 
+set_option exponentiation.threshold 512
+set_option maxRecDepth 4096
+
 open Lax56.Geometry
 open Lax56Proofs.FiniteIntervals
 open Lax56.VertexRemovalStability
 
 /-- The Hujter--Kisfaludi-Bak threshold minus one. -/
-def hkb : ℕ := 2310
+def hkb : ℕ := 5 * 2 ^ 428
 
 /-- The first interval length at which stability is applied. -/
-def m₀ : ℕ := 4620
+def m₀ : ℕ := 10 * 2 ^ 428
 
 /-- The stability parameter `ε₀/3500`. -/
-noncomputable def eps₁ : ℝ := 1 / 16177000
+noncomputable def eps₁ : ℝ := 1 / (3500 * (10 * 2 ^ 428 + 2))
 
 /-- The non-edge density, strictly larger than `1/10`. -/
 noncomputable def density : ℝ := 1 / 10 + eps₁
@@ -50,14 +53,14 @@ theorem blockGraph_cliqueFree_six
         ((Subtype.val_injective.comp e.injective).ne hij')
     exact hadj
 
-/-- A consecutive block of at least 2311 points cannot have a 5-colourable
+/-- A consecutive block of at least `5 * 2^428 + 1` points cannot have a 5-colourable
 visibility graph. This is the direct block form of the HKB dependency. -/
 theorem blockGraph_not_colorable_five
     (P : Finset Point) (hfour : ¬HasFourCollinear P)
-    {s m : ℕ} (hs : s + m ≤ P.card) (hm : 2311 ≤ m) :
+    {s m : ℕ} (hs : s + m ≤ P.card) (hm : 5 * 2 ^ 428 + 1 ≤ m) :
     ¬(blockGraph P hs).Colorable 5 := by
   intro hc
-  have hcard : 2311 ≤ (blockSet P s m hs).card := by
+  have hcard : 5 * 2 ^ 428 + 1 ≤ (blockSet P s m hs).card := by
     simpa using hm
   rcases Lax56Proofs.HujterKisfaludiBak.visibilityGraph_not_fiveColorable
       (blockSet P s m hs) hcard with hcol | hncol
@@ -66,37 +69,49 @@ theorem blockGraph_not_colorable_five
     obtain ⟨C⟩ := hc
     exact ⟨C.comp (blockGraphIso P hs).symm.toHom⟩
 
-/-- Lemma 2.2: deleting fewer than a `1/4622` fraction of a sufficiently
+/-- Lemma 2.2: deleting fewer than a `1/(10 * 2^428 + 2)` fraction of a sufficiently
 long block cannot make its visibility graph 5-colourable. -/
+private theorem window_gap {m L z : ℕ} (hLm : L ≤ m) (h : 2 * (z * L) < m) :
+    z * L < m - L + 1 := by
+  by_cases hz : z = 0
+  · subst z
+    omega
+  · have hmul : L ≤ z * L := by
+      simpa using Nat.mul_le_mul_right L (by omega : 1 ≤ z)
+    omega
+
 theorem deletion_distance_five
     (P : Finset Point) (hfour : ¬HasFourCollinear P)
     {s m : ℕ} (hs : s + m ≤ P.card) (hm : m₀ ≤ m)
     (Z : Set (Fin m))
-    (hZ : (Nat.card Z : ℝ) < (m : ℝ) / 4622) :
+    (hZ : (Nat.card Z : ℝ) < (m : ℝ) / (10 * 2 ^ 428 + 2)) :
     ¬((blockGraph P hs).induce Zᶜ).Colorable 5 := by
   intro hc
-  have hNat : 4622 * Nat.card Z < m := by
-    have hR : (4622 : ℝ) * Nat.card Z < m := by
-      have : (0 : ℝ) < 4622 := by norm_num
+  have hNat : (10 * 2 ^ 428 + 2) * Nat.card Z < m := by
+    have hR : (10 * 2 ^ 428 + 2 : ℝ) * Nat.card Z < m := by
+      have : (0 : ℝ) < 10 * 2 ^ 428 + 2 := by positivity
       calc
-        (4622 : ℝ) * Nat.card Z < 4622 * ((m : ℝ) / 4622) :=
+        (10 * 2 ^ 428 + 2 : ℝ) * Nat.card Z <
+            (10 * 2 ^ 428 + 2) * ((m : ℝ) / (10 * 2 ^ 428 + 2)) :=
           mul_lt_mul_of_pos_left hZ this
         _ = m := by
           norm_num
           ring
     exact_mod_cast hR
-  have hLm : 2311 ≤ m := by
-    unfold m₀ at hm
+  have hLm : 5 * 2 ^ 428 + 1 ≤ m := by
+    norm_num [m₀] at hm ⊢
     omega
-  have hsmall : Nat.card Z * 2311 < m - 2311 + 1 := by omega
+  have hsmall : Nat.card Z * (5 * 2 ^ 428 + 1) < m - (5 * 2 ^ 428 + 1) + 1 := by
+    apply window_gap hLm
+    convert hNat using 1 <;> ring
   obtain ⟨w, hw⟩ := exists_disjoint_window (by norm_num) hLm Z hsmall
-  have hsw : s + w.val + 2311 ≤ P.card := by
+  have hsw : s + w.val + (5 * 2 ^ 428 + 1) ≤ P.card := by
     have hwlt := w.isLt
     omega
   apply blockGraph_not_colorable_five P hfour hsw (by norm_num)
   obtain ⟨C⟩ := hc
   refine ⟨SimpleGraph.Coloring.mk
-    (fun i : Fin 2311 ↦ C ⟨windowIndex hLm w i, by simpa using hw i⟩) ?_⟩
+    (fun i : Fin (5 * 2 ^ 428 + 1) ↦ C ⟨windowIndex hLm w i, by simpa using hw i⟩) ?_⟩
   intro i j hij
   apply C.valid
   rw [SimpleGraph.induce_adj]
@@ -150,7 +165,7 @@ theorem visible_edge_upper
   push_neg at h
   have hm20 : 20 ≤ Fintype.card (Fin m) := by
     simp only [Fintype.card_fin]
-    unfold m₀ at hm
+    norm_num [m₀] at hm
     omega
   rcases Lax56Proofs.VertexRemovalStability.exists_fiveColorable_delete
       (blockGraph P hs) eps₁
@@ -160,7 +175,7 @@ theorem visible_edge_upper
   apply deletion_distance_five P hfour hs hm Z
   · calc
       (Nat.card Z : ℝ) < 3500 * eps₁ * Fintype.card (Fin m) := hZ
-      _ = (m : ℝ) / 4622 := by
+      _ = (m : ℝ) / (10 * 2 ^ 428 + 2) := by
         simp only [Fintype.card_fin, eps₁]
         ring
   · exact hcolor
