@@ -46,6 +46,20 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   for arbitrary polygon sizes. In a hexagon-free set with nonempty interior,
   every consecutive five-vertex cap contains a vertex of the next layer.
   This proves the vertex-extraction step for Valtr's final pentagon.
+- `ValtrSelection.lean` and `ValtrSectorSetup.lean`: third-layer apex
+  selection, with base-triangle emptiness also against deeper layers,
+  and construction of the complete initial sector data.
+- `ValtrMissing.lean`: Valtr's Observation 3. Disjoint open radial sectors
+  and connectedness prove the unique-edge assertion; two consecutive
+  missing third-layer triangles would force an empty hexagon.
+- `ValtrConvexRun.lean`: ordered empty pentagons from two outer sector
+  points, and the convex-quadrilateral obstruction with its separating-side
+  condition explicit. Identifying that side for a whole run remains open.
+- `ValtrMissingExtension.lean`, `ValtrCoverage.lean`, and `ValtrCoverSetup.lean`:
+  the crossed-edge four-sector obstruction, endpoint containments proved
+  from extremality and empty triangles, coverage of every outer vertex by
+  a defined sector, and exhaustion of the third layer by the apices when
+  every apex exists and `|A| = |B| + 1`.
 - `ValtrRuns.lean`: the private-region counting that forces `|A| = |B| + 1`
   once the geometric sector-run bounds are supplied, and selection of
   private representatives with exactly one extra outer point.

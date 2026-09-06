@@ -32,6 +32,29 @@ explicit external axiom in the main proof.
   endpoint case (`ValtrSectorBounds` and `ValtrSectors.two_sector_chain_support`).
 - Uniqueness of the line crossing and radial fan triangle, including cyclic
   wrap-around (`ValtrCyclic`).
+- Selection of every defined apex in the third layer, including exclusion
+  of deeper-layer points from its base triangle (`ValtrSelection`), and
+  construction of the full initial sector configuration (`ValtrSectorSetup`).
+- Observation 3: two consecutive radial triangles cannot both miss the
+  third layer (`ValtrMissing.meetsThirdLayer_or_next`). The unique-edge
+  assertion is proved using disjoint open radial sectors and connectedness
+  of an outer edge; the resulting three-vertex obstruction is reduced to
+  the verified empty-triangle sector bound.
+- The defined sectors cover every outer-layer vertex
+  (`ValtrCoverSetup.outer_vertex_mem_defined_sector`). Missing sectors are
+  handled using the actual crossed third-layer edge: its four-sector is
+  empty of ambient points, its endpoints lie in the triangles determined
+  by the neighboring selected apices, and exclusion from both neighboring
+  sectors forces membership in that forbidden four-sector
+  (`ValtrMissingExtension`, `ValtrCoverage`). This supplies the coverage
+  consequence of Observation 4 without assuming the paper's diagram.
+- The convex-quadrilateral endpoint obstruction, with its required
+  separating-side condition explicit (`ValtrConvexRun.convex_quad_side_card_le_one`).
+  Deriving that side condition for the private part of an arbitrary run
+  is still outstanding.
+- All defined apices have different indices, and in the `|A| = |B| + 1`
+  case with every apex defined they exhaust the third layer
+  (`ValtrCoverSetup.third_layer_eq_all_apices`).
 - The cap identity for every consecutive vertex block, and existence of a
   next-layer vertex inside every consecutive five-vertex cap of a
   hexagon-free set with nonempty interior (`ValtrPolygon`).
@@ -88,9 +111,8 @@ because the entire replacement set lies in the original hull.
 ## Other parts of the four-layer argument still to formalize
 
 This is the current obstacle, not the final outstanding line of the theorem.
-Also remaining are the full selection of `cᵢ` in layer `C`, Observations 3
-and 4 and the associated missing-sector coverage, the other branches of
-the sector-run induction, geometric identification of the private regions,
+Also remaining are the other branches of the sector-run induction,
+including the private-part separating-side condition, geometric identification of the private regions,
 and the final chain replacement and radial-order argument with `d′`.
 The private-region cardinality calculation and extraction of a next-layer
 vertex from a five-vertex cap are now separately proved.
