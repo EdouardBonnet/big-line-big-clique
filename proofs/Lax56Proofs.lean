@@ -56,7 +56,10 @@ import Lax56Proofs.ValtrCoverSetup
 import Lax56Proofs.ValtrCounting
 import Lax56Proofs.ValtrCyclic
 import Lax56Proofs.ValtrCyclicRuns
+import Lax56Proofs.ValtrEdgeCaps
+import Lax56Proofs.ValtrEndpointCompletion
 import Lax56Proofs.ValtrExtension
+import Lax56Proofs.ValtrFourLayer
 import Lax56Proofs.ValtrFourLayerReduction
 import Lax56Proofs.ValtrEndpointGeometry
 import Lax56Proofs.ValtrEndpointDrop

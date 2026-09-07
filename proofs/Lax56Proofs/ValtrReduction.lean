@@ -3,9 +3,9 @@ import Lax56.HujterKisfaludiBak
 
 /-!
 The reduction supplied by the user, with intermediate inputs exposed as
-ordinary hypotheses. `ValtrCaps`, `ErdosSzekeres`, and `CyclicOrder` discharge
-all of these inputs except the four-layer lemma. `EmptyHexagon` connects the
-result to the main proof with that sole remaining external assumption.
+ordinary hypotheses. `ValtrCaps`, `ErdosSzekeres`, `CyclicOrder`, and
+`ValtrFourLayer` discharge all these inputs. `EmptyHexagon` connects the
+result to the main proof without an external geometric assumption.
 
 Reference: Pavel Valtr, "On Empty Hexagons", Section 3 of the published paper
 (Section 2 in the author's preprint, https://kam.mff.cuni.cz/~valtr/h.ps).

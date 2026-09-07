@@ -8,9 +8,8 @@ import Mathlib.Tactic
 The direct Hujter--Kisfaludi--Bak visibility-colouring theorem.
 
 The empty-hexagon input is derived in `Lax56Proofs.EmptyHexagon` from Valtr's
-four-layer lemma, the only geometric input still external. Everything after
-that input, including the blocker cases of cardinalities 10, 11 and 12, is
-proved in the `Lax56Proofs.HKB*` modules.
+four-layer lemma, proved in `Lax56Proofs.ValtrFourLayer`. The blocker cases
+of cardinalities 10, 11 and 12 are proved in the `Lax56Proofs.HKB*` modules.
 -/
 
 namespace Lax56Proofs.HujterKisfaludiBak

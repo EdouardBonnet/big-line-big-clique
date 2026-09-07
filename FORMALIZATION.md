@@ -1,18 +1,19 @@
-# Status of the convex-layer route
+# Completed convex-layer proof
 
-The supplied argument is formalized **conditional on Valtr's four-layer
-lemma**, the geometric ingredient explicitly left unexpanded in the informal
-proof. This is not yet an assumption-free proof of the headline theorem.
+The proof now includes Valtr's four-layer implication and the headline
+theorem. The proof declarations use only Lean's standard logical axioms:
+`propext`, `Classical.choice`, and `Quot.sound`.
 
-The only nonstandard axiom used by the main Lean proof is
-`Lax56.ValtrFourLayer.exists_emptyHexagon_of_four_layers`:
+The previously external geometric input is proved as
+`Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers`:
 
-> A finite general-position set with a minimal outer layer of at least nine
+> A finite general-position set with a minimal outer layer of at least sixteen
 > vertices and a nonempty fourth layer contains an empty convex hexagon.
 
-The remaining work is the both-convex endpoint case of the sector-run bound in
-Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
-[author's preprint](https://kam.mff.cuni.cz/~valtr/h.ps)).
+The relaxed local threshold 16 is sufficient for the convex 216-point
+application. The empty-hexagon and headline constants do not increase.
+The final both-convex endpoint argument is recorded in
+[the geometric resolution](VALTR_REMAINING.md).
 
 ## What is proved
 
@@ -88,7 +89,7 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   chain through the deep point has all required supports. Moving the
   center into a five-apex cap and replacing at most five outer vertices
   by this chain contradicts minimality. The five-sector cardinality bound
-  is still an explicit input to this application.
+  is an explicit input to this helper and is supplied in the final assembly.
 
 - `ValtrSectorArcs.lean` and `ValtrPrivateRuns.lean`: a two-point sector
   joins neighboring outer vertices, so the unique extra outer point
@@ -97,9 +98,9 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   completes the all-sectors endgame when there are at least 15 sectors.
 - `ValtrFourLayerReduction.lean` and `ValtrRunInduction.lean`: the entire
   four-layer argument, with outer-layer threshold 16, is reduced to the
-  both-convex endpoint run bound. This remains an ordinary explicit
-  hypothesis, not a new axiom. The 216-point application and all downstream
-  numerical bounds are unchanged.
+  both-convex endpoint run bound. This ordinary explicit hypothesis is
+  discharged by `ValtrFourLayer`; it is not an external assumption.
+  The 216-point application and all downstream numerical bounds are unchanged.
 - `ValtrEndpointGeometry.lean`: the endpoint case splits yield exactly
   the indicated strictly convex quadrilaterals when the corresponding
   interior-triangle conditions fail.
@@ -112,20 +113,24 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   this structured both-convex configuration suffices for the four-layer
   theorem; the strong-induction connection is proved.
 
-The both-convex endpoint counting estimate is **not yet proved**. All other
-endpoint cases, the run induction, and subsequent geometric steps are
-proved. `four_layer_of_doubly_convex_run_bound` isolates the remaining case,
-including the available bounds on both shorter runs.
-`ValtrExtremalRun.four_layer_of_extremal_run_obstruction` narrows the
-remaining input further to that disjoint exact-count configuration.
-See [the remaining gap](VALTR_REMAINING.md).
+- `ValtrEdgeCaps.lean`: an inner supporting edge has at most three outer
+  vertices beyond it in a hexagon-free set. Also proved: the local transfer
+  of a neighboring sector into that edge's cap, using a triangle-containment
+  contradiction to outer extremality.
+- `ValtrEndpointCompletion.lean`: backward propagation carries a bad
+  last-endpoint point beyond every base edge. Together with the cap transfer,
+  this forces four distinct outer vertices into the first cap and excludes
+  the both-convex pattern `2,1,...,1,2`.
+- `ValtrFourLayer.lean`: the new obstruction is connected to the actual
+  cyclic apex data and the existing strong induction, proving the complete
+  four-layer implication with outer-layer threshold 16.
 
 The already completed downstream reduction consists of:
 
 - `ValtrReduction.lean`: the contradiction `216 ≤ 215` after the four-layer
   lemma empties the fourth layer.
-- `EmptyHexagon.lean`: the resulting labelled empty-hexagon theorem, with
-  just the four-layer lemma as its external assumption.
+- `EmptyHexagon.lean`: the resulting labelled empty-hexagon theorem, invoking
+  the proved four-layer theorem without an external assumption.
 - The existing blocker, stability, interval, and analytic proofs, with the
   larger constants propagated all the way to `MainTheorem.lean`.
 
@@ -133,8 +138,8 @@ The new elementary proofs use only Lean's standard logical axioms
 `propext`, `Classical.choice`, and `Quot.sound`. There are no `sorry` proofs,
 SAT calls, or `native_decide` proofs in the convex-layer development.
 
-The new four-layer preparatory lemmas do not discharge the four-layer axiom
-and are not used to claim that the main theorem is now assumption-free.
+Lax concept-layer `axiom` declarations are theorem specifications, each
+matched by a proof declaration. The main proof does not use them as axioms.
 
 ## Constants
 
@@ -162,7 +167,11 @@ import Lax56Proofs
 #print axioms Lax56Proofs.MainTheorem.large_point_set_four_collinear_or_visible_six
 ```
 
-The concept-layer declarations for the empty-hexagon theorem and the main
-theorem are Lax theorem specifications. The proof no longer invokes the
-empty-hexagon specification as an external assumption: it invokes its proved
-reduction to the explicitly isolated four-layer lemma.
+The same axiom audit can be run on
+`Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers` and
+`Lax56Proofs.EmptyHexagon.exists_emptyConvexHexagon`.
+
+Verified on 2026-09-07: the full Lake build passed (8574 jobs), and
+`lax build --profile --replay` passed compilation, kernel replay, and
+statement inspection (6 concepts, 4 proofs). All three axiom audits above
+reported exactly `propext`, `Classical.choice`, and `Quot.sound`.

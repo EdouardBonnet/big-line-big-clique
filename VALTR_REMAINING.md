@@ -1,218 +1,153 @@
-# Current geometric gap in Valtr's argument
+# Resolution of the final Valtr endpoint case
+
+The geometric gap previously recorded in this file is closed.
+The proof is in `ValtrEdgeCaps.lean`, `ValtrEndpointCompletion.lean`,
+and `ValtrFourLayer.lean`. The final four-layer theorem uses only
+`propext`, `Classical.choice`, and `Quot.sound`.
 
 Reference: Pavel Valtr, *On Empty Hexagons*, Section 3.3 of the published
 paper, Section 2.3 of the [author's preprint](https://kam.mff.cuni.cz/~valtr/h.ps).
+The following argument supplies the previously missing both-convex case.
 
-This file records a formalization gap, not a claim that the published
-mathematical argument is incorrect. The four-layer theorem is still an
-explicit external axiom in the main proof.
+## Setting
 
-## Newly proved in Lean
+Let \(A,B,C,D\) be successive convex layers of a finite general-position
+set \(P\), with \(A\) minimal and \(D\) nonempty. Assume that \(P\) has no
+empty convex hexagon. In a clockwise run of \(t\ge2\) defined sectors,
+write
+\[
+ S_i=\{x:[b_i,c_i,x]>0,\ [c_i,b_{i+1},x]>0,\
+                     [b_i,b_{i+1},x]>0\},\qquad U_i=A\cap S_i.
+\]
+Here \(c_i\in C\) lies strictly in the fan triangle \(d b_i b_{i+1}\),
+and the triangle \(b_i c_i b_{i+1}\) is empty.
 
-- Observation 1, in a boundary-safe form: a point outside the outer layer
-  and outside the closed hull of the fourth layer belongs to the second
-  or third layer (`ConvexLayers.mem_middle_layers_of_not_mem_fourth_hull`).
-- Observation 2, with the paper's four-sector condition:
-  `ValtrExtension.empty_pentagon_extension`. The point nearest the closing
-  edge is chosen by a finite minimum. All boundary, convexity, and emptiness
-  checks are proved; no empty-polygon theorem is assumed.
-- Sector convexity and the inclusion
-  `sector(a,d,b) ⊆ sector(a,c,b)` when `c` lies in the triangle `dab` and is
-  different from its base vertices (`ValtrSectors.sector_triangle_mono`).
-- Radial-sector coverage of every ambient point outside an inner polygon
-  (`ValtrCyclic.exists_radial_sector_of_not_mem_hull`). General position
-  eliminates the boundary rays, and a finite cyclic sign transition selects
-  the relevant edge.
-- A supported-chain replacement is in convex position and contradicts
-  minimality when no more vertices are deleted than inserted
-  (`ValtrSplice.convexPosition_splice_of_edge_supports` and
-  `ValtrSplice.not_minimal_of_supported_splice`).
-- The one-sector bound of two outer points, and both the convexity and
-  supporting inequalities of the replacement in the two-sector nonconvex
-  endpoint case (`ValtrSectorBounds` and `ValtrSectors.two_sector_chain_support`).
-- Uniqueness of the line crossing and radial fan triangle, including cyclic
-  wrap-around (`ValtrCyclic`).
-- Selection of every defined apex in the third layer, including exclusion
-  of deeper-layer points from its base triangle (`ValtrSelection`), and
-  construction of the full initial sector configuration (`ValtrSectorSetup`).
-- Observation 3: two consecutive radial triangles cannot both miss the
-  third layer (`ValtrMissing.meetsThirdLayer_or_next`). The unique-edge
-  assertion is proved using disjoint open radial sectors and connectedness
-  of an outer edge; the resulting three-vertex obstruction is reduced to
-  the verified empty-triangle sector bound.
-- The defined sectors cover every outer-layer vertex
-  (`ValtrCoverSetup.outer_vertex_mem_defined_sector`). Missing sectors are
-  handled using the actual crossed third-layer edge: its four-sector is
-  empty of ambient points, its endpoints lie in the triangles determined
-  by the neighboring selected apices, and exclusion from both neighboring
-  sectors forces membership in that forbidden four-sector
-  (`ValtrMissingExtension`, `ValtrCoverage`). This supplies the coverage
-  consequence of Observation 4 without assuming the paper's diagram.
-- The convex-quadrilateral endpoint obstruction, with its required
-  separating-side condition explicit, in both orientations (`ValtrConvexRun`).
-  `ValtrEndpointDrop` now derives the side test for the private region when
-  the opposite endpoint is nonconvex, and proves both mixed endpoint bounds.
-- All defined apices have different indices, and in the `|A| = |B| + 1`
-  case with every apex defined they exhaust the third layer
-  (`ValtrCoverSetup.third_layer_eq_all_apices`).
-- The cap identity for every consecutive vertex block, and existence of a
-  next-layer vertex inside every consecutive five-vertex cap of a
-  hexagon-free set with nonempty interior (`ValtrPolygon`).
-- The private-region counting that excludes `|A| = |B| + 2`, forces
-  `|A| = |B| + 1`, and chooses distinct private representatives with exactly
-  one extra point, conditional on the sector-run cardinality bounds
-  (`ValtrRuns`).
+The verified strong induction reduces failure of the run bound to:
+the \(U_i\) are pairwise disjoint, their counts are \(2,1,\ldots,1,2\),
+and both endpoint quadrilaterals
+\[
+ (b_1,c_1,c_2,b_2),\qquad(b_t,c_{t-1},c_t,b_{t+1})
+\]
+are strictly convex in the displayed counterclockwise order.
 
-## Closed gap: the supporting inequalities for the replacement
+No disjointness of the planar sectors is assumed. The selected \(C\)-points
+need not be consecutive or exhaust \(C\).
 
-Use Valtr's configuration in a finite general-position set with no empty
-hexagon: a minimal outer layer `A` and successive layers `B, C, D`, a fixed
-`d ∈ D`, clockwise vertices `b₁,...,bβ` of `B`, and selected points
-`cᵢ ∈ C ∩ conv{d,bᵢ,bᵢ₊₁}` whose base triangles are empty. Write
+## 1. An edge cap contains at most three outer vertices
 
-```
-Sᵢ = sector(bᵢ,cᵢ,bᵢ₊₁),
-U  = S₁ ∪ ... ∪ Sₜ,
-R  = A \ U,
-H  = [b₁,c₁,...,cₜ,bₜ₊₁],       2 ≤ t < β.
-```
+For each base edge let
+\[
+ E_i=\{x\in A:[b_i,b_{i+1},x]>0\}.
+\]
+Then \(|E_i|\le3\).
 
-In the nonconvex-quadrilateral branch of Lemma 2, the two endpoint conditions
-are that `c₁` is inside `conv{b₁,b₂,c₂}` and `cₜ` is inside
-`conv{bₜ,bₜ₊₁,cₜ₋₁}`. The paper then asserts that `H` is convex and that
-replacing `A ∩ U` by its vertices gives a convex-position set.
+Indeed, four points of \(E_i\), together with \(b_i,b_{i+1}\), are in
+convex position: outer vertices remain extreme, and the base line supports
+both new endpoints. Their hull is empty. Every inner point lies on the
+opposite side of the base line, while an unselected outer vertex cannot
+belong to the hull of other ambient points. General position leaves only
+the two base endpoints on the line.
 
-The formal splice criterion reduces this assertion to the following explicit
-inequalities. Orient the chain counterclockwise (reverse the paper's clockwise
-listing). For every chain edge `uv`, excluding the closing chord of `H`, prove
+This is `emptyHexagon_of_four_outer_edge_points`.
 
-```
-turn u v w ≥ 0   for every vertex w of H,     -- hchain
-turn u v a ≥ 0   for every retained a ∈ R.    -- hcross
-```
+## 2. The local transfer into the preceding cap
 
-For every `t ≥ 2`, both groups of inequalities are now proved. The key
-local relation places each `cᵢ` in the hull of its two chain neighbors and
-the two base vertices. From an exterior viewpoint, a positive affine
-height functional turns oriented-edge signs into comparisons of real
-projective coordinates. The scalar maximum principle propagates any
-ascent until it either encounters a removed sector or contradicts an
-endpoint condition. Strict supporting functionals handle the two endpoint
-viewpoints, and the empty base triangles handle the end edges against `C`.
+The following elementary implication is central. For consecutive
+clockwise base vertices \(a,b,f\), an inner point \(e\), and \(x\in P\),
+suppose
+\[
+ [a,b,x]>0,\quad[b,e,x]>0,\quad x\notin S(b,e,f).
+\]
+Then every outer vertex \(y\in S(b,e,f)\) satisfies \([a,b,y]>0\).
 
-`ValtrRunSetup.not_minimal_of_nonconvex_run_card_le` constructs the entire
-configuration from the actual cyclic layers and apex data and proves the
-minimality contradiction from `|A ∩ U| ≤ t + 2`. It does not take `hchain`,
-`hcross`, or the local neighbor-hull relations as hypotheses.
+To verify it, the inner supporting inequalities give
+\[
+ [a,b,e]<0,\quad[a,b,f]<0,\quad[b,e,f]>0.
+\]
+The determinant identity
+\[
+ -[a,b,f]\,[b,e,x]
+ =-[a,b,e]\,[b,f,x]-[b,e,f]\,[a,b,x]
+\]
+first implies \([b,f,x]>0\). Sector exclusion then gives
+\([e,f,x]\le0\).
 
-The supporting modules are `ValtrMaximum`, `ValtrProjective`,
-`ValtrLocalSupport`, `ValtrRunSupport`, and `ValtrRunSetup`.
-`ValtrRadialOrder` proves cyclic order of partial apex selections.
-`ValtrCyclicRuns` and `ValtrRunReduction` connect the assumed run bound
-to the actual sector counting and all-sectors conclusions.
+For \(y\in S(b,e,f)\), another determinant identity gives
+\[
+ [b,e,f]\,[f,x,y]
+ =-[e,f,x]\,[b,f,y]+[b,f,x]\,[e,f,y]>0.
+\]
+If \([a,b,y]\le0\), then
+\[
+ -[a,b,e]\,[x,b,y]
+ =[a,b,x]\,[b,e,y]-[a,b,y]\,[b,e,x]>0.
+\]
+Together with \([b,f,y]>0\), these put \(y\) strictly inside the triangle
+\(bfx\), contrary to outer extremality.
 
-## Remaining geometric gap: both endpoint quadrilaterals convex
+This is `next_sector_in_previous_cap`.
 
-For a clockwise run `S₁,...,Sₜ`, set
+## 3. A first-endpoint point puts the second sector in \(E_1\)
 
-```
-W = (A ∩ S₁) \ (S₂ ∪ ... ∪ Sₜ).
-```
+The already proved empty-pentagon extension implies that at most one point
+of \(U_1\) satisfies \([c_2,b_2,x]>0\). Since \(|U_1|=2\), choose
+\(x\in U_1\) with \([c_2,b_2,x]<0\); general position makes the inequality
+strict.
 
-When `b₁,c₁,c₂,b₂` is a strictly convex quadrilateral in that order,
-Valtr's proof asserts `|W| ≤ 1`, using an empty pentagon formed from two
-points of `W` and applying Observation 2 with `c₂`. The detailed
-four-sector justification for this invocation is not proved in full.
-There is now a complete proof when the opposite endpoint is nonconvex:
-`ValtrEndpointDrop.first_drop_card_of_mixed_endpoints`. Its symmetric
-counterpart is `last_drop_card_of_mixed_endpoints`. These use the forward
-and backward scalar propagation principles: the wrong-side inequality
-would propagate to the opposite endpoint and contradict its equality.
+Thus \([b_1,b_2,x]>0\) and \([b_2,c_2,x]>0\). Disjointness gives
+\(x\notin S_2\). Apply Section 2 with
+\[
+ (a,b,e,f)=(b_1,b_2,c_2,b_3)
+\]
+to obtain \(U_2\subseteq E_1\). Also \(U_1\subseteq E_1\).
 
-Consequently, only the following weaker statement is needed. In the same
-minimal, hexagon-free, general-position four-layer configuration, suppose
-`2 ≤ t < β`, all selected apices of the run are defined, and both
+If \(t=2\), the four distinct points of \(U_1\cup U_2\) already contradict
+\(|E_1|\le3\).
 
-```
-[b₁,c₁,c₂,b₂]                 and
-[bₜ,cₜ₋₁,cₜ,bₜ₊₁]
-```
+## 4. A last-endpoint point propagates into every base cap
 
-are strictly convex quadrilaterals in the listed counterclockwise order.
-Assume the two induction bounds
+Suppose \(t\ge3\). The mirrored empty-pentagon extension and \(|U_t|=2\)
+give \(y\in U_t\) with \([b_t,c_{t-1},y]<0\).
 
-```
-|A ∩ (S₁ ∪ ... ∪ Sₜ₋₁)| ≤ t,
-|A ∩ (S₂ ∪ ... ∪ Sₜ)|   ≤ t.
-```
+View the inner polygon from \(y\), using a positive-height projective
+coordinate \(\sigma\). Write \(z_i=\sigma(c_i)\), \(a_i=\sigma(b_i)\).
+Then
+\[
+ z_{t-1}<a_t<z_t<a_{t+1}.
+\]
+For every internal index \(2\le i<t\), the local convex-hull relation
+\[
+ c_i\in\operatorname{conv}\{c_{i-1},b_i,b_{i+1},c_{i+1}\}
+\]
+provides a strictly smaller projective neighbor. Sector exclusion forbids
+\(a_i<z_i<a_{i+1}\). Backward induction consequently gives
+\[
+ z_i<z_{i+1},\qquad z_i<a_{i+1}\quad(1\le i<t).
+\]
+No endpoint local-hull condition is used here.
 
-Prove `|A ∩ (S₁ ∪ ... ∪ Sₜ)| ≤ t + 1`. It suffices to exclude the
-case of equality `t + 2`, since a single sector contains at most two
-outer vertices. In that extremal case each end's private region has
-exactly two points. No particular pentagon or pointwise side implication
-is prescribed: an alternative geometric argument for this union bound
-would complete the missing input.
+These inequalities say \([c_i,b_{i+1},y]>0\). Starting with
+\([b_t,b_{t+1},y]>0\), the reversed base-edge implication
+`previous_base_pos` carries positivity backward:
+\[
+ [b_i,b_{i+1},y]>0\quad(1\le i\le t).
+\]
+In particular, \(y\in E_1\). This is
+`last_bad_point_beyond_bases`.
 
-The exact Lean interface is `ValtrRunInduction.DoublyConvexRunBound`.
-`ValtrEndpointGeometry` proves that its failed interior tests are
-equivalent to the indicated convex cases under the actual run hypotheses.
-An informal expansion of this final case would be useful.
+Now \(E_1\) contains the two points of \(U_1\), the point of \(U_2\), and
+the point \(y\in U_t\). They are distinct by the extremal disjointness
+pattern. This again contradicts \(|E_1|\le3\).
 
-There is also a sharper sufficient interface:
-`ValtrExtremalRun.ExtremalRunObstruction`. In a smallest failing run,
-all its sector point sets are pairwise disjoint and their cardinalities
-are exactly
+## Consequence
 
-```
-2, 1, ..., 1, 2.
-```
+`extremal_run_impossible` closes the last geometric case.
+`ValtrFourLayer.extremal_run_obstruction` connects the clockwise
+indices to the existing cyclic strong induction. The resulting theorem
+proves the four-layer implication for a minimal outer layer of at least
+16 vertices.
 
-This is proved in Lean by splitting the run at every internal index.
-The two shorter bounds sum to `t + 2`; equality forces their intersection
-to be empty and each bound to be sharp. Consecutive sharp prefix counts
-give the one-point middle sectors. Thus it suffices to rule out this
-specific both-convex configuration. The actual strong-induction and
-four-layer connections are proved in `ValtrExtremalRun`, not left implicit.
-
-## Completed reduction to this endpoint estimate
-
-The complete sector-run induction is now proved in `ValtrRunInduction`,
-conditional only on `DoublyConvexRunBound`.
-`four_layer_of_doubly_convex_run_bound` derives the four-layer theorem with
-outer-layer threshold 16 from that case. The no-hexagon assumption and
-both shorter-run bounds are available to its proof. No other geometric
-statement is left as an explicit hypothesis there. The earlier, stronger
-reduction via `EndpointDropBounds` is also retained.
-`ValtrExtremalRun.four_layer_of_extremal_run_obstruction` further reduces
-the input to the disjoint exact-count pattern above.
-The matching argument with `d′` is now proved in
-`ValtrMatching`: positive cyclic enumerations agreeing at one index agree
-everywhere, the new fan containing the old center supplies a fixed index,
-and a fourth-layer point in a consecutive five-apex cap preserves all the
-apex data under the all-fans condition.
-The private-region cardinality calculation and extraction of a next-layer
-vertex from a five-vertex cap are now separately proved.
-
-The final shortened-chain replacement is now proved in `ValtrShortSetup`.
-Its chain is `[b₁,c₁,d,c₅,b₆]`. Eliminating the three middle apices puts
-`d` in the hull of `c₁,b₂,b₃,b₄,b₅,c₅`. The projective maximum principle
-compresses these four base neighbors to two using the excluded raw
-sectors. Both endpoint viewpoints and all chain-vertex supports are
-proved. `not_minimal_of_five_run_card_le` combines this splice with the
-center-changing theorem; it still takes the five-sector cardinality bound
-as an explicit hypothesis.
-
-The private-region step is now proved in `ValtrSectorArcs` and
-`ValtrPrivateRuns`. The finite boundary-arc lemma shows that a sector
-containing exactly two outer vertices connects neighboring outer
-vertices. Its private representative must therefore be one of the extra
-point's two neighbors. Thus the extra point belongs to at most two sectors.
-With at least 15 sectors, one of three disjoint five-sector runs avoids it.
-The selected run contains only its five private representatives. This
-does not require locating the extra point relative to the cyclic sector
-indices. The sufficient outer-layer threshold becomes 16; the application
-has 216 outer vertices, so the final numerical bound is unchanged.
-
-None of these statements has been added as a new axiom or represented by
-`sorry`. The only nonstandard assumption of the main proof remains the
-explicit four-layer declaration.
+The 216-point application is unchanged: \(16\le216\), and the three
+successive counting bounds are still \(5,35,215\). Hence the empty-hexagon
+threshold remains \(2^{428}+1\), and the headline threshold remains
+\(10^{2^{450}}\).

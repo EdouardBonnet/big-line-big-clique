@@ -36,8 +36,8 @@ def EmptyConvexHexagon (P : Finset Point) (h : Fin 6 → Point) : Prop :=
     ∀ p ∈ P, p ∈ convexHull ℝ (Set.range h) → p ∈ Set.range h
 
 /-- The deliberately unoptimized Valtr bound `h(6) ≤ 2^428 + 1`, via 216
-points in convex position. Its proof in `Lax56Proofs.EmptyHexagon` depends
-only on the explicitly isolated four-layer lemma. This concept declaration
+points in convex position. Its proof in `Lax56Proofs.EmptyHexagon` includes
+the four-layer lemma and uses only standard logical axioms. This concept declaration
 is a theorem specification, not the input used directly by the main proof. -/
 axiom exists_emptyConvexHexagon
     (P : Finset Point) (hP : 2 ^ 428 + 1 ≤ P.card)

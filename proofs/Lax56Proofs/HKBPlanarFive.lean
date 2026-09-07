@@ -6,7 +6,7 @@ A finite order-type formulation of the elementary fact that five points in
 general position have seven pairwise noncrossing connecting segments.
 
 Only the ten orientation signs of increasing triples are enumerated.  The
-enumeration is internal to Lean (`native_decide`), and its geometric
+enumeration is checked by Lean's kernel (`decide`), and its geometric
 interpretation is proved below from the real determinant identities.
 -/
 
