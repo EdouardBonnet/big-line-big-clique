@@ -60,6 +60,7 @@ import Lax56Proofs.ValtrExtension
 import Lax56Proofs.ValtrFourLayerReduction
 import Lax56Proofs.ValtrEndpointGeometry
 import Lax56Proofs.ValtrEndpointDrop
+import Lax56Proofs.ValtrExtremalRun
 import Lax56Proofs.ValtrLocalSupport
 import Lax56Proofs.ValtrMatching
 import Lax56Proofs.ValtrMaximum

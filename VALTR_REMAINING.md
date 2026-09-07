@@ -158,6 +158,22 @@ The exact Lean interface is `ValtrRunInduction.DoublyConvexRunBound`.
 equivalent to the indicated convex cases under the actual run hypotheses.
 An informal expansion of this final case would be useful.
 
+There is also a sharper sufficient interface:
+`ValtrExtremalRun.ExtremalRunObstruction`. In a smallest failing run,
+all its sector point sets are pairwise disjoint and their cardinalities
+are exactly
+
+```
+2, 1, ..., 1, 2.
+```
+
+This is proved in Lean by splitting the run at every internal index.
+The two shorter bounds sum to `t + 2`; equality forces their intersection
+to be empty and each bound to be sharp. Consecutive sharp prefix counts
+give the one-point middle sectors. Thus it suffices to rule out this
+specific both-convex configuration. The actual strong-induction and
+four-layer connections are proved in `ValtrExtremalRun`, not left implicit.
+
 ## Completed reduction to this endpoint estimate
 
 The complete sector-run induction is now proved in `ValtrRunInduction`,
@@ -167,6 +183,8 @@ outer-layer threshold 16 from that case. The no-hexagon assumption and
 both shorter-run bounds are available to its proof. No other geometric
 statement is left as an explicit hypothesis there. The earlier, stronger
 reduction via `EndpointDropBounds` is also retained.
+`ValtrExtremalRun.four_layer_of_extremal_run_obstruction` further reduces
+the input to the disjoint exact-count pattern above.
 The matching argument with `d′` is now proved in
 `ValtrMatching`: positive cyclic enumerations agreeing at one index agree
 everywhere, the new fan containing the old center supplies a fixed index,

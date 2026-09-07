@@ -107,11 +107,17 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   forward/backward projective propagation supplies the side test for the
   empty-pentagon extension. Both mixed endpoint cases have their complete
   one-point drop bounds, including the finite cyclic index conversions.
+- `ValtrExtremalRun.lean`: in a smallest failing run, the sector point
+  sets are disjoint and their counts are exactly `2,1,...,1,2`. Excluding
+  this structured both-convex configuration suffices for the four-layer
+  theorem; the strong-induction connection is proved.
 
 The both-convex endpoint counting estimate is **not yet proved**. All other
 endpoint cases, the run induction, and subsequent geometric steps are
 proved. `four_layer_of_doubly_convex_run_bound` isolates the remaining case,
 including the available bounds on both shorter runs.
+`ValtrExtremalRun.four_layer_of_extremal_run_obstruction` narrows the
+remaining input further to that disjoint exact-count configuration.
 See [the remaining gap](VALTR_REMAINING.md).
 
 The already completed downstream reduction consists of:
