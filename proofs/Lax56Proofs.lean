@@ -56,6 +56,8 @@ import Lax56Proofs.ValtrCyclic
 import Lax56Proofs.ValtrCyclicRuns
 import Lax56Proofs.ValtrExtension
 import Lax56Proofs.ValtrLocalSupport
+import Lax56Proofs.ValtrMatching
+import Lax56Proofs.ValtrShortSetup
 import Lax56Proofs.ValtrMaximum
 import Lax56Proofs.ValtrMissing
 import Lax56Proofs.ValtrMissingExtension

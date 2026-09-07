@@ -78,9 +78,20 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   apex data and applied to the finite sector union. Neither the chain
   supports nor the local hull containments remain hypotheses of that
   application.
+- `ValtrMatching.lean`: a common indexed vertex fixes the cyclic matching;
+  moving the deep viewpoint preserves all apices. Under the all-fans
+  condition, a fourth-layer point in a consecutive five-apex cap preserves
+  the entire sector configuration.
+- `ValtrCompression.lean`, `ValtrCompressedSupport.lean`,
+  `ValtrShortSplice.lean`, and `ValtrShortSetup.lean`: the final shortened
+  chain through the deep point has all required supports. Moving the
+  center into a five-apex cap and replacing at most five outer vertices
+  by this chain contradicts minimality. The five-sector cardinality bound
+  is still an explicit input to this application.
 
-The nonconvex-endpoint branch is now proved. The convex-endpoint counting
-branch, private-region geometry, and final replacement with `d′` are
+The nonconvex-endpoint branch and shortened-chain replacement are proved.
+The convex-endpoint counting branch, sector-run induction, and the
+private-region geometry giving a five-sector union of size at most five are
 **not yet proved**. See [the remaining gaps](VALTR_REMAINING.md).
 
 The already completed downstream reduction consists of:

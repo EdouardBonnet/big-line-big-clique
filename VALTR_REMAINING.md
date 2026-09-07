@@ -130,12 +130,31 @@ full claim about `W`. An informal expansion has been requested.
 ## Other parts of the four-layer argument still to formalize
 
 This is the current obstacle, not the final outstanding line of the theorem.
-Also remaining are completion of the sector-run induction, geometric
-identification of the private regions, and the final chain replacement
-and matching argument with `d′`. Radial order of the apices themselves is
-now proved, but the final matching argument is not yet assembled.
+Also remaining are completion of the sector-run induction and geometric
+identification of a five-sector union containing only five outer points.
+The matching argument with `d′` is now proved in
+`ValtrMatching`: positive cyclic enumerations agreeing at one index agree
+everywhere, the new fan containing the old center supplies a fixed index,
+and a fourth-layer point in a consecutive five-apex cap preserves all the
+apex data under the all-fans condition.
 The private-region cardinality calculation and extraction of a next-layer
 vertex from a five-vertex cap are now separately proved.
+
+The final shortened-chain replacement is now proved in `ValtrShortSetup`.
+Its chain is `[b₁,c₁,d,c₅,b₆]`. Eliminating the three middle apices puts
+`d` in the hull of `c₁,b₂,b₃,b₄,b₅,c₅`. The projective maximum principle
+compresses these four base neighbors to two using the excluded raw
+sectors. Both endpoint viewpoints and all chain-vertex supports are
+proved. `not_minimal_of_five_run_card_le` combines this splice with the
+center-changing theorem; it still takes the five-sector cardinality bound
+as an explicit hypothesis.
+
+For the application with 216 outer vertices, the private-region step may
+be simplified: proving that the extra outer point belongs to at most two
+sectors gives a clean run among three disjoint five-sector runs. This does
+not require locating the extra point relative to the cyclic sector
+indices, and does not change the final numerical bound. This geometric
+multiplicity bound is not yet proved.
 
 None of these statements has been added as a new axiom or represented by
 `sorry`. The only nonstandard assumption of the main proof remains the
