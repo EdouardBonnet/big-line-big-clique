@@ -1,8 +1,9 @@
 # Completed convex-layer proof
 
-The proof now includes Valtr's four-layer implication and the headline
-theorem. The proof declarations use only Lean's standard logical axioms:
-`propext`, `Classical.choice`, and `Quot.sound`.
+The proof includes Valtr's four-layer implication and the headline theorem.
+Its Lax proof tree is fully grounded: composing the modular proof declarations
+leaves only Lean's standard logical axioms, `propext`, `Classical.choice`, and
+`Quot.sound`.
 
 The previously external geometric input is proved as
 `Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers`:
@@ -130,7 +131,7 @@ The already completed downstream reduction consists of:
 - `ValtrReduction.lean`: the contradiction `216 ≤ 215` after the four-layer
   lemma empties the fourth layer.
 - `EmptyHexagon.lean`: the resulting labelled empty-hexagon theorem, invoking
-  the proved four-layer theorem without an external assumption.
+  the four-layer theorem interface whose proof is supplied in this package.
 - The existing blocker, stability, interval, and analytic proofs, with the
   larger constants propagated all the way to `MainTheorem.lean`.
 
@@ -138,8 +139,25 @@ The new elementary proofs use only Lean's standard logical axioms
 `propext`, `Classical.choice`, and `Quot.sound`. There are no `sorry` proofs,
 SAT calls, or `native_decide` proofs in the convex-layer development.
 
-Lax concept-layer `axiom` declarations are theorem specifications, each
-matched by a proof declaration. The main proof does not use them as axioms.
+Lax concept-layer `axiom` declarations are theorem interfaces, each matched
+by a proof declaration. Consumers use these interfaces so the archive can
+display their dependencies, rather than importing and embedding the entire
+upstream proofs. The dependency tree is:
+
+```text
+Main theorem
+├── Empty-hexagon bound
+│   └── Valtr's four-layer lemma
+└── Vertex-removal stability
+```
+
+The two leaves use only standard logical axioms. The empty-hexagon proof
+has exactly the four-layer interface as its Lax assumption. The main proof
+has exactly the empty-hexagon and stability interfaces as its Lax assumptions;
+it does not also inherit the four-layer interface as a direct dependency.
+All three dependency edges are inferred from the checked Lean proof terms,
+and the `assumptions` annotations assert that the inferred sets match this
+tree. No geometric statement is left unproved.
 
 ## Constants
 
@@ -160,18 +178,35 @@ outer power of ten is kept symbolic in the numerical proof.
 
 From `proofs/`, build with `lake build Lax56Proofs`. From the submission root,
 `lax build --profile --replay` additionally checks packaging and kernel replay.
-The decisive axiom audit is:
+The modular dependency audit is:
 
 ```lean
 import Lax56Proofs
 #print axioms Lax56Proofs.MainTheorem.large_point_set_four_collinear_or_visible_six
+#print axioms Lax56Proofs.EmptyHexagon.exists_emptyConvexHexagon
+#print axioms Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers
+#print axioms Lax56Proofs.VertexRemovalStability.exists_fiveColorable_delete
 ```
 
-The same axiom audit can be run on
-`Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers` and
-`Lax56Proofs.EmptyHexagon.exists_emptyConvexHexagon`.
+Besides the three standard logical axioms, these report precisely the Lax
+interfaces described above. After submission, compose and audit the complete
+archive proof tree with:
 
-Verified on 2026-09-07: the full Lake build passed (8574 jobs), and
-`lax build --profile --replay` passed compilation, kernel replay, and
-statement inspection (6 concepts, 4 proofs). All three axiom audits above
-reported exactly `propext`, `Classical.choice`, and `Quot.sound`.
+```sh
+lax generate-prooftree lax-56 --output /tmp/lax56-proof-tree
+```
+
+The composer replaces each interface by its proof, checks the generated
+theorems in Lean's kernel, and verifies the standalone module in a fresh
+process. All four composed theorems must have only standard logical axioms.
+
+Verified after the dependency-interface refactor on 2026-09-07: the full Lake
+build passed (8574 jobs), and `lax build --profile --replay` passed compilation,
+kernel replay, and statement inspection (6 concepts, 4 proofs). The exported
+metadata was checked to contain exactly the four-node, three-edge rooted tree
+above and the shortened two-sentence abstract.
+
+The Lax composer then kernel-checked all four composed theorems. Its standalone
+module passed fresh-process verification, and an independent `#print axioms`
+audit of each generated theorem reported exactly `propext`, `Classical.choice`,
+and `Quot.sound`.

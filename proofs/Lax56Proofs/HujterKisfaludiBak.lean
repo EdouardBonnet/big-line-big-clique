@@ -1,14 +1,15 @@
 import Lax56Proofs.HKBFinalCases
 import Lax56Proofs.HKBHexCardBound
-import Lax56Proofs.EmptyHexagon
+import Lax56.HujterKisfaludiBak
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic
 
 /-!
 The direct Hujter--Kisfaludi--Bak visibility-colouring theorem.
 
-The empty-hexagon input is derived in `Lax56Proofs.EmptyHexagon` from Valtr's
-four-layer lemma, proved in `Lax56Proofs.ValtrFourLayer`. The blocker cases
+The empty-hexagon input is used through its concept-layer theorem interface,
+so Lax records the dependency on `Lax56Proofs.EmptyHexagon`. That proof uses
+Valtr's four-layer lemma, proved in `Lax56Proofs.ValtrFourLayer`. The blocker cases
 of cardinalities 10, 11 and 12 are proved in the `Lax56Proofs.HKB*` modules.
 -/
 
@@ -75,7 +76,7 @@ theorem visibilityGraph_not_fiveColorable
     simpa [fibre] using hxc
   have hQgeneral : ¬HasThreeCollinear Q :=
     noThreeCollinear_of_constantColour hQP hfour' C c hQcolour
-  obtain ⟨hex, hempty⟩ := Lax56Proofs.EmptyHexagon.exists_emptyConvexHexagon Q hQcard hQgeneral
+  obtain ⟨hex, hempty⟩ := Lax56.HujterKisfaludiBak.exists_emptyConvexHexagon Q hQcard hQgeneral
   have hh : StrictConvexHexagon hex := hempty.1
   have hhQ : ∀ i, hex i ∈ Q := hempty.2.1
   have hhP : ∀ i, hex i ∈ P := fun i ↦ hQP (hhQ i)

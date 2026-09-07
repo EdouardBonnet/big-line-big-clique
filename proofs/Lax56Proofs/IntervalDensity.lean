@@ -1,5 +1,5 @@
 import Lax56Proofs.FiniteIntervals
-import Lax56Proofs.VertexRemovalStability
+import Lax56.VertexRemovalStability
 import Lax56Proofs.HujterKisfaludiBak
 import Mathlib.Combinatorics.SimpleGraph.Extremal.Turan
 import Mathlib.Tactic
@@ -167,7 +167,7 @@ theorem visible_edge_upper
     simp only [Fintype.card_fin]
     norm_num [m₀] at hm
     omega
-  rcases Lax56Proofs.VertexRemovalStability.exists_fiveColorable_delete
+  rcases Lax56.VertexRemovalStability.exists_fiveColorable_delete
       (blockGraph P hs) eps₁
       (by norm_num [eps₁]) (by norm_num [eps₁]) hm20
       (blockGraph_cliqueFree_six P hvisible hs)

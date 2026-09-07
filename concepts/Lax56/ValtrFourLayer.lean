@@ -9,7 +9,8 @@ This theorem specification is proved in `Lax56Proofs.ValtrFourLayer`.
 The outer-layer threshold sixteen allows an unoptimized endgame; it is
 sufficient for the 216-point convex-position application. Chain replacement,
 all endpoint cases, and the four-layer reduction are proved in Lean. The
-main proof invokes the proved theorem, not this specification as an axiom.
+empty-hexagon proof uses this theorem interface so Lax records the dependency
+on the proof supplied in this package.
 
 Reference: Pavel Valtr, "On Empty Hexagons", Section 3 (Section 2 in the
 author's preprint at https://kam.mff.cuni.cz/~valtr/h.ps).
