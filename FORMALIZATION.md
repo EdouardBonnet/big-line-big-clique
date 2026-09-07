@@ -89,10 +89,20 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   by this chain contradicts minimality. The five-sector cardinality bound
   is still an explicit input to this application.
 
-The nonconvex-endpoint branch and shortened-chain replacement are proved.
-The convex-endpoint counting branch, sector-run induction, and the
-private-region geometry giving a five-sector union of size at most five are
-**not yet proved**. See [the remaining gaps](VALTR_REMAINING.md).
+- `ValtrSectorArcs.lean` and `ValtrPrivateRuns.lean`: a two-point sector
+  joins neighboring outer vertices, so the unique extra outer point
+  belongs to at most two sectors. Among three disjoint five-sector runs,
+  one therefore contains only its five private representatives. This
+  completes the all-sectors endgame when there are at least 15 sectors.
+- `ValtrFourLayerReduction.lean` and `ValtrRunInduction.lean`: the entire
+  four-layer argument, with outer-layer threshold 16, is reduced to the
+  two symmetric convex-endpoint drop estimates. These remain ordinary
+  explicit hypotheses, not new axioms. The 216-point application and all
+  downstream numerical bounds are unchanged.
+
+The convex-endpoint counting estimate is **not yet proved**. The run
+induction and all subsequent geometric steps are now proved conditional
+on that estimate. See [the remaining gap](VALTR_REMAINING.md).
 
 The already completed downstream reduction consists of:
 

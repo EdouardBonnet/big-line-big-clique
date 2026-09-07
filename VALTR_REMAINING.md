@@ -127,11 +127,13 @@ The existing `convex_quad_side_card_le_one` proves a restricted version
 with an explicit separating-side condition; it does not yet prove the
 full claim about `W`. An informal expansion has been requested.
 
-## Other parts of the four-layer argument still to formalize
+## Completed reduction to this endpoint estimate
 
-This is the current obstacle, not the final outstanding line of the theorem.
-Also remaining are completion of the sector-run induction and geometric
-identification of a five-sector union containing only five outer points.
+The complete sector-run induction is now proved in `ValtrRunInduction`,
+conditional only on `EndpointDropBounds`, the two symmetric endpoint
+estimates above. `four_layer_of_endpoint_drop_bounds` derives the
+four-layer theorem with outer-layer threshold 16 from those estimates.
+No other geometric statement is left as an explicit hypothesis there.
 The matching argument with `d′` is now proved in
 `ValtrMatching`: positive cyclic enumerations agreeing at one index agree
 everywhere, the new fan containing the old center supplies a fixed index,
@@ -149,12 +151,16 @@ proved. `not_minimal_of_five_run_card_le` combines this splice with the
 center-changing theorem; it still takes the five-sector cardinality bound
 as an explicit hypothesis.
 
-For the application with 216 outer vertices, the private-region step may
-be simplified: proving that the extra outer point belongs to at most two
-sectors gives a clean run among three disjoint five-sector runs. This does
-not require locating the extra point relative to the cyclic sector
-indices, and does not change the final numerical bound. This geometric
-multiplicity bound is not yet proved.
+The private-region step is now proved in `ValtrSectorArcs` and
+`ValtrPrivateRuns`. The finite boundary-arc lemma shows that a sector
+containing exactly two outer vertices connects neighboring outer
+vertices. Its private representative must therefore be one of the extra
+point's two neighbors. Thus the extra point belongs to at most two sectors.
+With at least 15 sectors, one of three disjoint five-sector runs avoids it.
+The selected run contains only its five private representatives. This
+does not require locating the extra point relative to the cyclic sector
+indices. The sufficient outer-layer threshold becomes 16; the application
+has 216 outer vertices, so the final numerical bound is unchanged.
 
 None of these statements has been added as a new axiom or represented by
 `sorry`. The only nonstandard assumption of the main proof remains the
