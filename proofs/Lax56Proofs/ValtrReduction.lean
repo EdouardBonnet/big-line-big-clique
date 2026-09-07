@@ -15,11 +15,13 @@ namespace Lax56Proofs.ValtrReduction
 
 open Lax56.Geometry Lax56.ConvexLayers Lax56Proofs.ConvexLayers
 
-/-- The geometric four-layer ingredient, in exactly the weakened form proposed
-by the user. Since layers are zero-indexed, `layer S 3` is the fourth layer. -/
+/-- The geometric four-layer ingredient. The threshold 16 is sufficient
+for the three-five-sector-block proof of the endgame and for the intended
+216-point application. Since layers are zero-indexed, `layer S 3` is the
+fourth layer. -/
 def FourLayerLemma : Prop :=
   ∀ S : Finset Point, ¬HasThreeCollinear S → MinimalOuter S →
-    9 ≤ (extremeLayer S).card → (layer S 3).Nonempty → HasEmptyHexagon S
+    16 ≤ (extremeLayer S).card → (layer S 3).Nonempty → HasEmptyHexagon S
 
 /-- The consecutive-six-vertex-block inequality, proved in
 `ValtrCaps.consecutive_layer_bound` using cyclic polygon/chord separation. -/

@@ -20,6 +20,8 @@ theorem exists_emptyConvexHexagon
     (P : Finset Point) (hP : 2 ^ 428 + 1 ≤ P.card) (hgeneral : ¬HasThreeCollinear P) :
     ∃ h : Fin 6 → Point, EmptyConvexHexagon P h :=
   Lax56Proofs.ValtrCaps.exists_emptyConvexHexagon_of_fourLayer
-    Lax56.ValtrFourLayer.exists_emptyHexagon_of_four_layers P hP hgeneral
+    (fun S hSgen hSmin hlarge hfourth ↦
+      Lax56.ValtrFourLayer.exists_emptyHexagon_of_four_layers S hSgen hSmin
+        (by omega) hfourth) P hP hgeneral
 
 end Lax56Proofs.EmptyHexagon

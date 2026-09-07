@@ -11,10 +11,9 @@ open Lax56Proofs.ValtrExtension Lax56Proofs.ValtrProjective
 open Lax56Proofs.ValtrLocalSupport Lax56Proofs.ValtrSplice
 open scoped Classical
 
-/-- The geometric hypotheses of a clockwise nonconvex-endpoint run.
-The local hull containments and all supporting inequalities are proved
-below, not fields. Neither minimality nor absence of a hexagon is a field. -/
-structure RunConfig (S : Finset Point) (m : ℕ) (b h : ℕ → Point) (d : Point) : Prop where
+/-- The geometric data of a clockwise run, before the endpoint case
+split. No supporting-line or local hull conclusion is a field. -/
+structure RunGeometry (S : Finset Point) (m : ℕ) (b h : ℕ → Point) (d : Point) : Prop where
   length : 2 ≤ m
   first : h 0 = b 1
   last : h (m + 1) = b (m + 1)
@@ -28,13 +27,18 @@ structure RunConfig (S : Finset Point) (m : ℕ) (b h : ℕ → Point) (d : Poin
   deep : d ∈ inner (inner (inner S))
   empty_triangle : ∀ i, 1 ≤ i → i ≤ m → ∀ p ∈ inner S,
     p ∈ triangleHull (b i) (h i) (b (i + 1)) → p = b i ∨ p = h i ∨ p = b (i + 1)
+
+/-- The nonconvex-endpoint branch of a run. Neither minimality nor
+absence of a hexagon is a field. -/
+structure RunConfig (S : Finset Point) (m : ℕ) (b h : ℕ → Point) (d : Point) : Prop
+    extends RunGeometry S m b h d where
   first_interior : StrictlyInsideTriangle (b 1) (h 2) (b 2) (h 1)
   last_interior : StrictlyInsideTriangle (b m) (h (m - 1)) (b (m + 1)) (h m)
 
-namespace RunConfig
+namespace RunGeometry
 
 variable {S : Finset Point} {m : ℕ} {b h : ℕ → Point} {d : Point}
-variable (cfg : RunConfig S m b h d)
+variable (cfg : RunGeometry S m b h d)
 include cfg
 
 theorem base_inner (i : ℕ) (hi : 1 ≤ i) (him : i ≤ m + 1) : b i ∈ inner S :=
@@ -88,6 +92,14 @@ theorem intermediate_left (i : ℕ) (hi : 1 ≤ i) (him : i < m) :
   · rw [turn_swap_first]
     exact neg_neg_of_pos (cfg.fan (i + 1) (by omega) (by omega)).2.2
 
+end RunGeometry
+
+namespace RunConfig
+
+variable {S : Finset Point} {m : ℕ} {b h : ℕ → Point} {d : Point}
+variable (cfg : RunConfig S m b h d)
+include cfg
+
 theorem local_hulls (hgen : ¬HasThreeCollinear S) :
     ∀ k, 1 ≤ k → k ≤ m → h k ∈ convexHull ℝ
       ({h (k - 1), b k, b (k + 1), h (k + 1)} : Set Point) := by
@@ -105,6 +117,14 @@ theorem local_hulls (hgen : ¬HasThreeCollinear S) :
       (cfg.chain_ne k (k - 1) (by omega) (by omega) (by omega))
       (cfg.apex_ne_base k (k + 1) (by omega) (by omega) (by omega) (by omega))
       (cfg.apex_ne_base (k - 1) (k + 1) (by omega) (by omega) (by omega) (by omega))
+
+end RunConfig
+
+namespace RunGeometry
+
+variable {S : Finset Point} {m : ℕ} {b h : ℕ → Point} {d : Point}
+variable (cfg : RunGeometry S m b h d)
+include cfg
 
 theorem neighbor_mem_ne (k : ℕ) (hk : 1 ≤ k) (hkm : k ≤ m) {q : Point}
     (hq : q ∈ ({h (k - 1), b k, b (k + 1), h (k + 1)} : Set Point)) :
@@ -145,6 +165,59 @@ theorem base_ne_last (k : ℕ) (hk : 1 ≤ k) (hkm : k ≤ m) : b k ≠ h (m + 1
   rw [cfg.last] at hh
   have hh := cfg.base_inj k (m + 1) hk (by omega) (by omega) le_rfl hh
   omega
+
+theorem internal_local_hull (hgen : ¬HasThreeCollinear S)
+    (k : ℕ) (hk : 2 ≤ k) (hkm : k < m) :
+    h k ∈ convexHull ℝ ({h (k - 1), b k, b (k + 1), h (k + 1)} : Set Point) := by
+  have hprev := cfg.intermediate_left (k - 1) (by omega) (by omega)
+  rw [Nat.sub_add_cancel (by omega : 1 ≤ k)] at hprev
+  have hnext := cfg.intermediate_left k (by omega) hkm
+  apply mem_neighbor_hull_of_four_clockwise_turns
+  · rw [turn_swap_first]; exact neg_neg_of_pos hprev
+  · convert neg_neg_of_pos (cfg.fan k (by omega) (by omega)).2.1 using 1 <;>
+      unfold turn <;> ring
+  · rw [turn_swap_last]; exact neg_neg_of_pos hnext
+  · convert cfg.apex_triples (k - 1) k (k + 1) (by omega) (by omega) (by omega) (by omega)
+      using 1 <;> unfold turn <;> ring
+  · exact turn_ne_zero_of_generalPosition hgen
+      (inner_subset S (cfg.chain_inner k (by omega)))
+      (inner_subset S (cfg.chain_inner (k - 1) (by omega)))
+      (inner_subset S (cfg.base_inner (k + 1) (by omega) (by omega)))
+      (cfg.chain_ne k (k - 1) (by omega) (by omega) (by omega))
+      (cfg.apex_ne_base k (k + 1) (by omega) (by omega) (by omega) (by omega))
+      (cfg.apex_ne_base (k - 1) (k + 1) (by omega) (by omega) (by omega) (by omega))
+
+theorem tail_local_hulls (hgen : ¬HasThreeCollinear S)
+    (hlast : StrictlyInsideTriangle (b m) (h (m - 1)) (b (m + 1)) (h m))
+    (k : ℕ) (hk : 2 ≤ k) (hkm : k ≤ m) :
+    h k ∈ convexHull ℝ ({h (k - 1), b k, b (k + 1), h (k + 1)} : Set Point) := by
+  by_cases hlastIndex : k = m
+  · subst k
+    apply convexHull_mono (show ({b m, h (m - 1), b (m + 1)} : Set Point) ⊆
+        {h (m - 1), b m, b (m + 1), h (m + 1)} by
+      intro p hp; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢; tauto)
+    exact strictlyInsideTriangle_mem_triangleHull hlast
+  · exact cfg.internal_local_hull hgen k hk (by omega)
+
+theorem head_local_hulls (hgen : ¬HasThreeCollinear S)
+    (hfirst : StrictlyInsideTriangle (b 1) (h 2) (b 2) (h 1))
+    (k : ℕ) (hk : 1 ≤ k) (hkm : k < m) :
+    h k ∈ convexHull ℝ ({h (k - 1), b k, b (k + 1), h (k + 1)} : Set Point) := by
+  by_cases hfirstIndex : k = 1
+  · subst k
+    apply convexHull_mono (show ({b 1, h 2, b 2} : Set Point) ⊆
+        {h (1 - 1), b 1, b (1 + 1), h (1 + 1)} by
+      intro p hp; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp ⊢; tauto)
+    exact strictlyInsideTriangle_mem_triangleHull hfirst
+  · exact cfg.internal_local_hull hgen k (by omega) hkm
+
+end RunGeometry
+
+namespace RunConfig
+
+variable {S : Finset Point} {m : ℕ} {b h : ℕ → Point} {d : Point}
+variable (cfg : RunConfig S m b h d)
+include cfg
 
 /-- The first base endpoint satisfies every chain-edge support. -/
 theorem first_support (hgen : ¬HasThreeCollinear S) :

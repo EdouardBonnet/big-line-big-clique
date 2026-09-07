@@ -52,22 +52,17 @@ theorem runBase_next {n : ℕ} [NeZero n] (v : Fin n → Point) (start : Fin n)
   congr 2
   omega
 
-/-- All hypotheses of the support theorem are obtained from the actual
-cyclic second layer and selected apex data. Only the two nonconvex
-endpoint conditions distinguish this branch of the run argument. -/
-theorem runConfig_of_apex_data {S : Finset Point} (hgen : ¬HasThreeCollinear S)
+/-- The common run geometry is obtained from the actual cyclic second
+layer and selected apex data, without an endpoint case assumption. -/
+theorem runGeometry_of_apex_data {S : Finset Point} (hgen : ¬HasThreeCollinear S)
     {n : ℕ} [NeZero n] (v : Fin n → Point) (hinj : Function.Injective v)
     (hrange : Set.range v = (extremeLayer (inner S) : Set Point))
     (htri : ∀ i j k, i < j → j < k → 0 < turn (v i) (v j) (v k))
     {d : Point} (hd : d ∈ inner (inner (inner S))) (c : Fin n → Point)
     (hdata : ∀ i, MeetsThirdLayer S v d i → ApexData S v d i (c i))
     (start : Fin n) {t : ℕ} (ht : 2 ≤ t) (htn : t < n)
-    (hdefined : ∀ k < t, MeetsThirdLayer S v d (cyclicIndex start k))
-    (hfirst : StrictlyInsideTriangle (runBase v start t 1) (runChain v c start t 2)
-      (runBase v start t 2) (runChain v c start t 1))
-    (hlast : StrictlyInsideTriangle (runBase v start t t) (runChain v c start t (t - 1))
-      (runBase v start t (t + 1)) (runChain v c start t t)) :
-    RunConfig S t (runBase v start t) (runChain v c start t) d := by
+    (hdefined : ∀ k < t, MeetsThirdLayer S v d (cyclicIndex start k)) :
+    RunGeometry S t (runBase v start t) (runChain v c start t) d := by
   let b := runBase v start t
   let h := runChain v c start t
   have hvB (i) : v i ∈ extremeLayer (inner S) := by
@@ -146,8 +141,8 @@ theorem runConfig_of_apex_data {S : Finset Point} (hgen : ¬HasThreeCollinear S)
       (i := ⟨a, by omega⟩) (j := ⟨b, by omega⟩) (k := ⟨e, by omega⟩) hab hbe hd
       (hdatum a (by omega)).mem_third (hdatum b (by omega)).mem_third (hdatum e het).mem_third
       (hfanAt a (by omega)) (hfanAt b (by omega)) (hfanAt e het)
-  change RunConfig S t b h d
-  refine ⟨ht, hfirstEq, hlastEq, hbase_mem, hapex_mem, hchain_inj, hb_inj, ?_, ?_, ?_, hd, ?_, hfirst, hlast⟩
+  change RunGeometry S t b h d
+  refine ⟨ht, hfirstEq, hlastEq, hbase_mem, hapex_mem, hchain_inj, hb_inj, ?_, ?_, ?_, hd, ?_⟩
   · intro k hk hkt p hp
     rw [hbCurrent k hk hkt, hbNext k hk hkt, turn_swap_first]
     apply neg_nonpos.mpr
@@ -164,6 +159,24 @@ theorem runConfig_of_apex_data {S : Finset Point} (hgen : ¬HasThreeCollinear S)
   · intro k hk hkt p hp hptri
     rw [hbCurrent k hk hkt, hbNext k hk hkt, hapex k hk hkt] at hptri ⊢
     exact (hdatum (t - k) (by omega)).empty_triangle p hp hptri
+
+/-- Adding the two nonconvex endpoint conditions gives the hypotheses
+of the proved chain-replacement theorem. -/
+theorem runConfig_of_apex_data {S : Finset Point} (hgen : ¬HasThreeCollinear S)
+    {n : ℕ} [NeZero n] (v : Fin n → Point) (hinj : Function.Injective v)
+    (hrange : Set.range v = (extremeLayer (inner S) : Set Point))
+    (htri : ∀ i j k, i < j → j < k → 0 < turn (v i) (v j) (v k))
+    {d : Point} (hd : d ∈ inner (inner (inner S))) (c : Fin n → Point)
+    (hdata : ∀ i, MeetsThirdLayer S v d i → ApexData S v d i (c i))
+    (start : Fin n) {t : ℕ} (ht : 2 ≤ t) (htn : t < n)
+    (hdefined : ∀ k < t, MeetsThirdLayer S v d (cyclicIndex start k))
+    (hfirst : StrictlyInsideTriangle (runBase v start t 1) (runChain v c start t 2)
+      (runBase v start t 2) (runChain v c start t 1))
+    (hlast : StrictlyInsideTriangle (runBase v start t t) (runChain v c start t (t - 1))
+      (runBase v start t (t + 1)) (runChain v c start t t)) :
+    RunConfig S t (runBase v start t) (runChain v c start t) d :=
+  ⟨runGeometry_of_apex_data hgen v hinj hrange htri hd c hdata start ht htn hdefined,
+    hfirst, hlast⟩
 
 /-- The full nonconvex-endpoint branch of the run induction, applied to
 the actual finite sector union. The size bound `t + 2` is supplied by the

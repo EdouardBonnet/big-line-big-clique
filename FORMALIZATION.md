@@ -10,7 +10,7 @@ The only nonstandard axiom used by the main Lean proof is
 > A finite general-position set with a minimal outer layer of at least nine
 > vertices and a nonempty fourth layer contains an empty convex hexagon.
 
-The remaining work is the sector/chain-replacement proof of this lemma in
+The remaining work is the both-convex endpoint case of the sector-run bound in
 Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
 [author's preprint](https://kam.mff.cuni.cz/~valtr/h.ps)).
 
@@ -38,7 +38,8 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   supporting inequalities in the nonconvex endpoint case.
 - `ValtrSplice.lean`: a chain-splicing criterion from explicit supporting-edge
   inequalities, and the resulting cardinality/minimality contradiction.
-  For arbitrary-length chains those inequalities remain hypotheses.
+  The generic criterion takes supporting inequalities as hypotheses; their
+  arbitrary-length geometric application is proved in `ValtrRunSetup`.
 - `ValtrSectorBounds.lean`: the single-sector bound of two outer vertices,
   and the nonconvex endpoint branch of the two-sector run bound, including
   the geometric supporting inequalities rather than assuming them.
@@ -54,7 +55,7 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   missing third-layer triangles would force an empty hexagon.
 - `ValtrConvexRun.lean`: ordered empty pentagons from two outer sector
   points, and the convex-quadrilateral obstruction with its separating-side
-  condition explicit. Identifying that side for a whole run remains open.
+  condition explicit, in both orientations.
 - `ValtrMissingExtension.lean`, `ValtrCoverage.lean`, and `ValtrCoverSetup.lean`:
   the crossed-edge four-sector obstruction, endpoint containments proved
   from extremality and empty triangles, coverage of every outer vertex by
@@ -96,13 +97,22 @@ Valtr, *On Empty Hexagons*, Section 3 (Section 2 of the
   completes the all-sectors endgame when there are at least 15 sectors.
 - `ValtrFourLayerReduction.lean` and `ValtrRunInduction.lean`: the entire
   four-layer argument, with outer-layer threshold 16, is reduced to the
-  two symmetric convex-endpoint drop estimates. These remain ordinary
-  explicit hypotheses, not new axioms. The 216-point application and all
-  downstream numerical bounds are unchanged.
+  both-convex endpoint run bound. This remains an ordinary explicit
+  hypothesis, not a new axiom. The 216-point application and all downstream
+  numerical bounds are unchanged.
+- `ValtrEndpointGeometry.lean`: the endpoint case splits yield exactly
+  the indicated strictly convex quadrilaterals when the corresponding
+  interior-triangle conditions fail.
+- `ValtrEndpointDrop.lean`: when the opposite endpoint is nonconvex,
+  forward/backward projective propagation supplies the side test for the
+  empty-pentagon extension. Both mixed endpoint cases have their complete
+  one-point drop bounds, including the finite cyclic index conversions.
 
-The convex-endpoint counting estimate is **not yet proved**. The run
-induction and all subsequent geometric steps are now proved conditional
-on that estimate. See [the remaining gap](VALTR_REMAINING.md).
+The both-convex endpoint counting estimate is **not yet proved**. All other
+endpoint cases, the run induction, and subsequent geometric steps are
+proved. `four_layer_of_doubly_convex_run_bound` isolates the remaining case,
+including the available bounds on both shorter runs.
+See [the remaining gap](VALTR_REMAINING.md).
 
 The already completed downstream reduction consists of:
 

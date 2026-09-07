@@ -49,9 +49,9 @@ explicit external axiom in the main proof.
   (`ValtrMissingExtension`, `ValtrCoverage`). This supplies the coverage
   consequence of Observation 4 without assuming the paper's diagram.
 - The convex-quadrilateral endpoint obstruction, with its required
-  separating-side condition explicit (`ValtrConvexRun.convex_quad_side_card_le_one`).
-  Deriving that side condition for the private part of an arbitrary run
-  is still outstanding.
+  separating-side condition explicit, in both orientations (`ValtrConvexRun`).
+  `ValtrEndpointDrop` now derives the side test for the private region when
+  the opposite endpoint is nonconvex, and proves both mixed endpoint bounds.
 - All defined apices have different indices, and in the `|A| = |B| + 1`
   case with every apex defined they exhaust the third layer
   (`ValtrCoverSetup.third_layer_eq_all_apices`).
@@ -111,7 +111,7 @@ The supporting modules are `ValtrMaximum`, `ValtrProjective`,
 `ValtrCyclicRuns` and `ValtrRunReduction` connect the assumed run bound
 to the actual sector counting and all-sectors conclusions.
 
-## Next geometric gap: the convex-endpoint branch
+## Remaining geometric gap: both endpoint quadrilaterals convex
 
 For a clockwise run `S₁,...,Sₜ`, set
 
@@ -122,18 +122,51 @@ W = (A ∩ S₁) \ (S₂ ∪ ... ∪ Sₜ).
 When `b₁,c₁,c₂,b₂` is a strictly convex quadrilateral in that order,
 Valtr's proof asserts `|W| ≤ 1`, using an empty pentagon formed from two
 points of `W` and applying Observation 2 with `c₂`. The detailed
-four-sector justification for this invocation is not yet formalized.
-The existing `convex_quad_side_card_le_one` proves a restricted version
-with an explicit separating-side condition; it does not yet prove the
-full claim about `W`. An informal expansion has been requested.
+four-sector justification for this invocation is not proved in full.
+There is now a complete proof when the opposite endpoint is nonconvex:
+`ValtrEndpointDrop.first_drop_card_of_mixed_endpoints`. Its symmetric
+counterpart is `last_drop_card_of_mixed_endpoints`. These use the forward
+and backward scalar propagation principles: the wrong-side inequality
+would propagate to the opposite endpoint and contradict its equality.
+
+Consequently, only the following weaker statement is needed. In the same
+minimal, hexagon-free, general-position four-layer configuration, suppose
+`2 ≤ t < β`, all selected apices of the run are defined, and both
+
+```
+[b₁,c₁,c₂,b₂]                 and
+[bₜ,cₜ₋₁,cₜ,bₜ₊₁]
+```
+
+are strictly convex quadrilaterals in the listed counterclockwise order.
+Assume the two induction bounds
+
+```
+|A ∩ (S₁ ∪ ... ∪ Sₜ₋₁)| ≤ t,
+|A ∩ (S₂ ∪ ... ∪ Sₜ)|   ≤ t.
+```
+
+Prove `|A ∩ (S₁ ∪ ... ∪ Sₜ)| ≤ t + 1`. It suffices to exclude the
+case of equality `t + 2`, since a single sector contains at most two
+outer vertices. In that extremal case each end's private region has
+exactly two points. No particular pentagon or pointwise side implication
+is prescribed: an alternative geometric argument for this union bound
+would complete the missing input.
+
+The exact Lean interface is `ValtrRunInduction.DoublyConvexRunBound`.
+`ValtrEndpointGeometry` proves that its failed interior tests are
+equivalent to the indicated convex cases under the actual run hypotheses.
+An informal expansion of this final case would be useful.
 
 ## Completed reduction to this endpoint estimate
 
 The complete sector-run induction is now proved in `ValtrRunInduction`,
-conditional only on `EndpointDropBounds`, the two symmetric endpoint
-estimates above. `four_layer_of_endpoint_drop_bounds` derives the
-four-layer theorem with outer-layer threshold 16 from those estimates.
-No other geometric statement is left as an explicit hypothesis there.
+conditional only on `DoublyConvexRunBound`.
+`four_layer_of_doubly_convex_run_bound` derives the four-layer theorem with
+outer-layer threshold 16 from that case. The no-hexagon assumption and
+both shorter-run bounds are available to its proof. No other geometric
+statement is left as an explicit hypothesis there. The earlier, stronger
+reduction via `EndpointDropBounds` is also retained.
 The matching argument with `d′` is now proved in
 `ValtrMatching`: positive cyclic enumerations agreeing at one index agree
 everywhere, the new fan containing the old center supplies a fixed index,

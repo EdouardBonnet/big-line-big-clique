@@ -236,4 +236,92 @@ theorem convex_quad_side_card_le_one {S : Finset Point}
   · exact hno (emptyHexagon_of_two_outer_points_of_convex_quad hgen ha hc he hb
       hacb hace haeb hceb hbase hempty hq hr hqS hrS hpos hqb)
 
+/-- The mirrored four-sector calculation for a convex last endpoint.
+The required side test is now `turn a e r > 0`. -/
+theorem extension_sector_of_last_convex_quad {a c e b r : Point}
+    (haec : 0 < turn a e c) (haeb : 0 < turn a e b)
+    (hacb : 0 < turn a c b) (hecb : 0 < turn e c b)
+    (hr : r ∈ sector ![a, c, b]) (haer : 0 < turn a e r) :
+    e ∈ sector ![c, b, r, a] := by
+  have hebr : 0 < turn e b r := by
+    apply (mul_pos_iff_of_pos_left hacb).mp
+    have hid : turn a c b * turn e b r =
+        turn a e b * turn c b r + turn e c b * turn a b r := by unfold turn; ring
+    rw [hid]
+    exact add_pos (mul_pos haeb (hr 1 2 (by decide))) (mul_pos hecb (hr 0 2 (by decide)))
+  have hecr : 0 < turn e c r := by
+    apply (mul_pos_iff_of_pos_left hacb).mp
+    have hid : turn a c b * turn e c r =
+        turn a e c * turn c b r + turn e c b * turn a c r := by unfold turn; ring
+    rw [hid]
+    exact add_pos (mul_pos haec (hr 1 2 (by decide))) (mul_pos hecb (hr 0 1 (by decide)))
+  have h01 : 0 < turn c b e := by rw [turn_rotate]; exact hecb
+  have h02 : 0 < turn c r e := by rw [turn_rotate]; exact hecr
+  have h03 : 0 < turn c a e := by rw [← turn_rotate]; exact haec
+  have h12 : 0 < turn b r e := by rw [turn_rotate]; exact hebr
+  have h13 : 0 < turn b a e := by rw [← turn_rotate]; exact haeb
+  have h23 : 0 < turn r a e := by rw [← turn_rotate]; exact haer
+  intro i j hij
+  fin_cases i <;> fin_cases j <;> norm_num at hij <;> assumption
+
+theorem emptyHexagon_of_two_outer_points_of_last_convex_quad {S : Finset Point}
+    (hgen : ¬HasThreeCollinear S) {a c e b q r : Point}
+    (ha : a ∈ inner S) (hc : c ∈ inner S) (he : e ∈ S) (hb : b ∈ inner S)
+    (haec : 0 < turn a e c) (haeb : 0 < turn a e b)
+    (hacb : 0 < turn a c b) (hecb : 0 < turn e c b)
+    (hbase : ∀ p ∈ inner S, turn a b p ≤ 0)
+    (hempty : ∀ p ∈ inner S, p ∈ triangleHull a c b → p = a ∨ p = c ∨ p = b)
+    (hq : q ∈ extremeLayer S) (hr : r ∈ extremeLayer S)
+    (hqS : q ∈ sector ![a, c, b]) (hrS : r ∈ sector ![a, c, b])
+    (horder : 0 < turn c q r) (haer : 0 < turn a e r) : HasEmptyHexagon S := by
+  obtain ⟨hinj, htri, hmem, hEmpty⟩ := empty_pentagon_data_of_two_outer_sector_points
+    ha hc hb hacb hbase hempty hq hr hqS hrS horder
+  let v : Fin 5 → Point := ![c, b, q, r, a]
+  have hshift (i : Fin 5) : v i = ![b, q, r, a, c] (i + 4) := by fin_cases i <;> rfl
+  have hinj' : Function.Injective v := by
+    intro i j hh
+    rw [hshift, hshift] at hh
+    exact add_right_cancel (hinj hh)
+  have htri' : ∀ i j k, i < j → j < k → 0 < turn (v i) (v j) (v k) := by
+    intro i j k hij hjk
+    rw [hshift, hshift, hshift]
+    exact cyclic_shift_triples htri (4 : Fin 5) i j k hij hjk
+  have hrange : Set.range v = Set.range ![b, q, r, a, c] := by
+    ext p
+    simp only [Set.mem_range]
+    constructor
+    · rintro ⟨i, rfl⟩; exact ⟨i + 4, (hshift i).symm⟩
+    · rintro ⟨i, rfl⟩
+      refine ⟨i - 4, ?_⟩
+      rw [hshift, sub_add_cancel]
+  apply empty_pentagon_extension hgen v hinj' htri'
+    (fun i ↦ by rw [hshift]; exact hmem _) he
+  · intro p hp hph
+    rw [hrange] at hph ⊢
+    exact hEmpty p hp hph
+  · exact extension_sector_of_last_convex_quad haec haeb hacb hecb hrS haer
+
+theorem last_convex_quad_side_card_le_one {S : Finset Point}
+    (hgen : ¬HasThreeCollinear S) (hno : ¬HasEmptyHexagon S) {a c e b : Point}
+    (ha : a ∈ inner S) (hc : c ∈ inner S) (he : e ∈ S) (hb : b ∈ inner S)
+    (haec : 0 < turn a e c) (haeb : 0 < turn a e b)
+    (hacb : 0 < turn a c b) (hecb : 0 < turn e c b)
+    (hbase : ∀ p ∈ inner S, turn a b p ≤ 0)
+    (hempty : ∀ p ∈ inner S, p ∈ triangleHull a c b → p = a ∨ p = c ∨ p = b) :
+    ((extremeLayer S).filter (fun p ↦ p ∈ sector ![a, c, b] ∧ 0 < turn a e p)).card ≤ 1 := by
+  by_contra hh
+  obtain ⟨q, hq, r, hr, hqr⟩ := Finset.one_lt_card.mp (lt_of_not_ge hh)
+  obtain ⟨hq, hqS, hqb⟩ := Finset.mem_filter.mp hq
+  obtain ⟨hr, hrS, hrb⟩ := Finset.mem_filter.mp hr
+  have hcq : c ≠ q := fun hh ↦ (Finset.mem_sdiff.mp hc).2 (hh.symm ▸ hq)
+  have hcr : c ≠ r := fun hh ↦ (Finset.mem_sdiff.mp hc).2 (hh.symm ▸ hr)
+  have hne := turn_ne_zero_of_generalPosition hgen (inner_subset _ hc)
+    (extremeLayer_subset _ hq) (extremeLayer_subset _ hr) hcq hcr hqr
+  rcases lt_or_gt_of_ne hne with hneg | hpos
+  · have hpos' : 0 < turn c r q := by rw [turn_swap_last]; exact neg_pos.mpr hneg
+    exact hno (emptyHexagon_of_two_outer_points_of_last_convex_quad hgen ha hc he hb
+      haec haeb hacb hecb hbase hempty hr hq hrS hqS hpos' hqb)
+  · exact hno (emptyHexagon_of_two_outer_points_of_last_convex_quad hgen ha hc he hb
+      haec haeb hacb hecb hbase hempty hq hr hqS hrS hpos hrb)
+
 end Lax56Proofs.ValtrConvexRun
