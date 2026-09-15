@@ -21,6 +21,10 @@ bibEntries:
     Julian Sahasrabudhe and Richard Snyder}, title = {A Stability Theorem for
     Maximal K_{r+1}-free Graphs}, journal = {Journal of Combinatorial Theory,
     Series B}, volume = {132}, pages = {236--257}, year = {2018}}'
+paper:
+  folder: paper
+  main: main.tex
+  engine: pdflatex
 issue:
   repositoryId: 1320232165
   number: 56
