@@ -111,13 +111,18 @@ theorem consecutive_cap_eq {n t : ℕ} [NeZero t] (ht : 3 ≤ t)
   constructor
   · intro hp
     refine ⟨convexHull_mono (Set.range_comp_subset_range _ _) hp, ?_⟩
-    simpa only [hlast] using cyclic_edge_nonneg_of_mem_hull hbtri hp last
+    change 0 ≤ turn (b last) (b 0) p
+    have h := cyclic_edge_nonneg_of_mem_hull hbtri hp last
+    rw [hlast] at h
+    exact h
   · rintro ⟨hp, hside⟩
+    change 0 ≤ turn (b last) (b 0) p at hside
     apply mem_convexHull_of_edge_nonneg ht hbtri
     intro i
     by_cases hilast : i = last
     · subst i
-      simpa only [hlast] using hside
+      rw [hlast]
+      exact hside
     · have hnext := cyclic_next_cases i
       have hival : i.val ≠ t - 1 := fun h ↦ hilast (Fin.ext h)
       have hadj : (offsetIndex a ha i).val + 1 = (offsetIndex a ha (i + 1)).val := by
@@ -283,7 +288,11 @@ theorem exists_next_layer_vertex_in_five_cap {Q : Finset Point}
       by_contra hpnot
       by_cases hpouter : p ∈ extremeLayer Q
       · apply extreme_not_mem_convexHull hpouter hbsub
-          (by simpa only [Finset.mem_image, Finset.mem_univ, true_and] using hpnot)
+          (by
+            intro hpimage
+            apply hpnot
+            obtain ⟨i, _, hbi⟩ := Finset.mem_image.mp hpimage
+            exact ⟨i, hbi⟩)
         simpa using hpHull
       · exact hpoint ⟨p, Finset.mem_sdiff.mpr ⟨hp, hpouter⟩, hpHull⟩
     apply (hno (empty_pentagon_extension hgen b

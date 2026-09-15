@@ -86,8 +86,12 @@ theorem visible_blockSet_iff
       (orderedPoint_strictMono P).lt_iff_lt.mp hbetween.1
     have hkj : k < blockIndex hs j :=
       (orderedPoint_strictMono P).lt_iff_lt.mp hbetween.2
-    have hikv : s + i.val < k.val := by simpa [blockIndex] using hik
-    have hkjv : k.val < s + j.val := by simpa [blockIndex] using hkj
+    have hikv : s + i.val < k.val := by
+      change s + i.val < k.val at hik
+      exact hik
+    have hkjv : k.val < s + j.val := by
+      change k.val < s + j.val at hkj
+      exact hkj
     let t : Fin m := ⟨k - s, by
       have := j.isLt
       omega⟩
@@ -106,9 +110,9 @@ theorem visible_blockSet_iff
 noncomputable def blockGraph (P : Finset Point) {s m : ℕ}
     (hs : s + m ≤ P.card) : SimpleGraph (Fin m) where
   Adj i j := Visible P (blockPoint P hs i) (blockPoint P hs j)
-  symm := by
+  symm := ⟨by
     intro i j h
-    exact ⟨h.1.symm, by simpa only [openSegment_symm] using h.2⟩
+    exact ⟨h.1.symm, by simpa only [openSegment_symm] using h.2⟩⟩
   loopless := ⟨fun i h ↦ h.1 rfl⟩
 
 @[simp] theorem blockGraph_adj (P : Finset Point) {s m : ℕ}

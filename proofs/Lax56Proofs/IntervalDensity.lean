@@ -118,14 +118,16 @@ theorem deletion_distance_five
   change (blockGraph P hs).Adj (windowIndex hLm w i) (windowIndex hLm w j)
   change Visible P (blockPoint P hs (windowIndex hLm w i))
     (blockPoint P hs (windowIndex hLm w j))
+  rw [blockGraph_adj] at hij
   simpa only [blockPoint_windowIndex P hs hLm w hsw] using hij
 
 /-- For a graph on a finite type, the concept-layer edge count agrees with
 Mathlib's finite edge set. -/
 theorem edgeCount_eq_edgeFinset_card {V : Type*} [Fintype V]
-    (G : SimpleGraph V) : edgeCount G = G.edgeFinset.card := by
-  rw [edgeCount, Nat.card_coe_set_eq, Set.ncard_eq_toFinset_card']
-  rfl
+    (G : SimpleGraph V) [DecidableRel G.Adj] :
+    edgeCount G = G.edgeFinset.card := by
+  rw [edgeCount, @Nat.card_eq_fintype_card G.edgeSet G.fintypeEdgeSet,
+    @SimpleGraph.card_edgeSet V G G.fintypeEdgeSet]
 
 /-- Edges and non-edges partition all unordered pairs of distinct vertices. -/
 theorem edgeCount_add_compl {V : Type*} [Fintype V] (G : SimpleGraph V) :

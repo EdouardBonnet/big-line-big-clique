@@ -33,13 +33,19 @@ theorem radial_sector_unique {n : ℕ} [NeZero n] {v : Fin n → Point}
     (hi : q ∈ sector ![v (i + 1), d, v i])
     (hj : q ∈ sector ![v (j + 1), d, v j]) : i = j := by
   apply cyclic_line_crossing_unique htri (u := q) (w := d)
-  · simpa only [turn_rotate] using hi 1 2 (by decide)
+  · have h := hi 1 2 (by decide)
+    change 0 < turn d (v i) q at h
+    rw [turn_rotate q d (v i)] at h
+    exact h
   · have h := hi 0 1 (by decide)
     change 0 < turn (v (i + 1)) d q at h
     rw [turn_swap_first] at h
     have hneg : turn d (v (i + 1)) q < 0 := by linarith
     convert hneg using 1 <;> unfold turn <;> ring
-  · simpa only [turn_rotate] using hj 1 2 (by decide)
+  · have h := hj 1 2 (by decide)
+    change 0 < turn d (v j) q at h
+    rw [turn_rotate q d (v j)] at h
+    exact h
   · have h := hj 0 1 (by decide)
     change 0 < turn (v (j + 1)) d q at h
     rw [turn_swap_first] at h

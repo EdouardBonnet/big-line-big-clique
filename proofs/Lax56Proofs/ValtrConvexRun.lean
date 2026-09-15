@@ -15,7 +15,7 @@ theorem extreme_not_mem_triangle {S : Finset Point} {p a b c : Point}
     intro x hx
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl <;> assumption
-  simpa only [Finset.coe_insert, Finset.coe_singleton] using
+  simpa only [triangleHull, Finset.coe_insert, Finset.coe_singleton] using
     extreme_not_mem_convexHull hp hsub (by simp [hpa, hpb, hpc])
 
 /-- Two outer vertices in the sector of an inner triangle have a definite

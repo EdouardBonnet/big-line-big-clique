@@ -310,10 +310,16 @@ theorem opposite_sidePoint_colours_eq
     exact (visible_adjacent_sidePoints q hq y z hyseg hz₀₂ hz₁₃
       hyinj hpattern i).2 p p.property hp
   intro i
+  have hidx : (i + 1) + 1 = i + 2 := by
+    calc
+      (i + 1) + 1 = i + (1 + 1) := add_assoc i 1 1
+      _ = i + 2 := congrArg (i + ·) (show (1 : Fin 4) + 1 = 2 by decide)
+  have hadjNext := hadj (i + 1)
+  rw [hidx] at hadjNext
   exact fin4_two_remaining_alternate hzc
     (hyc i) (hyc (i + 1)) (hyc (i + 2))
     (hzColour i) (hzColour (i + 1)) (hzColour (i + 2))
-    (hadj i) (by simpa only [add_assoc] using hadj (i + 1))
+    (hadj i) hadjNext
 
 /-- The common diagonal point blocks each pair of opposite side blockers. -/
 theorem commonDiagonal_between_opposite_sidePoints

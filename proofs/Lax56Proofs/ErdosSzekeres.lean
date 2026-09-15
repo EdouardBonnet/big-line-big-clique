@@ -64,7 +64,8 @@ theorem convexIndependent_linear_image {ι : Type*} {v : ι → Point}
   change e (v i) ∈ (e.toLinearMap.toAffineMap : Point → Point) '' convexHull ℝ (v '' S)
   have himage := e.toLinearMap.toAffineMap.image_convexHull (v '' S)
   rw [himage]
-  simpa only [Set.image_image, Function.comp_def] using hi
+  simpa only [LinearMap.coe_toAffineMap, LinearEquiv.coe_coe,
+    Set.image_image, Function.comp_def] using hi
 
 theorem convexPosition_image (e : Point ≃ₗ[ℝ] Point) {P : Finset Point}
     (hP : ConvexPosition P) : ConvexPosition (P.image e) := by

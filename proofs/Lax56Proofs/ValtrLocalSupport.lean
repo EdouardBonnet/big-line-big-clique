@@ -40,17 +40,23 @@ theorem mem_neighbor_hull_of_four_clockwise_turns {p a b e f : Point}
   rcases lt_or_gt_of_ne hae with hneg | hpos
   · have hstrict : StrictlyInsideTriangle a f e p := by
       refine ⟨?_, ?_, ?_⟩
-      · convert neg_pos.mpr hfa using 1 <;> unfold turn <;> ring
-      · convert neg_pos.mpr hef using 1 <;> unfold turn <;> ring
-      · convert neg_pos.mpr hneg using 1 <;> unfold turn <;> ring
+      · rw [← turn_rotate a f p, turn_swap_first]
+        exact neg_pos.mpr hfa
+      · rw [← turn_rotate f e p, turn_swap_first]
+        exact neg_pos.mpr hef
+      · rw [← turn_rotate e a p, turn_swap_first]
+        exact neg_pos.mpr hneg
     apply convexHull_mono (show ({a, f, e} : Set Point) ⊆ {a, b, e, f} by
       intro x hx; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx ⊢; tauto)
     exact strictlyInsideTriangle_mem_triangleHull hstrict
   · have hstrict : StrictlyInsideTriangle a e b p := by
       refine ⟨?_, ?_, ?_⟩
-      · convert hpos using 1 <;> unfold turn <;> ring
-      · convert neg_pos.mpr hbe using 1 <;> unfold turn <;> ring
-      · convert neg_pos.mpr hab using 1 <;> unfold turn <;> ring
+      · rw [turn_rotate p a e]
+        exact hpos
+      · rw [← turn_rotate e b p, turn_swap_first]
+        exact neg_pos.mpr hbe
+      · rw [← turn_rotate b a p, turn_swap_first]
+        exact neg_pos.mpr hab
     apply convexHull_mono (show ({a, e, b} : Set Point) ⊆ {a, b, e, f} by
       intro x hx; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx ⊢; tauto)
     exact strictlyInsideTriangle_mem_triangleHull hstrict

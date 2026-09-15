@@ -39,7 +39,12 @@ theorem sum_one_div_lower_log (M N : ℕ) (hM : 0 < M) (hMN : M ≤ N) :
   have hmR : (0 : ℝ) < m := by exact_mod_cast (lt_of_lt_of_le hM hm.1)
   have hlog := Real.log_le_sub_one_of_pos
     (show (0 : ℝ) < (((m + 1 : ℕ) : ℝ) / m) by positivity)
-  convert hlog using 1 <;> push_cast <;> field_simp <;> ring
+  calc
+    Real.log (((m + 1 : ℕ) : ℝ) / m) ≤
+        (((m + 1 : ℕ) : ℝ) / m) - 1 := hlog
+    _ = 1 / (m : ℝ) := by
+      push_cast
+      field_simp <;> ring
 
 theorem one_div_le_ratio (m : ℕ) (hm : 2 ≤ m) :
     1 / (m : ℝ) ≤ (m : ℝ) / ((m : ℝ) ^ 2 - 1) := by
@@ -165,7 +170,12 @@ theorem analyticTerm_le_scaleContribution
     have : (0 : ℝ) < (m : ℝ) ^ 2 - 1 := by nlinarith
     positivity
   unfold analyticTerm scaleContribution
-  convert mul_le_mul_of_nonneg_left hmass hcoef using 1 <;> ring
+  calc
+    2 / ((m : ℝ) ^ 2 - 1) *
+        (density * (m : ℝ) * P.card - density * (m : ℝ) ^ 2 - P.card / 2) ≤
+      2 / ((m : ℝ) ^ 2 - 1) * ((deficit P m : ℝ) / m) :=
+        mul_le_mul_of_nonneg_left hmass hcoef
+    _ = 2 / ((m : ℝ) ^ 2 - 1) * (deficit P m : ℝ) / m := by ring
 
 theorem analytic_sum_le_potential
     (P : Finset Point) (hfour : ¬HasFourCollinear P)
@@ -209,7 +219,10 @@ theorem analytic_sum_lower (n M N : ℕ) (hM : 2 ≤ M) (hMN : M ≤ N) :
   have h₃ :
       (n : ℝ) * (∑ m ∈ Finset.Icc M N, 1 / ((m : ℝ) ^ 2 - 1)) ≤
         3 * (n : ℝ) / 4 := by
-    convert mul_le_mul_of_nonneg_left hS₃ hn using 1 <;> ring
+    calc
+      (n : ℝ) * (∑ m ∈ Finset.Icc M N, 1 / ((m : ℝ) ^ 2 - 1)) ≤
+          (n : ℝ) * (3 / 4) := mul_le_mul_of_nonneg_left hS₃ hn
+      _ = 3 * (n : ℝ) / 4 := by ring
   nlinarith
 
 /-- Section 5 lower bound for `W`, with all sliding windows in place of a
@@ -260,8 +273,10 @@ theorem potential_lower_log
     omega
   have hfloorR : (4 : ℝ) * N ≤ P.card := by exact_mod_cast hfloorNat
   have herror : 4 * density * (N : ℝ) ≤ density * P.card := by
-    convert mul_le_mul_of_nonneg_left hfloorR
-      (by norm_num [density, eps₁] : (0 : ℝ) ≤ density) using 1 <;> ring
+    calc
+      4 * density * (N : ℝ) = density * (4 * (N : ℝ)) := by ring
+      _ ≤ density * P.card := mul_le_mul_of_nonneg_left hfloorR
+        (by norm_num [density, eps₁] : (0 : ℝ) ≤ density)
   calc
     2 * density * (P.card : ℝ) *
           Real.log ((P.card : ℝ) / (4 * m₀)) -
@@ -299,7 +314,7 @@ theorem log_card_upper
           (2 * density * (Real.log P.card - Real.log (4 * m₀)) -
             density - 3 / 4) ≤
         (P.card : ℝ) * (1 / 5 * Real.log P.card + 1 / 5) := by
-    convert hboth using 1 <;> ring
+    nlinarith [hboth]
   have hcancel := (mul_le_mul_iff_of_pos_left hn).mp hfactored
   nlinarith
 

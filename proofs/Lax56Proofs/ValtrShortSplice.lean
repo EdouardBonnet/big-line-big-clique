@@ -154,12 +154,16 @@ theorem center_chord : turn (c 0) d (c 4) ≤ 0 := by
     rintro p ⟨i, rfl⟩
     fin_cases i
     · simp
-    · convert (cfg.apex_triples 0 1 4 (by decide) (by decide) (by decide)).le using 1 <;> unfold turn <;> ring
-    · convert (cfg.apex_triples 0 2 4 (by decide) (by decide) (by decide)).le using 1 <;> unfold turn <;> ring
-    · convert (cfg.apex_triples 0 3 4 (by decide) (by decide) (by decide)).le using 1 <;> unfold turn <;> ring
+    · rw [← turn_rotate (c 4) (c 0) (c 1)]
+      exact (cfg.apex_triples 0 1 4 (by decide) (by decide) (by decide)).le
+    · rw [← turn_rotate (c 4) (c 0) (c 2)]
+      exact (cfg.apex_triples 0 2 4 (by decide) (by decide) (by decide)).le
+    · rw [← turn_rotate (c 4) (c 0) (c 3)]
+      exact (cfg.apex_triples 0 3 4 (by decide) (by decide) (by decide)).le
     · simp
   have hh := turn_nonpos_of_mem_convexHull hall cfg.center_cap
-  convert hh using 1 <;> unfold turn <;> ring
+  rw [turn_rotate (c 4) (c 0) d]
+  exact hh
 
 theorem neighbor_mem_ne (k) (hk : 1 ≤ k) (hkm : k ≤ 3) {q : Point}
     (hq : q ∈ neighbors (shortChain b c d) b k) :
@@ -253,7 +257,8 @@ theorem first_support (hgen : ¬HasThreeCollinear S) :
       have hp : 0 < turn (b 4) (b 5) (b 0) := hx 0 2 (by decide)
       exact not_lt_of_ge (cfg.base_support 4 (by decide) _ (cfg.base_inner 0 (by decide))) hp
     · change turn (c 0) d (b 0) < 0
-      convert neg_neg_of_pos (cfg.fan 0 (by decide)).2.2 using 1 <;> unfold turn <;> ring
+      rw [turn_reverse]
+      exact neg_neg_of_pos (cfg.fan 0 (by decide)).2.2
     · rfl
   intro k hk
   by_cases hk0 : k = 0
@@ -301,7 +306,8 @@ theorem last_support (hgen : ¬HasThreeCollinear S) :
       exact not_lt_of_ge (cfg.base_support k (by omega) _ (cfg.base_inner 5 (by decide))) hp
     · rfl
     · change turn d (c 4) (b 5) < 0
-      convert neg_neg_of_pos (cfg.fan 4 (by decide)).1 using 1 <;> unfold turn <;> ring
+      rw [turn_swap_last]
+      exact neg_neg_of_pos (cfg.fan 4 (by decide)).1
   intro k hk
   by_cases hk3 : k = 3
   · subst k; simp [shortChain]
@@ -323,7 +329,8 @@ theorem chain_support (hgen : ¬HasThreeCollinear S) :
         (cfg.apex_ne_base 4 1 (by decide) (by decide)))
     · exact cfg.empty_triangle 0 (by decide) _ (inner_subset _ (cfg.apex_inner 4 (by decide)))
   have hcenter : turn d (c 4) (c 0) ≤ 0 := by
-    convert cfg.center_chord using 1 <;> unfold turn <;> ring
+    rw [turn_rotate (c 0) d (c 4)]
+    exact cfg.center_chord
   have hright : turn (c 4) (b 5) (c 0) ≤ 0 := by
     apply last_edge_support_of_empty_triangle hrightTri hcenter
     · rw [turn_swap_first]
@@ -336,7 +343,8 @@ theorem chain_support (hgen : ¬HasThreeCollinear S) :
     rw [turn_swap_last]
     exact (neg_neg_of_pos hleftTri.1).le
   have hrightD : turn (c 4) (b 5) d ≤ 0 := by
-    convert (neg_neg_of_pos (cfg.fan 4 (by decide)).1).le using 1 <;> unfold turn <;> ring
+    rw [turn_reverse]
+    exact (neg_neg_of_pos (cfg.fan 4 (by decide)).1).le
   have hc := cfg.center_chord
   intro k hk j hj
   by_cases hj0 : j = 0

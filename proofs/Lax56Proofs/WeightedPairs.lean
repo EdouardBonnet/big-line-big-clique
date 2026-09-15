@@ -89,7 +89,12 @@ inductive ChargeKind
   | left
   | right
   | outer
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+instance : Fintype ChargeKind :=
+  Fintype.ofList [.left, .right, .outer] (by
+    intro x
+    cases x <;> simp)
 
 /-- The three pairs charged by a blocked pair: left-blocker,
 blocker-right, and left-right. -/

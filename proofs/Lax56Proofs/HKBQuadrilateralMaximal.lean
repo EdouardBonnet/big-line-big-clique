@@ -262,7 +262,9 @@ theorem center_axis_side_neg
     have : turn (P.z : Point) (q i : Point) (P.y (i + 2) : Point) =
         (1 - t) * turn (P.z : Point) (q i : Point) (q (i + 2) : Point) +
           t * turn (P.z : Point) (q i : Point) (q (i + 3) : Point) := by
-      simpa only [add_assoc] using heq
+      have hadd : (i + 2) + 1 = i + 3 := by fin_cases i <;> decide
+      rw [hadd] at heq
+      exact heq
     rw [this, hopp]
     nlinarith [mul_neg_of_pos_of_neg ht hprev]
   · obtain ⟨t, ht, ht1, heq⟩ := turn_of_mem_openSegment
