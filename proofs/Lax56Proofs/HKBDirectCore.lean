@@ -519,16 +519,16 @@ theorem same_colour_eq_concaveVertex_of_minimal
   · intro i
     fin_cases i
     · exact hpHull
-    · simpa [Y, y] using
-        (subset_convexHull ℝ
-          ({(R.q 0 : Point), (R.q 1 : Point), (R.q 2 : Point)} : Set Point)
-          (by simp) : (R.q 1 : Point) ∈
-            triangleHull (R.q 0 : Point) (R.q 1 : Point) (R.q 2 : Point))
-    · simpa [Y, y] using
-        (subset_convexHull ℝ
-          ({(R.q 0 : Point), (R.q 1 : Point), (R.q 2 : Point)} : Set Point)
-          (by simp) : (R.q 2 : Point) ∈
-            triangleHull (R.q 0 : Point) (R.q 1 : Point) (R.q 2 : Point))
+    · have hmem : (R.q 1 : Point) ∈
+          triangleHull (R.q 0 : Point) (R.q 1 : Point) (R.q 2 : Point) := by
+        unfold triangleHull
+        exact subset_convexHull ℝ _ (by simp)
+      simpa [Y, y] using hmem
+    · have hmem : (R.q 2 : Point) ∈
+          triangleHull (R.q 0 : Point) (R.q 1 : Point) (R.q 2 : Point) := by
+        unfold triangleHull
+        exact subset_convexHull ℝ _ (by simp)
+      simpa [Y, y] using hmem
     · simpa [Y, y] using strictlyInsideTriangle_mem_triangleHull hinside
   · intro i
     fin_cases i

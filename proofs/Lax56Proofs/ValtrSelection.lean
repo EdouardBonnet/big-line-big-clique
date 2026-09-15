@@ -380,7 +380,7 @@ theorem exists_empty_layer_triangle {Q : Finset Point}
       · exact hCQ hrC
       · exact extremeLayer_subset Q hb
     apply extreme_not_mem_convexHull hpB hsmall (by simp [h.1, h.2.1, h.2.2])
-    simpa only [Finset.coe_insert, Finset.coe_singleton] using hpT
+    simpa only [triangleHull, Finset.coe_insert, Finset.coe_singleton] using hpT
   · right; left
     apply hcap p _ hpT
     rw [convexHull_extremeLayer]

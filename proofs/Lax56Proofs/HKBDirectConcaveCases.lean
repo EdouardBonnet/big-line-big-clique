@@ -243,7 +243,10 @@ noncomputable def mirror (K : ConcaveConfiguration P colour a b c d) :
       apply mirror_mem_triangleHull_swap_iff.mp
       simpa [z₀] using hz
     have hc₀ : colour z₀ = colour a := by
-      simpa [z₀] using hc
+      have hc' : mirrorColour colour z = colour a := by
+        simpa only [mirrorColour_apply] using hc
+      change mirrorColour colour z = colour a
+      exact hc'
     rcases K.redHull z₀ hz₀ hc₀ with hza | hzb | hzc | hzd
     · exact Or.inl (by
         simpa [z₀] using congrArg (mirrorSubtypeEquiv P) hza)
@@ -418,11 +421,128 @@ noncomputable def M₃ : CellModel colour (colour a) K.T₃ :=
 @[simp] theorem T₃_side_one : K.T₃.side 1 = K.skeleton.u₂ := rfl
 @[simp] theorem T₃_side_two : K.T₃.side 2 = K.skeleton.u₁ := rfl
 
+@[simp] theorem T₁_side_zero_mk (h : 0 < 3) :
+    K.T₁.side ⟨0, h⟩ = K.skeleton.v₁ := rfl
+@[simp] theorem T₁_side_one_mk (h : 1 < 3) :
+    K.T₁.side ⟨1, h⟩ = K.skeleton.u₃ := rfl
+@[simp] theorem T₁_side_two_mk (h : 2 < 3) :
+    K.T₁.side ⟨2, h⟩ = K.skeleton.u₂ := rfl
+@[simp] theorem T₂_side_zero_mk (h : 0 < 3) :
+    K.T₂.side ⟨0, h⟩ = K.skeleton.v₂ := rfl
+@[simp] theorem T₂_side_one_mk (h : 1 < 3) :
+    K.T₂.side ⟨1, h⟩ = K.skeleton.u₁ := rfl
+@[simp] theorem T₂_side_two_mk (h : 2 < 3) :
+    K.T₂.side ⟨2, h⟩ = K.skeleton.u₃ := rfl
+@[simp] theorem T₃_side_zero_mk (h : 0 < 3) :
+    K.T₃.side ⟨0, h⟩ = K.skeleton.v₃ := rfl
+@[simp] theorem T₃_side_one_mk (h : 1 < 3) :
+    K.T₃.side ⟨1, h⟩ = K.skeleton.u₂ := rfl
+@[simp] theorem T₃_side_two_mk (h : 2 < 3) :
+    K.T₃.side ⟨2, h⟩ = K.skeleton.u₁ := rfl
+
+-- Keep the cell projections transparent to `simp`.  Lean 4.33 no longer
+-- unfolds these nested abbreviations in several otherwise-definitional goals.
+@[simp] theorem T₁_s₀ : K.T₁.s₀ = K.skeleton.v₁ := rfl
+@[simp] theorem T₁_s₁ : K.T₁.s₁ = K.skeleton.u₃ := rfl
+@[simp] theorem T₁_s₂ : K.T₁.s₂ = K.skeleton.u₂ := rfl
+@[simp] theorem T₂_s₀ : K.T₂.s₀ = K.skeleton.v₂ := rfl
+@[simp] theorem T₂_s₁ : K.T₂.s₁ = K.skeleton.u₁ := rfl
+@[simp] theorem T₂_s₂ : K.T₂.s₂ = K.skeleton.u₃ := rfl
+@[simp] theorem T₃_s₀ : K.T₃.s₀ = K.skeleton.v₃ := rfl
+@[simp] theorem T₃_s₁ : K.T₃.s₁ = K.skeleton.u₂ := rfl
+@[simp] theorem T₃_s₂ : K.T₃.s₂ = K.skeleton.u₁ := rfl
+
+@[simp] theorem skeleton_lookup_zero :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) 0 =
+      K.skeleton.u₁ := rfl
+@[simp] theorem skeleton_lookup_one :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) 1 =
+      K.skeleton.u₂ := rfl
+@[simp] theorem skeleton_lookup_two :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) 2 =
+      K.skeleton.u₃ := rfl
+@[simp] theorem skeleton_lookup_three :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) 3 =
+      K.skeleton.v₁ := rfl
+@[simp] theorem skeleton_lookup_four :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) 4 =
+      K.skeleton.v₂ := rfl
+@[simp] theorem skeleton_lookup_five :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) 5 =
+      K.skeleton.v₃ := rfl
+
+@[simp] theorem skeleton_lookup_zero_mk (h : 0 < 6) :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) ⟨0, h⟩ =
+      K.skeleton.u₁ := rfl
+@[simp] theorem skeleton_lookup_one_mk (h : 1 < 6) :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) ⟨1, h⟩ =
+      K.skeleton.u₂ := rfl
+@[simp] theorem skeleton_lookup_two_mk (h : 2 < 6) :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) ⟨2, h⟩ =
+      K.skeleton.u₃ := rfl
+@[simp] theorem skeleton_lookup_three_mk (h : 3 < 6) :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) ⟨3, h⟩ =
+      K.skeleton.v₁ := rfl
+@[simp] theorem skeleton_lookup_four_mk (h : 4 < 6) :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) ⟨4, h⟩ =
+      K.skeleton.v₂ := rfl
+@[simp] theorem skeleton_lookup_five_mk (h : 5 < 6) :
+    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) ⟨5, h⟩ =
+      K.skeleton.v₃ := rfl
+
+abbrev skeletonPoint (K : ConcaveConfiguration P colour a b c d)
+    (i : Fin 6) : P :=
+  match i.val with
+  | 0 => K.skeleton.u₁
+  | 1 => K.skeleton.u₂
+  | 2 => K.skeleton.u₃
+  | 3 => K.skeleton.v₁
+  | 4 => K.skeleton.v₂
+  | _ => K.skeleton.v₃
+
+@[simp] theorem skeletonPoint_zero : K.skeletonPoint 0 = K.skeleton.u₁ := rfl
+@[simp] theorem skeletonPoint_one : K.skeletonPoint 1 = K.skeleton.u₂ := rfl
+@[simp] theorem skeletonPoint_two : K.skeletonPoint 2 = K.skeleton.u₃ := rfl
+@[simp] theorem skeletonPoint_three : K.skeletonPoint 3 = K.skeleton.v₁ := rfl
+@[simp] theorem skeletonPoint_four : K.skeletonPoint 4 = K.skeleton.v₂ := rfl
+@[simp] theorem skeletonPoint_five : K.skeletonPoint 5 = K.skeleton.v₃ := rfl
+
+@[simp] theorem skeletonPoint_zero_mk (h : 0 < 6) :
+    K.skeletonPoint ⟨0, h⟩ = K.skeleton.u₁ := rfl
+@[simp] theorem skeletonPoint_one_mk (h : 1 < 6) :
+    K.skeletonPoint ⟨1, h⟩ = K.skeleton.u₂ := rfl
+@[simp] theorem skeletonPoint_two_mk (h : 2 < 6) :
+    K.skeletonPoint ⟨2, h⟩ = K.skeleton.u₃ := rfl
+@[simp] theorem skeletonPoint_three_mk (h : 3 < 6) :
+    K.skeletonPoint ⟨3, h⟩ = K.skeleton.v₁ := rfl
+@[simp] theorem skeletonPoint_four_mk (h : 4 < 6) :
+    K.skeletonPoint ⟨4, h⟩ = K.skeleton.v₂ := rfl
+@[simp] theorem skeletonPoint_five_mk (h : 5 < 6) :
+    K.skeletonPoint ⟨5, h⟩ = K.skeleton.v₃ := rfl
+
+theorem skeletonPoint_eq_blockerVector (i : Fin 6) :
+    K.skeletonPoint i =
+      (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
+        K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) i := by
+  fin_cases i <;> rfl
+
 theorem cellPoint_ne_skeleton
     {p : P}
     (hp : p ∈ K.I₁ ∨ p ∈ K.I₂ ∨ p ∈ K.I₃) (i : Fin 6) :
-    p ≠ (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
-      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) i := by
+    p ≠ K.skeletonPoint i := by
+  rw [K.skeletonPoint_eq_blockerVector]
   intro e
   have hpAll : p ∈ allCellPoints P (a : Point) (b : Point) (c : Point) (d : Point) := by
     rw [mem_allCellPoints]
@@ -440,11 +560,9 @@ theorem cellPoint_ne_skeleton
     (skeletonPoints_disjoint_allCellPoints K.inside K.skeleton)) hs hpAll
 
 theorem skeleton_ne (i j : Fin 6) (hij : i ≠ j) :
-    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
-      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) i ≠
-    (![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
-      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) j :=
-  K.skeleton.blockers_injective.ne hij
+    K.skeletonPoint i ≠ K.skeletonPoint j := by
+  rw [K.skeletonPoint_eq_blockerVector, K.skeletonPoint_eq_blockerVector]
+  exact K.skeleton.blockers_injective.ne hij
 
 theorem cellPoint_ne_T₁_side {p : P}
     (hp : p ∈ K.I₁ ∨ p ∈ K.I₂ ∨ p ∈ K.I₃) (i : Fin 3) :
@@ -543,8 +661,7 @@ theorem nonred_card₃ : K.T₃.nonredPoints.card = 3 + K.I₃.card := by
   rfl
 
 theorem skeleton_mem_outer (i : Fin 6) :
-    ((![K.skeleton.u₁, K.skeleton.u₂, K.skeleton.u₃,
-      K.skeleton.v₁, K.skeleton.v₂, K.skeleton.v₃] : Fin 6 → P) i : Point) ∈
+    (K.skeletonPoint i : Point) ∈
       triangleHull (a : Point) (b : Point) (c : Point) := by
   have ha : (a : Point) ∈ triangleHull (a : Point) (b : Point) (c : Point) :=
     vertex_mem_triangleHull _ _ _
@@ -1749,7 +1866,7 @@ theorem impossible_three_positive_full_lines
     (heSide l) hu₂w hu₂z hwz hwy hxLine hzLine
   have hcases := K.portal_three_to_one hz hzpos
     (K.T₁.nonredPoint_mem_hull (by
-      simpa only [K.T₁.coe_sideLocal] using (K.T₁.sideLocal l).property)) hr
+      simpa [K.T₁.coe_sideLocal] using (K.T₁.sideLocal l).property)) hr
   rcases hcases with hrI₃ | hru₂ | hrI₁
   · rcases hcover r hrI₃ with rfl | rfl | rfl
     · exact hexclude.1 hr
@@ -1786,7 +1903,7 @@ theorem impossible_three_negative_full_lines
     (heSide l) hu₁w hu₁z hwz hwy hxLine hzLine
   have hcases := K.portal_three_to_two hz hzneg
     (K.T₂.nonredPoint_mem_hull (by
-      simpa only [K.T₂.coe_sideLocal] using (K.T₂.sideLocal l).property)) hr
+      simpa [K.T₂.coe_sideLocal] using (K.T₂.sideLocal l).property)) hr
   rcases hcases with hrI₃ | hru₁ | hrI₂
   · rcases hcover r hrI₃ with rfl | rfl | rfl
     · exact hexclude.1 hr
@@ -2000,7 +2117,7 @@ theorem impossible_negative_portal_beam
   obtain ⟨r, hr⟩ := K.proper p (K.T₂.side i) hpSide hpiColour
   have hyHull := K.T₂.nonredPoint_mem_hull (K.T₂.sideLocal i).property
   have hcases := K.portal_three_to_two hp hpneg
-    (by simpa only [K.T₂.coe_sideLocal] using hyHull) hr
+    (by simpa [K.T₂.coe_sideLocal] using hyHull) hr
   rcases hcases with hrI₃ | hru₁ | hrI₂
   · have hrp := hunique r hrI₃
     have heq : (p : Point) = (K.T₂.side i : Point) := by
@@ -2047,7 +2164,7 @@ theorem impossible_positive_portal_beam
   obtain ⟨r, hr⟩ := K.proper p (K.T₁.side i) hpSide hpiColour
   have hyHull := K.T₁.nonredPoint_mem_hull (K.T₁.sideLocal i).property
   have hcases := K.portal_three_to_one hp hppos
-    (by simpa only [K.T₁.coe_sideLocal] using hyHull) hr
+    (by simpa [K.T₁.coe_sideLocal] using hyHull) hr
   rcases hcases with hrI₃ | hru₂ | hrI₁
   · have hrp := hunique r hrI₃
     have heq : (p : Point) = (K.T₁.side i : Point) := by
@@ -2092,7 +2209,7 @@ theorem impossible_one_in_three_central_beam
       · simpa using K.skeleton_ne 1 0 (by decide)
       · simpa using K.skeleton_ne 1 2 (by decide)
   · apply K.impossible_positive_portal_beam hp hunique hempty₁ hpos
-      (by simpa only [K.T₃_side_one, K.T₃_side_two, openSegment_symm]
+      (by simpa [K.T₃_side_one, K.T₃_side_two, openSegment_symm]
         using H.beam_between)
     · simpa using K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 0
     · simpa using K.skeleton_ne 0 1 (by decide)
@@ -2190,15 +2307,15 @@ theorem impossible_one_in_three_u₁_v₃_exception
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (by simpa using K.skeleton_ne 5 0 (by decide))
         (by simpa using K.skeleton_ne 5 3 (by decide))
-        (by simpa only [K.T₃_side_two, K.T₃_side_zero, openSegment_symm]
+        (by simpa [K.T₃_side_two, K.T₃_side_zero, openSegment_symm]
           using H.beam_between)
-        (by simpa only [openSegment_symm] using hpOn)
+        (by simpa [openSegment_symm] using hpOn)
       exact (K.skeleton_ne 0 3 (by decide) heq).elim
     · exact h
     · rw [hempty₁] at hsI₁
       simp at hsI₁
   exact K.u₂_cannot_block_both_exceptional_pairs
-    (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H.beam_between)
+    (by simpa [K.T₃_side_two, K.T₃_side_zero] using H.beam_between)
     (by simpa [hsu₂] using hs) hu₂Interior
 
 theorem impossible_one_in_three_v₃_u₂_exception
@@ -2262,7 +2379,7 @@ theorem impossible_one_in_three_v₃_u₂_exception
     simpa [hru₁] using hr
   have hv₃neg : turn (c : Point) (d : Point) (K.skeleton.v₃ : Point) < 0 := by
     have hbpos : 0 < turn (c : Point) (d : Point) (b : Point) := by
-      simpa only [turn_rotate] using K.inside.2.1
+      simpa [turn_rotate] using K.inside.2.1
     have hu₂pos := edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂
       hbpos.le (by simp) (Or.inl hbpos)
     by_contra hn
@@ -2284,15 +2401,15 @@ theorem impossible_one_in_three_v₃_u₂_exception
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (by simpa using K.skeleton_ne 5 1 (by decide))
         (by simpa using K.skeleton_ne 5 4 (by decide))
-        (by simpa only [K.T₃_side_zero, K.T₃_side_one]
+        (by simpa [K.T₃_side_zero, K.T₃_side_one]
           using H.beam_between)
-        (by simpa only [openSegment_symm] using hpOn)
+        (by simpa [openSegment_symm] using hpOn)
       exact (K.skeleton_ne 1 4 (by decide) heq).elim
     · exact h
     · rw [hempty₂] at hsI₂
       simp at hsI₂
   exact K.u₁_cannot_block_both_exceptional_pairs
-    (by simpa only [K.T₃_side_zero, K.T₃_side_one]
+    (by simpa [K.T₃_side_zero, K.T₃_side_one]
       using H.beam_between)
     (by simpa [hsu₁] using hs) hu₁Interior
 
@@ -2320,7 +2437,7 @@ theorem impossible_only_I₃_one
     · exact K.impossible_one_in_three_v₃_u₂_exception hp hunique
         hempty₁ hempty₂ hneg H
     · apply K.impossible_positive_portal_beam hp hunique hempty₁ hpos
-        (by simpa only [K.T₃_side_zero, K.T₃_side_one]
+        (by simpa [K.T₃_side_zero, K.T₃_side_one]
           using H.beam_between)
       · simpa using K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 5
       · simpa using K.skeleton_ne 5 1 (by decide)
@@ -2336,7 +2453,7 @@ theorem impossible_only_I₃_one
         hp hunique hempty₂ hneg
         (by
           rw [openSegment_symm]
-          simpa only [K.T₃_side_two, K.T₃_side_zero] using H.beam_between)
+          simpa [K.T₃_side_two, K.T₃_side_zero] using H.beam_between)
       · simpa using K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 5
       · simpa using K.skeleton_ne 5 0 (by decide)
       · intro i
@@ -2416,7 +2533,7 @@ theorem impossible_only_I₃_three
     exact turn_neg_of_between_nonpos K.skeleton.hu₁ hacd (by simp)
   have hu₂pos : 0 < turn (c : Point) (d : Point) (K.skeleton.u₂ : Point) := by
     have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-      simpa only [turn_rotate] using K.inside.2.1
+      simpa [turn_rotate] using K.inside.2.1
     exact edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂ hbcd.le (by simp)
       (Or.inl hbcd)
   have hm₀ne := K.turn_cd_ne_zero_of_mem_I₃ hm₀
@@ -2426,8 +2543,8 @@ theorem impossible_only_I₃_three
         hm₀ hm₁ hm₂ hcover₀₁₂ hempty₂ hm₀neg
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hm₀)) 5)
         (H.injective.ne (by decide))
-        (by simpa only [K.T₃_side_zero, openSegment_symm] using hcycle.1)
-        (by simpa only [K.T₃_side_two] using hcycle.2.2)
+        (by simpa [K.T₃_side_zero, openSegment_symm] using hcycle.1)
+        (by simpa [K.T₃_side_two] using hcycle.2.2)
       intro l
       fin_cases l
       · simpa using K.skeleton_ne 5 4 (by decide)
@@ -2435,7 +2552,7 @@ theorem impossible_only_I₃_three
       · simpa using K.skeleton_ne 5 2 (by decide)
     · have hm₂pos : 0 < turn (c : Point) (d : Point) (H.mate 2 : Point) :=
         turn_pos_of_right_of_positive_between_nonpos
-          (by simpa only [K.T₃_side_two] using hcycle.2.2)
+          (by simpa [K.T₃_side_two] using hcycle.2.2)
           hu₁neg.le hm₀pos
       have hcover₂₀₁ : ∀ r : P, r ∈ K.I₃ →
           r = H.mate 2 ∨ r = H.mate 0 ∨ r = H.mate 1 := by
@@ -2448,8 +2565,8 @@ theorem impossible_only_I₃_three
         hm₂ hm₀ hm₁ hcover₂₀₁ hempty₁ hm₂pos
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hm₂)) 0)
         (H.injective.ne (by decide))
-        (by simpa only [K.T₃_side_two, openSegment_symm] using hcycle.2.2)
-        (by simpa only [K.T₃_side_one] using hcycle.2.1)
+        (by simpa [K.T₃_side_two, openSegment_symm] using hcycle.2.2)
+        (by simpa [K.T₃_side_one] using hcycle.2.1)
       intro l
       fin_cases l
       · simpa using K.skeleton_ne 0 3 (by decide)
@@ -2458,7 +2575,7 @@ theorem impossible_only_I₃_three
   · rcases lt_or_gt_of_ne hm₀ne with hm₀neg | hm₀pos
     · have hm₁neg : turn (c : Point) (d : Point) (H.mate 1 : Point) < 0 :=
         turn_neg_of_right_of_negative_between_nonneg
-          (by simpa only [K.T₃_side_one] using hcycle.2.1)
+          (by simpa [K.T₃_side_one] using hcycle.2.1)
           hu₂pos.le hm₀neg
       have hcover₁₀₂ : ∀ r : P, r ∈ K.I₃ →
           r = H.mate 1 ∨ r = H.mate 0 ∨ r = H.mate 2 := by
@@ -2471,8 +2588,8 @@ theorem impossible_only_I₃_three
         hm₁ hm₀ hm₂ hcover₁₀₂ hempty₂ hm₁neg
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hm₁)) 1)
         (H.injective.ne (by decide))
-        (by simpa only [K.T₃_side_one, openSegment_symm] using hcycle.2.1)
-        (by simpa only [K.T₃_side_two] using hcycle.2.2)
+        (by simpa [K.T₃_side_one, openSegment_symm] using hcycle.2.1)
+        (by simpa [K.T₃_side_two] using hcycle.2.2)
       intro l
       fin_cases l
       · simpa using K.skeleton_ne 1 4 (by decide)
@@ -2489,8 +2606,8 @@ theorem impossible_only_I₃_three
         hm₀ hm₂ hm₁ hcover₀₂₁ hempty₁ hm₀pos
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hm₀)) 5)
         (H.injective.ne (by decide))
-        (by simpa only [K.T₃_side_zero, openSegment_symm] using hcycle.1)
-        (by simpa only [K.T₃_side_one] using hcycle.2.1)
+        (by simpa [K.T₃_side_zero, openSegment_symm] using hcycle.1)
+        (by simpa [K.T₃_side_one] using hcycle.2.1)
       intro l
       fin_cases l
       · simpa using K.skeleton_ne 5 3 (by decide)
@@ -2542,13 +2659,13 @@ theorem impossible_one_one_beams_A_D
     (K.skeleton_ne 0 5 (by decide)) hu₁y hv₃y
     (K.skeleton_mem_outer 4) (K.skeleton_mem_outer 0)
     (K.skeleton_mem_outer 5) hyHull
-    (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
+    (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
     (by
       calc
         colour K.skeleton.v₃ = colour K.skeleton.u₁ := by
-          simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
+          simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
         _ = colour K.skeleton.v₂ := by
-          simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
+          simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
     (by simpa [y] using hcolour.symm)
     (K.skeleton.blocker_colour_ne 4)
     (K.otherColourBound _ (K.skeleton.blocker_colour_ne 4))
@@ -2563,15 +2680,15 @@ theorem impossible_one_one_beams_C_F
   have hcolour : colour K.skeleton.u₂ = colour K.skeleton.u₃ := by
     calc
       colour K.skeleton.u₂ = colour K.skeleton.u₁ := by
-        simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
+        simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
   have hne : K.skeleton.u₂ ≠ K.skeleton.u₃ := K.skeleton_ne 1 2 (by decide)
   obtain ⟨r, hr⟩ := K.proper K.skeleton.u₂ K.skeleton.u₃ hne hcolour
   have hrStrict : StrictlyInsideTriangle (b : Point) (c : Point) (d : Point)
       (r : Point) := K.T₁.strict_of_between_distinct_sides (i := 2) (j := 1)
         (by decide) (by
-          simpa only [K.T₁_side_two, K.T₁_side_one] using hr)
+          simpa [K.T₁_side_two, K.T₁_side_one] using hr)
   have hrI : r ∈ K.I₁ := K.mem_I₁.mpr hrStrict
   rw [hempty₁] at hrI
   simp at hrI
@@ -2596,10 +2713,10 @@ theorem impossible_one_one_beams_B_E
         simp only [K.T₃_side_two]
       _ = colour K.skeleton.u₂ := h.symm
       _ = colour K.skeleton.v₃ := by
-        simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+        simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
       _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero]
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
   have hpu₃ : colour p = colour K.skeleton.u₃ := by
     have hexhaust := fin4_eq_one_of_three_of_avoid
       (K.interior_colour_ne_red₃ p (K.mem_I₃.mp hp))
@@ -2618,7 +2735,7 @@ theorem impossible_one_one_beams_B_E
   have hpne := K.turn_cd_ne_zero_of_mem_I₃ hp
   rcases lt_or_gt_of_ne hpne with hpneg | hppos
   · have hv₂u₃ : colour K.skeleton.v₂ = colour K.skeleton.u₃ := by
-      simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour.symm
+      simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour.symm
     obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
     obtain ⟨s, hs⟩ := K.proper p K.skeleton.v₂ hp_v₂
       (hpu₃.trans hv₂u₃.symm)
@@ -2635,9 +2752,9 @@ theorem impossible_one_one_beams_B_E
       · have hrw := hunique₂ r hrI₂
         have hcommon := other_endpoint_eq_of_common_blocker K.hfour
           (by simpa using K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-          (by simpa only [K.T₂_side_two, K.T₂_side_zero, hrw]
+          (by simpa [K.T₂_side_two, K.T₂_side_zero, hrw]
             using H₂.beam_between)
-          (by simpa only [openSegment_symm, hrw] using hr)
+          (by simpa [openSegment_symm, hrw] using hr)
         exact (hp_v₂ hcommon.symm).elim
     have hsu₁ : s = K.skeleton.u₁ := by
       rcases hsCases with hsI₃ | h | hsI₂
@@ -2650,9 +2767,9 @@ theorem impossible_one_one_beams_B_E
           (by simpa using K.skeleton_ne 4 2 (by decide)) hp_v₂.symm
           (by
             rw [openSegment_symm]
-            simpa only [K.T₂_side_two, K.T₂_side_zero, hsw]
+            simpa [K.T₂_side_two, K.T₂_side_zero, hsw]
               using H₂.beam_between)
-          (by simpa only [openSegment_symm, hsw] using hs)
+          (by simpa [openSegment_symm, hsw] using hs)
         exact (hp_u₃ hcommon.symm).elim
     have heq := other_endpoint_eq_of_common_blocker K.hfour hp_u₃ hp_v₂
       (by simpa [hru₁] using hr) (by simpa [hsu₁] using hs)
@@ -2673,7 +2790,7 @@ theorem impossible_one_one_beams_B_E
         (by simpa using K.skeleton_ne 5 2 (by decide))
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 1).symm
         (by simpa using K.skeleton_ne 1 2 (by decide))
-        (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+        (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
       exact hcross.2 huBetween
     · rw [hempty₁] at hrI₁
       simp at hrI₁
@@ -2687,7 +2804,7 @@ theorem impossible_one_one_beams_B_F
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 2 0 1)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 1 2 0) : False := by
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
   have hu₃w : colour K.skeleton.u₃ ≠ colour w :=
     (H₂.p_colour_ne 2).symm
   have hwu₁ : colour w ≠ colour K.skeleton.u₁ := H₂.p_colour_ne 1
@@ -2715,14 +2832,14 @@ theorem impossible_one_one_beams_B_F
           (by simpa using K.skeleton_ne 1 2 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 0).symm
           (by simpa using K.skeleton_ne 0 2 (by decide))
-          (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+          (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
         exact hcross.2 (by simpa [hru₁] using hr)
       · have hrw := hunique₂ r hrI₂
         have hcommon := other_endpoint_eq_of_common_blocker K.hfour
           (by simpa using K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-          (by simpa only [K.T₂_side_two, K.T₂_side_zero, hrw]
+          (by simpa [K.T₂_side_two, K.T₂_side_zero, hrw]
             using H₂.beam_between)
-          (by simpa only [openSegment_symm, hrw] using hr)
+          (by simpa [openSegment_symm, hrw] using hr)
         exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 4 hcommon.symm).elim
     · have hpw : p ≠ w := by
         intro h
@@ -2740,14 +2857,14 @@ theorem impossible_one_one_beams_B_F
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 0).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
-          (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+          (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
         exact hcross.2 (by simpa [hru₁] using hr)
       · have hrw := hunique₂ r hrI₂
         exact hpw (by simpa [hrw] using hr)
   · apply K.impossible_positive_portal_beam (e := K.skeleton.u₁)
         hp hunique₃ hempty₁ hppos
     · rw [openSegment_symm]
-      simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between
+      simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between
     · simpa using K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 0
     · simpa using K.skeleton_ne 0 1 (by decide)
     · intro l
@@ -2767,7 +2884,7 @@ theorem impossible_one_one_beams_B_D
   have hpair₁ := K.M₁.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₁ (by simpa [hempty₁]))
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne.symm
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne.symm
   have hu₁u₂ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₂ := by
     intro h
     apply H₃.remaining_colour_ne
@@ -2800,7 +2917,7 @@ theorem impossible_one_one_beams_B_D
     · calc
         colour K.skeleton.v₁ = colour K.skeleton.u₁ := h
         _ = colour K.skeleton.v₃ := by
-          simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
+          simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
     · exact (hpair₁ (i := 0) (j := 2) (by decide) (by simpa using h)).elim
   have hp_u₃ : p ≠ K.skeleton.u₃ :=
     K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 2
@@ -2809,7 +2926,7 @@ theorem impossible_one_one_beams_B_D
   have hpne := K.turn_cd_ne_zero_of_mem_I₃ hp
   rcases lt_or_gt_of_ne hpne with hpneg | hppos
   · have hv₂u₃ : colour K.skeleton.v₂ = colour K.skeleton.u₃ := by
-      simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour.symm
+      simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour.symm
     obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
     obtain ⟨s, hs⟩ := K.proper p K.skeleton.v₂ hp_v₂
       (hpu₃.trans hv₂u₃.symm)
@@ -2829,17 +2946,17 @@ theorem impossible_one_one_beams_B_D
         rcases hy with rfl | rfl
         · have heq := other_endpoint_eq_of_common_blocker K.hfour
               (by simpa using K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-              (by simpa only [K.T₂_side_two, K.T₂_side_zero, htw]
+              (by simpa [K.T₂_side_two, K.T₂_side_zero, htw]
                 using H₂.beam_between)
-              (by simpa only [openSegment_symm, htw] using ht)
+              (by simpa [openSegment_symm, htw] using ht)
           exact (hp_v₂ heq.symm).elim
         · have heq := other_endpoint_eq_of_common_blocker K.hfour
               (by simpa using K.skeleton_ne 4 2 (by decide)) hp_v₂.symm
               (by
                 rw [openSegment_symm]
-                simpa only [K.T₂_side_two, K.T₂_side_zero, htw]
+                simpa [K.T₂_side_two, K.T₂_side_zero, htw]
                   using H₂.beam_between)
-              (by simpa only [openSegment_symm, htw] using ht)
+              (by simpa [openSegment_symm, htw] using ht)
           exact (hp_u₃ heq.symm).elim
     have hru₁ := forcePortal hr (Or.inl rfl)
     have hsu₁ := forcePortal hs (Or.inr rfl)
@@ -2869,7 +2986,7 @@ theorem impossible_one_one_beams_B_D
           linarith
         exact turn_neg_of_between_nonpos K.skeleton.hu₁ hacd (by simp)
       exact turn_pos_of_right_of_positive_between_nonpos
-        (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+        (by simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
         hu₁neg.le hppos
     obtain ⟨s, hs⟩ := K.proper K.skeleton.v₁ K.skeleton.v₃
       (K.skeleton_ne 3 5 (by decide)) hv₁v₃
@@ -2885,14 +3002,14 @@ theorem impossible_one_one_beams_B_D
           (by simpa using K.skeleton_ne 5 3 (by decide))
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
-          (by simpa only [openSegment_symm] using hpOn)
+            simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+          (by simpa [openSegment_symm] using hpOn)
         exact (K.skeleton_ne 0 3 (by decide) heq).elim
       · exact h
       · rw [hempty₁] at hsI₁
         simp at hsI₁
     exact K.u₂_cannot_block_both_exceptional_pairs
-      (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+      (by simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
       (by simpa [hsu₂] using hs) hu₂Interior
 
 /-- Beam pair `(u₁u₃, v₃u₁)`.  The only difficult subcase reduces to
@@ -2908,7 +3025,7 @@ theorem impossible_one_one_beams_C_D
   have hpair₁ := K.M₁.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₁ (by simpa [hempty₁]))
   have hu₁u₂ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₂ := by
-    simpa only [K.T₃_side_two, K.T₃_side_one] using H₃.remaining_colour_ne.symm
+    simpa [K.T₃_side_two, K.T₃_side_one] using H₃.remaining_colour_ne.symm
   have hu₂v₁ : colour K.skeleton.u₂ ≠ colour K.skeleton.v₁ := by
     exact hpair₁ (i := 2) (j := 0) (by decide)
   have hv₁u₁ : colour K.skeleton.v₁ ≠ colour K.skeleton.u₁ := by
@@ -2918,7 +3035,7 @@ theorem impossible_one_one_beams_C_D
       colour (K.T₁.side 0) = colour K.skeleton.v₁ := by simp only [K.T₁_side_zero]
       _ = colour K.skeleton.u₁ := h
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour (K.T₁.side 1) := by simp only [K.T₁_side_one]
   have hwCases := fin4_eq_one_of_three_of_avoid
     (K.interior_colour_ne_red₂ w (K.mem_I₂.mp hw))
@@ -2941,24 +3058,24 @@ theorem impossible_one_one_beams_C_D
   · obtain ⟨r, hr⟩ := K.proper w K.skeleton.u₂ hw_u₂ hwu₂
     have hrd := K.blocker_from_C_beam_to_u₂_eq_center hw hp hunique₂ hunique₃
       hempty₁
-      (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+      (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
       (by
         apply turn_neg_of_between_nonpos
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+            simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
           K.v₃_spoke_side_neg
         simp)
       hr
     have hb_u₂ : b ≠ K.skeleton.u₂ := by
       intro e
       have hm : (b : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₂
+        simpa [e] using K.skeleton.hu₂
       exact K.hbd (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
     have hd_u₂ : d ≠ K.skeleton.u₂ := by
       intro e
       have hm : (d : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₂
+        simpa [e] using K.skeleton.hu₂
       exact K.hbd (Subtype.ext
         ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
     have hb_w : b ≠ w := by
@@ -2973,11 +3090,11 @@ theorem impossible_one_one_beams_C_D
         (congrArg Subtype.val e.symm)
     have hbd := first_pair_points_do_not_block_second K.hfour K.hbd hw_u₂.symm
       hb_u₂ hb_w hd_u₂ hd_w K.skeleton.hu₂
-    exact hbd.2 (by simpa only [openSegment_symm, hrd] using hr)
+    exact hbd.2 (by simpa [openSegment_symm, hrd] using hr)
   · have hpu₁ : colour p ≠ colour K.skeleton.u₁ := by
-      simpa only [K.T₃_side_two] using H₃.p_colour_ne 2
+      simpa [K.T₃_side_two] using H₃.p_colour_ne 2
     have hpu₂ : colour p ≠ colour K.skeleton.u₂ := by
-      simpa only [K.T₃_side_one] using H₃.p_colour_ne 1
+      simpa [K.T₃_side_one] using H₃.p_colour_ne 1
     have hpv₁ : colour p = colour K.skeleton.v₁ := by
       have hpCases := fin4_eq_one_of_three_of_avoid
         (K.interior_colour_ne_red₃ p (K.mem_I₃.mp hp))
@@ -3003,7 +3120,7 @@ theorem impossible_one_one_beams_C_D
       (K.skeleton_ne 0 3 (by decide))
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
       (K.skeleton_ne 2 3 (by decide))
-      (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+      (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
     have hrCases : r = d ∨ r = K.skeleton.u₂ ∨ r = p := by
       have hrOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
           (r : Point) := strict_outer_of_between_strict_hull
@@ -3046,7 +3163,7 @@ theorem impossible_one_one_beams_C_D
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 0).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 2).symm
-      (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+      (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
     have hDpw := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 5 0 (by decide)) hwp.symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 5).symm
@@ -3055,7 +3172,7 @@ theorem impossible_one_one_beams_C_D
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
       (by
         rw [openSegment_symm]
-        simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+        simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
     have hsCases : s = d ∨ s = K.skeleton.u₂ := by
       have hsOuter := strictlyInside_between_inside_points hwOuter hpOuter hs
       have hsHull := strictlyInsideTriangle_mem_triangleHull hsOuter
@@ -3080,7 +3197,7 @@ theorem impossible_one_one_beams_C_D
         rw [turn_swap_first] at hz
         linarith [hsOuter.2.2, hz]
       · subst s
-        exact (hDpw.1 (by simpa only [openSegment_symm] using hs)).elim
+        exact (hDpw.1 (by simpa [openSegment_symm] using hs)).elim
       · have hsI : s ∈ K.I₁ := K.mem_I₁.mpr hs₁
         rw [hempty₁] at hsI
         simp at hsI
@@ -3097,10 +3214,10 @@ theorem impossible_one_one_beams_C_D
         rw [turn_swap_last]
         linarith [K.inside.2.1]
       exact turn_neg_of_between_nonpos
-        (by simpa only [openSegment_symm] using K.skeleton.hv₁)
+        (by simpa [openSegment_symm] using K.skeleton.hv₁)
         hbdc (by simp)
     have hbdA : 0 < turn (b : Point) (d : Point) (a : Point) := by
-      simpa only [turn_rotate] using K.inside.1
+      simpa [turn_rotate] using K.inside.1
     have hv₃pos : 0 < turn (b : Point) (d : Point)
         (K.skeleton.v₃ : Point) :=
       edgeTurn_pos_of_mem_openSegment K.skeleton.hv₃ hbdA.le (by simp)
@@ -3113,57 +3230,57 @@ theorem impossible_one_one_beams_C_D
       edgeTurn_pos_of_mem_openSegment
         (by
           rw [openSegment_symm]
-          simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+          simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
         hv₃pos.le hu₁pos.le (Or.inl hv₃pos)
     have hu₂zero : turn (b : Point) (d : Point) (K.skeleton.u₂ : Point) = 0 :=
       turn_eq_zero_of_between K.skeleton.hu₂
     have hdzero : turn (b : Point) (d : Point) (d : Point) = 0 := by simp
     rcases hrCases with hrd | hru₂ | hrp
     · have hrd' : (d : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hrd] using hr
+          (w : Point) (K.skeleton.v₁ : Point) := by simpa [hrd] using hr
       rcases hsCases with hsd | hsu₂
       · have hsd' : (d : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hsd] using hs
+          simpa [hsd] using hs
         have heq := other_endpoint_eq_of_common_blocker K.hfour hw_v₁ hwp hrd' hsd'
         exact (hp_v₁ heq.symm).elim
       · have hsu₂' : (K.skeleton.u₂ : Point) ∈
-            openSegment ℝ (w : Point) (p : Point) := by simpa only [hsu₂] using hs
+            openSegment ℝ (w : Point) (p : Point) := by simpa [hsu₂] using hs
         have hwpos := turn_pos_beyond_zero_from_neg
-          (by simpa only [openSegment_symm] using hrd') hv₁neg hdzero
+          (by simpa [openSegment_symm] using hrd') hv₁neg hdzero
         have hwneg := turn_neg_beyond_zero_from_pos
-          (by simpa only [openSegment_symm] using hsu₂') hppos hu₂zero
+          (by simpa [openSegment_symm] using hsu₂') hppos hu₂zero
         linarith
     · have hru₂' : (K.skeleton.u₂ : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hru₂] using hr
+          (w : Point) (K.skeleton.v₁ : Point) := by simpa [hru₂] using hr
       rcases hsCases with hsd | hsu₂
       · have hsd' : (d : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hsd] using hs
+          simpa [hsd] using hs
         have hwpos := turn_pos_beyond_zero_from_neg
-          (by simpa only [openSegment_symm] using hru₂') hv₁neg hu₂zero
+          (by simpa [openSegment_symm] using hru₂') hv₁neg hu₂zero
         have hwneg := turn_neg_beyond_zero_from_pos
-          (by simpa only [openSegment_symm] using hsd') hppos hdzero
+          (by simpa [openSegment_symm] using hsd') hppos hdzero
         linarith
       · have hsu₂' : (K.skeleton.u₂ : Point) ∈
-            openSegment ℝ (w : Point) (p : Point) := by simpa only [hsu₂] using hs
+            openSegment ℝ (w : Point) (p : Point) := by simpa [hsu₂] using hs
         have heq := other_endpoint_eq_of_common_blocker K.hfour hw_v₁ hwp
           hru₂' hsu₂'
         exact (hp_v₁ heq.symm).elim
     · have hpBetween : (p : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hrp] using hr
+          (w : Point) (K.skeleton.v₁ : Point) := by simpa [hrp] using hr
       have hsNested := openSegment_left_nested hs hpBetween
       have hsZero := turn_eq_zero_of_between hsNested
       rcases point_eq_of_on_full_line K.hfour hw_v₁ hpBetween hsZero with
           hsw | hsv₁ | hsp
       · have hm : (w : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hsw] using hs
+          simpa [hsw] using hs
         exact (hwp (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
       · have hm : (K.skeleton.v₁ : Point) ∈
-            openSegment ℝ (w : Point) (p : Point) := by simpa only [hsv₁] using hs
+            openSegment ℝ (w : Point) (p : Point) := by simpa [hsv₁] using hs
         exact not_two_mutual_openSegments (Subtype.val_injective.ne hw_v₁)
           ⟨hpBetween, hm⟩
       · have hm : (p : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hsp] using hs
+          simpa [hsp] using hs
         exact (hwp (Subtype.ext
           ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
 
@@ -3184,7 +3301,7 @@ theorem impossible_one_one_beams_A_F
       colour (K.T₂.side 2) = colour K.skeleton.u₃ := by simp only [K.T₂_side_two]
       _ = colour K.skeleton.u₁ := h.symm
       _ = colour K.skeleton.v₂ := by
-        simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
+        simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
       _ = colour (K.T₂.side 0) := by simp only [K.T₂_side_zero]
   have hu₃v₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.v₁ := by
     exact hpair₁ (i := 1) (j := 0) (by decide)
@@ -3195,7 +3312,7 @@ theorem impossible_one_one_beams_A_F
       colour (K.T₁.side 0) = colour K.skeleton.v₁ := by simp only [K.T₁_side_zero]
       _ = colour K.skeleton.u₁ := h
       _ = colour K.skeleton.u₂ := by
-        simpa only [K.T₃_side_two, K.T₃_side_one] using H₃.beam_colour.symm
+        simpa [K.T₃_side_two, K.T₃_side_one] using H₃.beam_colour.symm
       _ = colour (K.T₁.side 2) := by simp only [K.T₁_side_two]
   have hpCases := fin4_eq_one_of_three_of_avoid
     (K.interior_colour_ne_red₃ p (K.mem_I₃.mp hp))
@@ -3218,20 +3335,20 @@ theorem impossible_one_one_beams_A_F
   · obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
     have hrd := K.blocker_from_F_beam_to_u₃_eq_center hw hp hunique₂ hunique₃
       hempty₁
-      (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+      (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
       (by
         rw [openSegment_symm]
-        simpa only [K.T₃_side_two, K.T₃_side_one] using H₃.beam_between)
+        simpa [K.T₃_side_two, K.T₃_side_one] using H₃.beam_between)
       hr
     have hc_u₃ : c ≠ K.skeleton.u₃ := by
       intro e
       have hm : (c : Point) ∈ openSegment ℝ (c : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₃
+        simpa [e] using K.skeleton.hu₃
       exact K.hcd (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
     have hd_u₃ : d ≠ K.skeleton.u₃ := by
       intro e
       have hm : (d : Point) ∈ openSegment ℝ (c : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₃
+        simpa [e] using K.skeleton.hu₃
       exact K.hcd (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
     have hc_p : c ≠ p := by
       have hpOuter := strict_cell_strict_outer K.inside
@@ -3245,11 +3362,11 @@ theorem impossible_one_one_beams_A_F
         (congrArg Subtype.val e.symm)
     have hcd := first_pair_points_do_not_block_second K.hfour K.hcd hp_u₃.symm
       hc_u₃ hc_p hd_u₃ hd_p K.skeleton.hu₃
-    exact hcd.2 (by simpa only [openSegment_symm, hrd] using hr)
+    exact hcd.2 (by simpa [openSegment_symm, hrd] using hr)
   · have hwu₁ : colour w ≠ colour K.skeleton.u₁ := by
-      simpa only [K.T₂_side_one] using H₂.p_colour_ne 1
+      simpa [K.T₂_side_one] using H₂.p_colour_ne 1
     have hwu₃ : colour w ≠ colour K.skeleton.u₃ := by
-      simpa only [K.T₂_side_two] using H₂.p_colour_ne 2
+      simpa [K.T₂_side_two] using H₂.p_colour_ne 2
     have hwv₁ : colour w = colour K.skeleton.v₁ := by
       have hwCases := fin4_eq_one_of_three_of_avoid
         (K.interior_colour_ne_red₂ w (K.mem_I₂.mp hw))
@@ -3277,7 +3394,7 @@ theorem impossible_one_one_beams_A_F
       (K.skeleton_ne 1 3 (by decide))
       (by
         rw [openSegment_symm]
-        simpa only [K.T₃_side_two, K.T₃_side_one] using H₃.beam_between)
+        simpa [K.T₃_side_two, K.T₃_side_one] using H₃.beam_between)
     have hrCases : r = d ∨ r = K.skeleton.u₃ ∨ r = w := by
       rcases K.strict_outer_chord_cases hpOuter (K.skeleton_mem_outer 3) hr with
         hrd | hru₁ | hru₂ | hru₃ | hr₁ | hr₂ | hr₃
@@ -3289,7 +3406,7 @@ theorem impossible_one_one_beams_A_F
       · exact Or.inr (Or.inr (hunique₂ r hr₂))
       · have hrp := hunique₃ r hr₃
         have hm : (p : Point) ∈ openSegment ℝ
-            (p : Point) (K.skeleton.v₁ : Point) := by simpa only [hrp] using hr
+            (p : Point) (K.skeleton.v₁ : Point) := by simpa [hrp] using hr
         exact (hp_v₁ (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
     have hFpw := first_pair_points_do_not_block_second K.hfour
@@ -3300,7 +3417,7 @@ theorem impossible_one_one_beams_A_F
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1).symm
       (by
         rw [openSegment_symm]
-        simpa only [K.T₃_side_two, K.T₃_side_one] using H₃.beam_between)
+        simpa [K.T₃_side_two, K.T₃_side_one] using H₃.beam_between)
     have hsCases : s = d ∨ s = K.skeleton.u₃ := by
       rcases K.strict_outer_chord_cases hpOuter
           (strictlyInsideTriangle_mem_triangleHull hwOuter) hs with
@@ -3312,17 +3429,17 @@ theorem impossible_one_one_beams_A_F
       · rw [hempty₁] at hs₁; simp at hs₁
       · have hsw := hunique₂ s hs₂
         have hm : (w : Point) ∈ openSegment ℝ (p : Point) (w : Point) := by
-          simpa only [hsw] using hs
+          simpa [hsw] using hs
         exact (hpw (Subtype.ext
           ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
       · have hsp := hunique₃ s hs₃
         have hm : (p : Point) ∈ openSegment ℝ (p : Point) (w : Point) := by
-          simpa only [hsp] using hs
+          simpa [hsp] using hs
         exact (hpw (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
     have hv₁pos : 0 < turn (c : Point) (d : Point) (K.skeleton.v₁ : Point) := by
       have hcdb : 0 < turn (c : Point) (d : Point) (b : Point) := by
-        simpa only [turn_rotate] using K.inside.2.1
+        simpa [turn_rotate] using K.inside.2.1
       exact edgeTurn_pos_of_mem_openSegment K.skeleton.hv₁
         hcdb.le (by simp) (Or.inl hcdb)
     have hcda : turn (c : Point) (d : Point) (a : Point) < 0 := by
@@ -3334,21 +3451,21 @@ theorem impossible_one_one_beams_A_F
       turn_neg_of_between_nonpos K.skeleton.hu₁ hcda (by simp)
     have hwneg : turn (c : Point) (d : Point) (w : Point) < 0 :=
       turn_neg_of_between_nonpos
-        (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+        (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
         hv₂neg hu₁neg.le
     have hu₃zero : turn (c : Point) (d : Point) (K.skeleton.u₃ : Point) = 0 :=
       turn_eq_zero_of_between K.skeleton.hu₃
     have hdzero : turn (c : Point) (d : Point) (d : Point) = 0 := by simp
     rcases hrCases with hrd | hru₃ | hrw
     · have hrd' : (d : Point) ∈ openSegment ℝ
-          (p : Point) (K.skeleton.v₁ : Point) := by simpa only [hrd] using hr
+          (p : Point) (K.skeleton.v₁ : Point) := by simpa [hrd] using hr
       rcases hsCases with hsd | hsu₃
       · have hsd' : (d : Point) ∈ openSegment ℝ (p : Point) (w : Point) := by
-          simpa only [hsd] using hs
+          simpa [hsd] using hs
         have heq := other_endpoint_eq_of_common_blocker K.hfour hp_v₁ hpw hrd' hsd'
         exact (hw_v₁ heq.symm).elim
       · have hsu₃' : (K.skeleton.u₃ : Point) ∈
-            openSegment ℝ (p : Point) (w : Point) := by simpa only [hsu₃] using hs
+            openSegment ℝ (p : Point) (w : Point) := by simpa [hsu₃] using hs
         have hpneg := turn_neg_beyond_zero_from_pos
           (x := (K.skeleton.v₁ : Point)) (z := (d : Point)) (y := (p : Point))
           (by rw [openSegment_symm]; exact hrd') hv₁pos hdzero
@@ -3357,10 +3474,10 @@ theorem impossible_one_one_beams_A_F
           (by rw [openSegment_symm]; exact hsu₃') hwneg hu₃zero
         linarith
     · have hru₃' : (K.skeleton.u₃ : Point) ∈ openSegment ℝ
-          (p : Point) (K.skeleton.v₁ : Point) := by simpa only [hru₃] using hr
+          (p : Point) (K.skeleton.v₁ : Point) := by simpa [hru₃] using hr
       rcases hsCases with hsd | hsu₃
       · have hsd' : (d : Point) ∈ openSegment ℝ (p : Point) (w : Point) := by
-          simpa only [hsd] using hs
+          simpa [hsd] using hs
         have hpneg := turn_neg_beyond_zero_from_pos
           (x := (K.skeleton.v₁ : Point)) (z := (K.skeleton.u₃ : Point))
           (y := (p : Point)) (by rw [openSegment_symm]; exact hru₃')
@@ -3370,26 +3487,26 @@ theorem impossible_one_one_beams_A_F
           (by rw [openSegment_symm]; exact hsd') hwneg hdzero
         linarith
       · have hsu₃' : (K.skeleton.u₃ : Point) ∈
-            openSegment ℝ (p : Point) (w : Point) := by simpa only [hsu₃] using hs
+            openSegment ℝ (p : Point) (w : Point) := by simpa [hsu₃] using hs
         have heq := other_endpoint_eq_of_common_blocker K.hfour hp_v₁ hpw
           hru₃' hsu₃'
         exact (hw_v₁ heq.symm).elim
     · have hwBetween : (w : Point) ∈ openSegment ℝ
-          (p : Point) (K.skeleton.v₁ : Point) := by simpa only [hrw] using hr
+          (p : Point) (K.skeleton.v₁ : Point) := by simpa [hrw] using hr
       have hsNested := openSegment_left_nested hs hwBetween
       have hsZero := turn_eq_zero_of_between hsNested
       rcases point_eq_of_on_full_line K.hfour hp_v₁ hwBetween hsZero with
           hsp | hsv₁ | hsw
       · have hm : (p : Point) ∈ openSegment ℝ (p : Point) (w : Point) := by
-          simpa only [hsp] using hs
+          simpa [hsp] using hs
         exact (hpw (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
       · have hm : (K.skeleton.v₁ : Point) ∈
-            openSegment ℝ (p : Point) (w : Point) := by simpa only [hsv₁] using hs
+            openSegment ℝ (p : Point) (w : Point) := by simpa [hsv₁] using hs
         exact not_two_mutual_openSegments (Subtype.val_injective.ne hp_v₁)
           ⟨hwBetween, hm⟩
       · have hm : (w : Point) ∈ openSegment ℝ (p : Point) (w : Point) := by
-          simpa only [hsw] using hs
+          simpa [hsw] using hs
         exact (hpw (Subtype.ext
           ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
 
@@ -3409,7 +3526,7 @@ theorem impossible_one_one_beams_C_E
     calc
       colour (K.T₁.side 1) = colour K.skeleton.u₃ := by simp only [K.T₁_side_one]
       _ = colour K.skeleton.u₁ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour.symm
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour.symm
       _ = colour K.skeleton.u₂ := h
       _ = colour (K.T₁.side 2) := by simp only [K.T₁_side_two]
   have hu₂v₁ : colour K.skeleton.u₂ ≠ colour K.skeleton.v₁ :=
@@ -3421,7 +3538,7 @@ theorem impossible_one_one_beams_C_E
       colour (K.T₁.side 0) = colour K.skeleton.v₁ := by simp only [K.T₁_side_zero]
       _ = colour K.skeleton.u₁ := h
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour (K.T₁.side 1) := by simp only [K.T₁_side_one]
   have hwCases := fin4_eq_one_of_three_of_avoid
     (K.interior_colour_ne_red₂ w (K.mem_I₂.mp hw))
@@ -3445,21 +3562,21 @@ theorem impossible_one_one_beams_C_E
     have hpNeg : turn (K.skeleton.u₁ : Point) (K.skeleton.u₂ : Point)
         (p : Point) < 0 :=
       turn_neg_of_between_nonpos
-        (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+        (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
         K.v₃_spoke_side_neg (by simp)
     have hrd := K.blocker_from_C_beam_to_u₂_eq_center hw hp hunique₂ hunique₃
       hempty₁
-      (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+      (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
       hpNeg hr
     have hb_u₂ : b ≠ K.skeleton.u₂ := by
       intro e
       have hm : (b : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₂
+        simpa [e] using K.skeleton.hu₂
       exact K.hbd (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
     have hd_u₂ : d ≠ K.skeleton.u₂ := by
       intro e
       have hm : (d : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₂
+        simpa [e] using K.skeleton.hu₂
       exact K.hbd (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
     have hb_w : b ≠ w := by
       have hwOuter := strict_cell_strict_outer K.inside
@@ -3473,11 +3590,11 @@ theorem impossible_one_one_beams_C_E
         (congrArg Subtype.val e.symm)
     have hbd := first_pair_points_do_not_block_second K.hfour K.hbd hw_u₂.symm
       hb_u₂ hb_w hd_u₂ hd_w K.skeleton.hu₂
-    exact hbd.2 (by simpa only [openSegment_symm, hrd] using hr)
+    exact hbd.2 (by simpa [openSegment_symm, hrd] using hr)
   · have hpu₁ : colour p ≠ colour K.skeleton.u₁ := by
-      simpa only [K.T₃_side_two] using H₃.p_colour_ne 2
+      simpa [K.T₃_side_two] using H₃.p_colour_ne 2
     have hpu₂ : colour p ≠ colour K.skeleton.u₂ := by
-      simpa only [K.T₃_side_one] using H₃.p_colour_ne 1
+      simpa [K.T₃_side_one] using H₃.p_colour_ne 1
     have hpv₁ : colour p = colour K.skeleton.v₁ := by
       have hpCases := fin4_eq_one_of_three_of_avoid
         (K.interior_colour_ne_red₃ p (K.mem_I₃.mp hp))
@@ -3503,7 +3620,7 @@ theorem impossible_one_one_beams_C_E
       (K.skeleton_ne 0 3 (by decide))
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
       (K.skeleton_ne 2 3 (by decide))
-      (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+      (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
     have hrCases : r = d ∨ r = K.skeleton.u₂ ∨ r = p := by
       rcases K.strict_outer_chord_cases hwOuter (K.skeleton_mem_outer 3) hr with
         hrd | hru₁ | hru₂ | hru₃ | hr₁ | hr₂ | hr₃
@@ -3514,7 +3631,7 @@ theorem impossible_one_one_beams_C_E
       · rw [hempty₁] at hr₁; simp at hr₁
       · have hrw := hunique₂ r hr₂
         have hm : (w : Point) ∈ openSegment ℝ
-            (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hrw] using hr
+            (w : Point) (K.skeleton.v₁ : Point) := by simpa [hrw] using hr
         exact (hw_v₁ (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
       · exact Or.inr (Or.inr (hunique₃ r hr₃))
@@ -3524,14 +3641,14 @@ theorem impossible_one_one_beams_C_E
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 0).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 2).symm
-      (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+      (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
     have hEpw := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 5 1 (by decide)) hwp.symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 5).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 5).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inr hp)) 1).symm
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1).symm
-      (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+      (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
     have hsd : s = d := by
       rcases K.strict_outer_chord_cases hwOuter
           (strictlyInsideTriangle_mem_triangleHull hpOuter) hs with
@@ -3539,43 +3656,43 @@ theorem impossible_one_one_beams_C_E
       · exact hsd
       · subst s; exact (hCwp.1 hs).elim
       · subst s
-        exact (hEpw.2 (by simpa only [openSegment_symm] using hs)).elim
+        exact (hEpw.2 (by simpa [openSegment_symm] using hs)).elim
       · subst s; exact (hCwp.2 hs).elim
       · rw [hempty₁] at hs₁; simp at hs₁
       · have hsw := hunique₂ s hs₂
         have hm : (w : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hsw] using hs
+          simpa [hsw] using hs
         exact (hwp (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
       · have hsp := hunique₃ s hs₃
         have hm : (p : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hsp] using hs
+          simpa [hsp] using hs
         exact (hwp (Subtype.ext
           ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
     have hsd' : (d : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-      simpa only [hsd] using hs
+      simpa [hsd] using hs
     rcases hrCases with hrd | hru₂ | hrp
     · have hrd' : (d : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hrd] using hr
+          (w : Point) (K.skeleton.v₁ : Point) := by simpa [hrd] using hr
       have heq := other_endpoint_eq_of_common_blocker K.hfour hw_v₁ hwp hrd' hsd'
       exact (hp_v₁ heq.symm).elim
     · have hru₂' : (K.skeleton.u₂ : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hru₂] using hr
+          (w : Point) (K.skeleton.v₁ : Point) := by simpa [hru₂] using hr
       have hv₁neg : turn (b : Point) (d : Point) (K.skeleton.v₁ : Point) < 0 := by
         have hbdc : turn (b : Point) (d : Point) (c : Point) < 0 := by
           rw [turn_swap_last]
           linarith [K.inside.2.1]
         exact turn_neg_of_between_nonpos
-          (by simpa only [openSegment_symm] using K.skeleton.hv₁)
+          (by simpa [openSegment_symm] using K.skeleton.hv₁)
           hbdc (by simp)
       have hbdA : 0 < turn (b : Point) (d : Point) (a : Point) := by
-        simpa only [turn_rotate] using K.inside.1
+        simpa [turn_rotate] using K.inside.1
       have hv₃pos : 0 < turn (b : Point) (d : Point) (K.skeleton.v₃ : Point) :=
         edgeTurn_pos_of_mem_openSegment K.skeleton.hv₃ hbdA.le (by simp)
           (Or.inl hbdA)
       have hppos : 0 < turn (b : Point) (d : Point) (p : Point) :=
         edgeTurn_pos_of_mem_openSegment
-          (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+          (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
           hv₃pos.le (le_of_eq (turn_eq_zero_of_between K.skeleton.hu₂).symm)
           (Or.inl hv₃pos)
       have hwpos := turn_pos_beyond_zero_from_neg
@@ -3587,21 +3704,21 @@ theorem impossible_one_one_beams_C_E
         (by rw [openSegment_symm]; exact hsd') hppos (by simp)
       linarith
     · have hpBetween : (p : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₁ : Point) := by simpa only [hrp] using hr
+          (w : Point) (K.skeleton.v₁ : Point) := by simpa [hrp] using hr
       have hdNested := openSegment_left_nested hsd' hpBetween
       have hdZero := turn_eq_zero_of_between hdNested
       rcases point_eq_of_on_full_line K.hfour hw_v₁ hpBetween hdZero with
         hdw | hdv₁ | hdp
       · have hm : (w : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hdw] using hsd'
+          simpa [hdw] using hsd'
         exact (hwp (Subtype.ext
           ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
       · have hm : (K.skeleton.v₁ : Point) ∈ openSegment ℝ
-            (w : Point) (p : Point) := by simpa only [hdv₁] using hsd'
+            (w : Point) (p : Point) := by simpa [hdv₁] using hsd'
         exact not_two_mutual_openSegments (Subtype.val_injective.ne hw_v₁)
           ⟨hpBetween, hm⟩
       · have hm : (p : Point) ∈ openSegment ℝ (w : Point) (p : Point) := by
-          simpa only [hdp] using hsd'
+          simpa [hdp] using hsd'
         exact (hwp (Subtype.ext
           ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))).elim
 
@@ -3626,7 +3743,7 @@ theorem impossible_one_one_beams_A_E
         simp only [K.T₃_side_two]
       _ = colour K.skeleton.u₂ := h.symm
       _ = colour K.skeleton.v₃ := by
-        simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+        simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
       _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero]
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
     intro h
@@ -3636,7 +3753,7 @@ theorem impossible_one_one_beams_A_E
         simp only [K.T₂_side_two]
       _ = colour K.skeleton.u₁ := h.symm
       _ = colour K.skeleton.v₂ := by
-        simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
+        simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
       _ = colour (K.T₂.side 0) := by simp only [K.T₂_side_zero]
   have hu₃u₂ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₂ :=
     hpair₁ (i := 1) (j := 2) (by decide)
@@ -3674,7 +3791,7 @@ theorem impossible_one_one_beams_A_E
     · calc
         colour K.skeleton.v₁ = colour K.skeleton.u₁ := h
         _ = colour K.skeleton.v₂ := by
-          simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
+          simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
     · exact (hpair₁ (i := 0) (j := 1) (by decide) (by simpa using h)).elim
   have hw_u₂ : w ≠ K.skeleton.u₂ :=
     K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1
@@ -3689,7 +3806,7 @@ theorem impossible_one_one_beams_A_E
     hw_v₂.symm (K.skeleton_ne 4 1 (by decide))
     (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
     (K.skeleton_ne 0 1 (by decide))
-    (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+    (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
   obtain ⟨r, hr⟩ := K.proper w K.skeleton.u₂ hw_u₂ hwu₂
   have hrCases : r = d ∨ r = K.skeleton.u₃ := by
     have hwOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
@@ -3711,10 +3828,10 @@ theorem impossible_one_one_beams_A_E
     · have hrp := hunique₃ r hr₃
       have hpOn : (p : Point) ∈ openSegment ℝ
           (K.skeleton.u₂ : Point) (w : Point) := by
-        simpa only [hrp, openSegment_symm] using hr
+        simpa [hrp, openSegment_symm] using hr
       have hpBeam : (p : Point) ∈ openSegment ℝ
           (K.skeleton.u₂ : Point) (K.skeleton.v₃ : Point) := by
-        simpa only [K.T₃_side_zero, K.T₃_side_one, openSegment_symm]
+        simpa [K.T₃_side_zero, K.T₃_side_one, openSegment_symm]
           using H₃.beam_between
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 1 5 (by decide)) hw_u₂.symm hpBeam hpOn
@@ -3730,15 +3847,15 @@ theorem impossible_one_one_beams_A_E
       · exact hru₃
     have hu₃Interior : (K.skeleton.u₃ : Point) ∈
         openSegment ℝ (w : Point) (K.skeleton.u₂ : Point) := by
-      simpa only [hru₃] using hr
+      simpa [hru₃] using hr
     have hbda : 0 < turn (b : Point) (d : Point) (a : Point) := by
-      simpa only [turn_rotate] using K.inside.1
+      simpa [turn_rotate] using K.inside.1
     have hu₁pos : 0 < turn (b : Point) (d : Point) (K.skeleton.u₁ : Point) :=
       edgeTurn_pos_of_mem_openSegment K.skeleton.hu₁ hbda.le (by simp)
         (Or.inl hbda)
     have hv₂neg : turn (b : Point) (d : Point) (K.skeleton.v₂ : Point) < 0 :=
       turn_neg_of_right_of_negative_between_nonneg
-        (by simpa only [K.T₂_side_zero, K.T₂_side_one, openSegment_symm]
+        (by simpa [K.T₂_side_zero, K.T₂_side_one, openSegment_symm]
           using H₂.beam_between)
         hu₁pos.le hwneg
     have hbdc : turn (b : Point) (d : Point) (c : Point) < 0 := by
@@ -3746,14 +3863,14 @@ theorem impossible_one_one_beams_A_E
       linarith [K.inside.2.1]
     have hv₁neg : turn (b : Point) (d : Point) (K.skeleton.v₁ : Point) < 0 :=
       turn_neg_of_between_nonpos
-        (by simpa only [openSegment_symm] using K.skeleton.hv₁)
+        (by simpa [openSegment_symm] using K.skeleton.hv₁)
         hbdc (by simp)
     have hv₃pos : 0 < turn (b : Point) (d : Point) (K.skeleton.v₃ : Point) :=
       edgeTurn_pos_of_mem_openSegment K.skeleton.hv₃ hbda.le (by simp)
         (Or.inl hbda)
     have hppos : 0 < turn (b : Point) (d : Point) (p : Point) :=
       edgeTurn_pos_of_mem_openSegment
-        (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+        (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
         hv₃pos.le (le_of_eq (turn_eq_zero_of_between K.skeleton.hu₂).symm)
         (Or.inl hv₃pos)
     obtain ⟨s, hs⟩ := K.proper K.skeleton.v₁ K.skeleton.v₂
@@ -3764,7 +3881,7 @@ theorem impossible_one_one_beams_A_E
       rw [turn_rotate]
       exact turn_pos_of_strictlyInsideTriangle K.inside
     have hsRot := strictlyInside_between_adjacent_sides hBCA K.skeleton.hv₁
-      (by simpa only [openSegment_symm] using K.skeleton.hv₂) hs
+      (by simpa [openSegment_symm] using K.skeleton.hv₂) hs
     have hsOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
         (s : Point) := ⟨hsRot.2.2, hsRot.1, hsRot.2.1⟩
     have hsu₃ : s = K.skeleton.u₃ := by
@@ -3796,18 +3913,18 @@ theorem impossible_one_one_beams_A_E
       · have hsw := hunique₂ s (K.mem_I₂.mpr hs₂)
         have hwOn : (w : Point) ∈ openSegment ℝ
             (K.skeleton.v₂ : Point) (K.skeleton.v₁ : Point) := by
-          simpa only [hsw, openSegment_symm] using hs
+          simpa [hsw, openSegment_symm] using hs
         have heq := other_endpoint_eq_of_common_blocker K.hfour
           (K.skeleton_ne 4 3 (by decide)) (K.skeleton_ne 4 0 (by decide))
           hwOn
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
         exact (K.skeleton_ne 3 0 (by decide) heq).elim
       · have hsp := hunique₃ s (K.mem_I₃.mpr hs₃)
         rw [hsp] at hsneg
         linarith
     exact K.u₃_cannot_block_both_exceptional_pairs
-      (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
-      (by simpa only [hsu₃] using hs) hu₃Interior
+      (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+      (by simpa [hsu₃] using hs) hu₃Interior
   · have hrpos : 0 < turn (b : Point) (d : Point) (r : Point) :=
       edgeTurn_pos_of_mem_openSegment hr hwpos.le
         (le_of_eq (turn_eq_zero_of_between K.skeleton.hu₂).symm)
@@ -3898,13 +4015,13 @@ theorem impossible_one_two_beams_A_D
     (K.skeleton_ne 0 5 (by decide)) hu₁y hv₃y
     (K.skeleton_mem_outer 4) (K.skeleton_mem_outer 0)
     (K.skeleton_mem_outer 5) hyHull
-    (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
+    (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
     (by
       calc
         colour K.skeleton.v₃ = colour K.skeleton.u₁ := by
-          simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
+          simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
         _ = colour K.skeleton.v₂ := by
-          simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
+          simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm)
     (by simpa [y] using hcolour.symm)
     (K.skeleton.blocker_colour_ne 4)
     (K.otherColourBound _ (K.skeleton.blocker_colour_ne 4))
@@ -3918,14 +4035,14 @@ theorem impossible_one_two_beams_C_F
   have hcolour : colour K.skeleton.u₂ = colour K.skeleton.u₃ := by
     calc
       colour K.skeleton.u₂ = colour K.skeleton.u₁ := by
-        simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
+        simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
   obtain ⟨r, hr⟩ := K.proper K.skeleton.u₂ K.skeleton.u₃
     (K.skeleton_ne 1 2 (by decide)) hcolour
   have hrI : r ∈ K.I₁ := K.mem_I₁.mpr
     (K.T₁.strict_of_between_distinct_sides (i := 2) (j := 1)
-      (by decide) (by simpa only [K.T₁_side_two, K.T₁_side_one] using hr))
+      (by decide) (by simpa [K.T₁_side_two, K.T₁_side_one] using hr))
   rw [hempty₁] at hrI
   simp at hrI
 
@@ -3940,7 +4057,7 @@ theorem impossible_one_two_beams_B_F
   have hpI : p ∈ K.I₃ := K.mem_I₃.mpr H₃.hp
   have hqI : q ∈ K.I₃ := K.mem_I₃.mpr H₃.hq
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
   have hu₃w : colour K.skeleton.u₃ ≠ colour w :=
     (H₂.p_colour_ne 2).symm
   have hwu₁ : colour w ≠ colour K.skeleton.u₁ := H₂.p_colour_ne 1
@@ -3957,7 +4074,7 @@ theorem impossible_one_two_beams_B_F
         calc
           colour p = colour K.skeleton.u₁ := hpu₁
           _ = colour K.skeleton.u₂ := by
-            simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour.symm
+            simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour.symm
           _ = colour (K.T₃.side 1) := by simp only [K.T₃_side_one])).elim
     · have hp_u₃ : p ≠ K.skeleton.u₃ :=
         K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 2
@@ -3975,7 +4092,7 @@ theorem impossible_one_two_beams_B_F
         (K.skeleton_ne 1 2 (by decide))
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
         (K.skeleton_ne 0 2 (by decide))
-        (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+        (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
       obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
       rcases K.portal_three_to_two hpI hpneg
           (K.T₂.nonredPoint_mem_hull (K.T₂.sideLocal 2).property) hr with
@@ -3987,10 +4104,10 @@ theorem impossible_one_two_beams_B_F
       · have hrw := hunique₂ r hrI₂
         have hwOn : (w : Point) ∈ openSegment ℝ
             (K.skeleton.u₃ : Point) (p : Point) := by
-          simpa only [hrw, openSegment_symm] using hr
+          simpa [hrw, openSegment_symm] using hr
         have heq := other_endpoint_eq_of_common_blocker K.hfour
           (K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-          (by simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+          (by simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
           hwOn
         exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 4 heq.symm).elim
     · have hpw : p ≠ w := by
@@ -4010,7 +4127,7 @@ theorem impossible_one_two_beams_B_F
         (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1).symm
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
         (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
-        (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+        (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
       obtain ⟨r, hr⟩ := K.proper p w hpw hpwColour
       rcases K.portal_three_to_two hpI hpneg
           (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -4036,7 +4153,7 @@ theorem impossible_one_two_beams_B_E
   have hpair₁ := K.M₁.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₁ (by simpa [hempty₁]))
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
   have hu₃w : colour K.skeleton.u₃ ≠ colour w :=
     (H₂.p_colour_ne 2).symm
   have hwu₁ : colour w ≠ colour K.skeleton.u₁ := H₂.p_colour_ne 1
@@ -4047,7 +4164,7 @@ theorem impossible_one_two_beams_B_E
         colour (K.T₃.side 2) = colour K.skeleton.u₁ := by simp only [K.T₃_side_two]
         _ = colour K.skeleton.u₂ := h.symm
         _ = colour K.skeleton.v₃ := by
-          simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+          simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
         _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero]
     rcases H₃.secondary with hsec | hsec
     · exact H₃.p_colour_ne_beam (hsec.1.trans hkBeam)
@@ -4093,10 +4210,10 @@ theorem impossible_one_two_beams_B_E
             colour q = colour w := h
             _ = colour K.skeleton.u₂ := hu₂w.symm
             _ = colour K.skeleton.v₃ := by
-              simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+              simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
             _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero])).elim
       have hqneg := turn_neg_of_between_nonpos
-        (by simpa only [K.T₃_side_two] using hsec.2) hpneg hu₁neg.le
+        (by simpa [K.T₃_side_two] using hsec.2) hpneg hu₁neg.le
       have hq_u₃ : q ≠ K.skeleton.u₃ :=
         K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2
       have hp_u₃ : p ≠ K.skeleton.u₃ :=
@@ -4106,7 +4223,7 @@ theorem impossible_one_two_beams_B_E
         H₃.hpq hp_u₃
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
         (K.skeleton_ne 0 2 (by decide))
-        (by simpa only [K.T₃_side_two] using hsec.2)
+        (by simpa [K.T₃_side_two] using hsec.2)
       obtain ⟨r, hr⟩ := K.proper q K.skeleton.u₃ hq_u₃ hqu₃
       rcases K.portal_three_to_two hqI hqneg
           (K.T₂.nonredPoint_mem_hull (K.T₂.sideLocal 2).property) hr with
@@ -4118,10 +4235,10 @@ theorem impossible_one_two_beams_B_E
       · have hrw := hunique₂ r hrI₂
         have hwOn : (w : Point) ∈ openSegment ℝ
             (K.skeleton.u₃ : Point) (q : Point) := by
-          simpa only [hrw, openSegment_symm] using hr
+          simpa [hrw, openSegment_symm] using hr
         have heq := other_endpoint_eq_of_common_blocker K.hfour
           (K.skeleton_ne 2 4 (by decide)) hq_u₃.symm
-          (by simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+          (by simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
           hwOn
         exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 4 heq.symm).elim
     · have hpu₃ : colour p = colour K.skeleton.u₃ := by
@@ -4141,7 +4258,7 @@ theorem impossible_one_two_beams_B_E
             colour p = colour w := h
             _ = colour K.skeleton.u₂ := hu₂w.symm
             _ = colour K.skeleton.v₃ := by
-              simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+              simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
             _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero])).elim
       have hp_u₃ : p ≠ K.skeleton.u₃ :=
         K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 2
@@ -4152,7 +4269,7 @@ theorem impossible_one_two_beams_B_E
         H₃.hpq.symm hq_u₃
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
         (K.skeleton_ne 0 2 (by decide))
-        (by simpa only [K.T₃_side_two] using hsec.2)
+        (by simpa [K.T₃_side_two] using hsec.2)
       obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
       rcases K.portal_three_to_two hpI hpneg
           (K.T₂.nonredPoint_mem_hull (K.T₂.sideLocal 2).property) hr with
@@ -4164,10 +4281,10 @@ theorem impossible_one_two_beams_B_E
       · have hrw := hunique₂ r hrI₂
         have hwOn : (w : Point) ∈ openSegment ℝ
             (K.skeleton.u₃ : Point) (p : Point) := by
-          simpa only [hrw, openSegment_symm] using hr
+          simpa [hrw, openSegment_symm] using hr
         have heq := other_endpoint_eq_of_common_blocker K.hfour
           (K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-          (by simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+          (by simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
           hwOn
         exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 4 heq.symm).elim
   · exact K.impossible_two_pattern_positive H₃ hunique₃ hempty₁ hppos
@@ -4190,7 +4307,7 @@ theorem impossible_one_two_beams_C_D
     calc
       colour (K.T₁.side 1) = colour K.skeleton.u₃ := by simp only [K.T₁_side_one]
       _ = colour K.skeleton.u₁ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour.symm
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour.symm
       _ = colour K.skeleton.u₂ := h
       _ = colour (K.T₁.side 2) := by simp only [K.T₁_side_two]
   have hu₂v₁ : colour K.skeleton.u₂ ≠ colour K.skeleton.v₁ :=
@@ -4202,7 +4319,7 @@ theorem impossible_one_two_beams_C_D
       colour (K.T₁.side 0) = colour K.skeleton.v₁ := by simp only [K.T₁_side_zero]
       _ = colour K.skeleton.u₁ := h
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour (K.T₁.side 1) := by simp only [K.T₁_side_one]
   have hwCases := fin4_eq_one_of_three_of_avoid
     (K.interior_colour_ne_red₂ w (K.mem_I₂.mp hw))
@@ -4225,25 +4342,25 @@ theorem impossible_one_two_beams_C_D
           (turn_pos_of_strictlyInsideTriangle hcenter)
           (by
             rw [openSegment_symm]
-            simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+            simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
           hr
       have hpCentralNeg : turn (K.skeleton.u₁ : Point)
           (K.skeleton.u₂ : Point) (p : Point) < 0 :=
         turn_neg_of_between_nonpos
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+            simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
           K.v₃_spoke_side_neg (by simp)
       have hqCentralNeg : turn (K.skeleton.u₁ : Point)
           (K.skeleton.u₂ : Point) (q : Point) < 0 := by
         rcases H₃.secondary with hsec | hsec
         · exact turn_neg_of_between_nonpos
-            (by simpa only [K.T₃_side_one] using hsec.2)
+            (by simpa [K.T₃_side_one] using hsec.2)
             hpCentralNeg (by simp)
         · exact turn_neg_of_right_of_negative_between_nonneg
             (by
               rw [openSegment_symm]
-              simpa only [K.T₃_side_one] using hsec.2)
+              simpa [K.T₃_side_one] using hsec.2)
             (by simp) hpCentralNeg
       have hwOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
           (w : Point) := strict_cell_strict_outer K.inside
@@ -4290,12 +4407,12 @@ theorem impossible_one_two_beams_C_D
       have hb_u₂ : b ≠ K.skeleton.u₂ := by
         intro e
         have hm : (b : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-          simpa only [e] using K.skeleton.hu₂
+          simpa [e] using K.skeleton.hu₂
         exact K.hbd (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
       have hd_u₂ : d ≠ K.skeleton.u₂ := by
         intro e
         have hm : (d : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-          simpa only [e] using K.skeleton.hu₂
+          simpa [e] using K.skeleton.hu₂
         exact K.hbd (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
       have hb_w : b ≠ w := by
         intro e
@@ -4307,7 +4424,7 @@ theorem impossible_one_two_beams_C_D
           (congrArg Subtype.val e.symm)
       have hbd := first_pair_points_do_not_block_second K.hfour K.hbd hw_u₂.symm
         hb_u₂ hb_w hd_u₂ hd_w K.skeleton.hu₂
-      exact hbd.2 (by simpa only [openSegment_symm, hrd] using hr)
+      exact hbd.2 (by simpa [openSegment_symm, hrd] using hr)
     · have hwp : w ≠ p := by
         intro e
         exact (Finset.disjoint_left.mp cellPoints_pairwise_disjoint.2.2) hw (e ▸ hpI)
@@ -4324,7 +4441,7 @@ theorem impossible_one_two_beams_C_D
             hu₁u₂ hu₂v₁ hv₁u₁
           rcases hcases with h | h | h
           · exact (H₃.q_colour_ne_beam (by
-              simpa only [K.T₃_side_two] using h)).elim
+              simpa [K.T₃_side_two] using h)).elim
           · exact (H₃.interior_colour_ne (by
               calc
                 colour p = colour (K.T₃.side 1) := hsec.1
@@ -4338,14 +4455,14 @@ theorem impossible_one_two_beams_C_D
             H₃.hpq hwp.symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 1).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1).symm
-            (by simpa only [K.T₃_side_one] using hsec.2)
+            (by simpa [K.T₃_side_one] using hsec.2)
           have hwline := first_pair_points_do_not_block_second K.hfour
             (K.skeleton_ne 0 2 (by decide)) hwq
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2).symm
-            (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+            (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
           obtain ⟨r, hr⟩ := K.proper q w hwq.symm (hqv₁.trans hwv₁.symm)
           rcases K.portal_three_to_two hqI hqneg
               (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -4353,7 +4470,7 @@ theorem impossible_one_two_beams_C_D
           · rcases hunique₃ r hrI₃ with hrp | hrq
             · exact hline.1 (by simpa [hrp] using hr)
             · exact hwq.symm (by simpa [hrq] using hr)
-          · exact hwline.1 (by simpa only [hru₁, openSegment_symm] using hr)
+          · exact hwline.1 (by simpa [hru₁, openSegment_symm] using hr)
           · have hrw := hunique₂ r hrI₂
             exact hwq.symm (by simpa [hrw] using hr)
         · have hline := first_pair_points_do_not_block_second K.hfour
@@ -4362,7 +4479,7 @@ theorem impossible_one_two_beams_C_D
             H₃.hpq (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 3)
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 1).symm
             (K.skeleton_ne 1 3 (by decide))
-            (by simpa only [K.T₃_side_one] using hsec.2)
+            (by simpa [K.T₃_side_one] using hsec.2)
           obtain ⟨r, hr⟩ := K.proper q K.skeleton.v₁
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 3) hqv₁
           rcases K.portal_three_to_one hqI hqpos
@@ -4383,7 +4500,7 @@ theorem impossible_one_two_beams_C_D
             hu₁u₂ hu₂v₁ hv₁u₁
           rcases hcases with h | h | h
           · exact (H₃.p_colour_ne_beam (by
-              simpa only [K.T₃_side_two] using h)).elim
+              simpa [K.T₃_side_two] using h)).elim
           · exact (H₃.interior_colour_ne (by
               calc
                 colour p = colour K.skeleton.u₂ := h
@@ -4395,14 +4512,14 @@ theorem impossible_one_two_beams_C_D
           H₃.hpq.symm hwq.symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 1).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1).symm
-          (by simpa only [K.T₃_side_one] using hsec.2)
+          (by simpa [K.T₃_side_one] using hsec.2)
         have hbeamLine := first_pair_points_do_not_block_second K.hfour
           (K.skeleton_ne 0 5 (by decide)) hwp.symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 5).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 5).symm
-          (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+          (by simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
         obtain ⟨r, hr⟩ := K.proper p w hwp.symm (hpv₁.trans hwv₁.symm)
         rcases K.portal_three_to_two hpI hpneg
             (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -4428,7 +4545,7 @@ theorem impossible_one_two_beams_B_D
   have hpair₁ := K.M₁.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₁ (by simpa [hempty₁]))
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne
   have hu₃w : colour K.skeleton.u₃ ≠ colour w :=
     (H₂.p_colour_ne 2).symm
   have hwu₁ : colour w ≠ colour K.skeleton.u₁ := H₂.p_colour_ne 1
@@ -4469,7 +4586,7 @@ theorem impossible_one_two_beams_B_D
           hu₂u₁.symm hu₂u₃ hu₁u₃.symm
         rcases hcases with h | h | h
         · exact (H₃.q_colour_ne_beam (by
-              simpa only [K.T₃_side_two] using h)).elim
+              simpa [K.T₃_side_two] using h)).elim
         · exact (H₃.interior_colour_ne (by
               calc
                 colour p = colour (K.T₃.side 1) := hsec.1
@@ -4498,7 +4615,7 @@ theorem impossible_one_two_beams_B_D
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 1) hq_y
             H₃.hpq hp_y
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 1).symm hu₂_y
-            (by simpa only [K.T₃_side_one] using hsec.2)
+            (by simpa [K.T₃_side_one] using hsec.2)
           have hyHull : (y : Point) ∈ triangleHull (c : Point) (a : Point) (d : Point) := by
             rcases hy with rfl | rfl
             · exact K.T₂.nonredPoint_mem_hull (K.T₂.sideLocal 2).property
@@ -4512,29 +4629,29 @@ theorem impossible_one_two_beams_B_D
             rcases hy with rfl | rfl
             · have hwOn : (w : Point) ∈ openSegment ℝ
                   (K.skeleton.u₃ : Point) (q : Point) := by
-                simpa only [hrw, openSegment_symm] using hr
+                simpa [hrw, openSegment_symm] using hr
               have heq := other_endpoint_eq_of_common_blocker K.hfour
                 (K.skeleton_ne 2 4 (by decide))
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2).symm
-                (by simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+                (by simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
                 hwOn
               exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 4 heq.symm).elim
             · have hwOn : (w : Point) ∈ openSegment ℝ
                   (K.skeleton.v₂ : Point) (q : Point) := by
-                simpa only [hrw, openSegment_symm] using hr
+                simpa [hrw, openSegment_symm] using hr
               have heq := other_endpoint_eq_of_common_blocker K.hfour
                 (K.skeleton_ne 4 2 (by decide))
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 4).symm
                 (by
                   rw [openSegment_symm]
-                  simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+                  simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
                 hwOn
               exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2 heq.symm).elim
         obtain ⟨r, hr⟩ := K.proper q K.skeleton.u₃
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2) hqu₃
         have hru₁ := forceU₁ (Or.inl rfl) hr
         have hv₂u₃ : colour K.skeleton.v₂ = colour K.skeleton.u₃ := by
-          simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour.symm
+          simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour.symm
         obtain ⟨s, hs⟩ := K.proper q K.skeleton.v₂
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 4)
           (hqu₃.trans hv₂u₃.symm)
@@ -4550,7 +4667,7 @@ theorem impossible_one_two_beams_B_D
           H₃.hpq (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 2)
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 1).symm
           (K.skeleton_ne 1 2 (by decide))
-          (by simpa only [K.T₃_side_one] using hsec.2)
+          (by simpa [K.T₃_side_one] using hsec.2)
         obtain ⟨r, hr⟩ := K.proper q K.skeleton.u₃
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2) hqu₃
         rcases K.portal_three_to_one hqI hqpos
@@ -4571,7 +4688,7 @@ theorem impossible_one_two_beams_B_D
           hu₂u₁.symm hu₂u₃ hu₁u₃.symm
         rcases hcases with h | h | h
         · exact (H₃.p_colour_ne_beam (by
-              simpa only [K.T₃_side_two] using h)).elim
+              simpa [K.T₃_side_two] using h)).elim
         · exact (H₃.interior_colour_ne (by
               calc
                 colour p = colour K.skeleton.u₂ := h
@@ -4585,14 +4702,14 @@ theorem impossible_one_two_beams_B_D
         H₃.hpq.symm (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2)
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 1).symm
         (K.skeleton_ne 1 2 (by decide))
-        (by simpa only [K.T₃_side_one] using hsec.2)
+        (by simpa [K.T₃_side_one] using hsec.2)
       have hbeamLine := first_pair_points_do_not_block_second K.hfour
         (K.skeleton_ne 0 5 (by decide)) hp_u₃
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
         (K.skeleton_ne 0 2 (by decide))
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 5).symm
         (K.skeleton_ne 5 2 (by decide))
-        (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+        (by simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
       obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
       rcases K.portal_three_to_two hpI hpneg
           (K.T₂.nonredPoint_mem_hull (K.T₂.sideLocal 2).property) hr with
@@ -4604,10 +4721,10 @@ theorem impossible_one_two_beams_B_D
       · have hrw := hunique₂ r hrI₂
         have hwOn : (w : Point) ∈ openSegment ℝ
             (K.skeleton.u₃ : Point) (p : Point) := by
-          simpa only [hrw, openSegment_symm] using hr
+          simpa [hrw, openSegment_symm] using hr
         have heq := other_endpoint_eq_of_common_blocker K.hfour
           (K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-          (by simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+          (by simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
           hwOn
         exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 4 heq.symm).elim
   · exact K.impossible_two_pattern_positive H₃ hunique₃ hempty₁ hppos
@@ -4630,7 +4747,7 @@ theorem impossible_one_two_beams_C_E
     calc
       colour (K.T₁.side 1) = colour K.skeleton.u₃ := by simp only [K.T₁_side_one]
       _ = colour K.skeleton.u₁ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour.symm
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour.symm
       _ = colour K.skeleton.u₂ := h
       _ = colour (K.T₁.side 2) := by simp only [K.T₁_side_two]
   have hu₂v₁ : colour K.skeleton.u₂ ≠ colour K.skeleton.v₁ :=
@@ -4642,7 +4759,7 @@ theorem impossible_one_two_beams_C_E
       colour (K.T₁.side 0) = colour K.skeleton.v₁ := by simp only [K.T₁_side_zero]
       _ = colour K.skeleton.u₁ := h
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour (K.T₁.side 1) := by simp only [K.T₁_side_one]
   have hwCases := fin4_eq_one_of_three_of_avoid
     (K.interior_colour_ne_red₂ w (K.mem_I₂.mp hw))
@@ -4662,7 +4779,7 @@ theorem impossible_one_two_beams_C_E
       exact turn_neg_of_between_nonpos K.skeleton.hu₁ hacd (by simp)
     rcases H₃.secondary with hsec | hsec
     · have hqneg := turn_neg_of_between_nonpos
-        (by simpa only [K.T₃_side_two] using hsec.2) hpneg hu₁neg.le
+        (by simpa [K.T₃_side_two] using hsec.2) hpneg hu₁neg.le
       have hqv₁ : colour q = colour K.skeleton.v₁ := by
         have hcases := fin4_eq_one_of_three_of_avoid
           (K.interior_colour_ne_red₃ q H₃.hq)
@@ -4680,7 +4797,7 @@ theorem impossible_one_two_beams_C_E
             calc
               colour q = colour K.skeleton.u₂ := h
               _ = colour K.skeleton.v₃ := by
-                simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+                simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
               _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero])).elim
         · exact h
       rcases hwCases with hwu₁ | hwu₂ | hwv₁
@@ -4694,7 +4811,7 @@ theorem impossible_one_two_beams_C_E
             hu₁u₂ hu₂v₁ hv₁u₁
           rcases hcases with h | h | h
           · exact (H₂.remaining_colour_ne (by
-              simpa only [K.T₂_side_zero, K.T₂_side_one] using h)).elim
+              simpa [K.T₂_side_zero, K.T₂_side_one] using h)).elim
           · exact (H₂.p_colour_ne 0 (by
               calc
                 colour w = colour K.skeleton.u₂ := hwu₂
@@ -4710,7 +4827,7 @@ theorem impossible_one_two_beams_C_E
           H₃.hpq hp_v₂
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
           (K.skeleton_ne 0 4 (by decide))
-          (by simpa only [K.T₃_side_two] using hsec.2)
+          (by simpa [K.T₃_side_two] using hsec.2)
         obtain ⟨r, hr⟩ := K.proper q K.skeleton.v₂ hq_v₂
           (hqv₁.trans hv₂v₁.symm)
         have hrw : r = w := by
@@ -4730,10 +4847,10 @@ theorem impossible_one_two_beams_C_E
           turn_neg_of_right_of_negative_between_nonneg
             (by
               rw [openSegment_symm]
-              simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+              simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
             (by
               have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-                simpa only [turn_rotate] using K.inside.2.1
+                simpa [turn_rotate] using K.inside.2.1
               exact (edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂ hbcd.le (by simp)
                 (Or.inl hbcd)).le)
             hpneg
@@ -4741,7 +4858,7 @@ theorem impossible_one_two_beams_C_E
           calc
             colour w = colour K.skeleton.u₂ := hwu₂
             _ = colour K.skeleton.v₃ := by
-              simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
+              simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
         have hwOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
             (w : Point) := strict_cell_strict_outer K.inside
               (Or.inr (Or.inl (K.mem_I₂.mp hw)))
@@ -4754,7 +4871,7 @@ theorem impossible_one_two_beams_C_E
           · exact Or.inl hsu₁
           · rw [hsu₂] at hsneg
             have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-              simpa only [turn_rotate] using K.inside.2.1
+              simpa [turn_rotate] using K.inside.2.1
             have hu₂pos := edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂
               hbcd.le (by simp) (Or.inl hbcd)
             linarith
@@ -4774,16 +4891,16 @@ theorem impossible_one_two_beams_C_E
             (K.skeleton_ne 0 5 (by decide))
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
             (K.skeleton_ne 2 5 (by decide))
-            (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+            (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
           exact hfull.1
         rcases hsCases with hsu₁ | hsp | hsq
         · exact hu₁Not (by simpa [hsu₁] using hs)
         · have hpOn : (p : Point) ∈ openSegment ℝ
               (K.skeleton.v₃ : Point) (w : Point) := by
-            simpa only [hsp, openSegment_symm] using hs
+            simpa [hsp, openSegment_symm] using hs
           have heq := other_endpoint_eq_of_common_blocker K.hfour
             (K.skeleton_ne 5 1 (by decide)) hw_v₃.symm
-            (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+            (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
             hpOn
           exact (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1 heq.symm).elim
         · have hwq : w ≠ q := by
@@ -4795,7 +4912,7 @@ theorem impossible_one_two_beams_C_E
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 5)
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 4).symm
             (K.skeleton_ne 4 5 (by decide)) hwv₂
-          exact hfull.1 (by simpa only [hsq] using hs)
+          exact hfull.1 (by simpa [hsq] using hs)
       · have hqw : q ≠ w := by
           intro e
           exact (Finset.disjoint_left.mp cellPoints_pairwise_disjoint.2.2) hw (e ▸ hqI)
@@ -4807,7 +4924,7 @@ theorem impossible_one_two_beams_C_E
           H₃.hpq hwp
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
-          (by simpa only [K.T₃_side_two] using hsec.2)
+          (by simpa [K.T₃_side_two] using hsec.2)
         obtain ⟨r, hr⟩ := K.proper q w hqw (hqv₁.trans hwv₁.symm)
         rcases K.portal_three_to_two hqI hqneg
             (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -4835,7 +4952,7 @@ theorem impossible_one_two_beams_C_E
             calc
               colour p = colour K.skeleton.u₂ := h
               _ = colour K.skeleton.v₃ := by
-                simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+                simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
               _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero])).elim
         · exact h
       rcases hwCases with hwu₁ | hwu₂ | hwv₁
@@ -4849,7 +4966,7 @@ theorem impossible_one_two_beams_C_E
             hu₁u₂ hu₂v₁ hv₁u₁
           rcases hcases with h | h | h
           · exact (H₂.remaining_colour_ne (by
-              simpa only [K.T₂_side_zero, K.T₂_side_one] using h)).elim
+              simpa [K.T₂_side_zero, K.T₂_side_one] using h)).elim
           · exact (H₂.p_colour_ne 0 (by
               calc
                 colour w = colour K.skeleton.u₂ := hwu₂
@@ -4865,7 +4982,7 @@ theorem impossible_one_two_beams_C_E
           H₃.hpq.symm hq_v₂
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
           (K.skeleton_ne 0 4 (by decide))
-          (by simpa only [K.T₃_side_two] using hsec.2)
+          (by simpa [K.T₃_side_two] using hsec.2)
         obtain ⟨r, hr⟩ := K.proper p K.skeleton.v₂ hp_v₂
           (hpv₁.trans hv₂v₁.symm)
         have hrw : r = w := by
@@ -4885,7 +5002,7 @@ theorem impossible_one_two_beams_C_E
           calc
             colour w = colour K.skeleton.u₂ := hwu₂
             _ = colour K.skeleton.v₃ := by
-              simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
+              simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
         have hsCases : s = q := by
           have hwOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
               (w : Point) := strict_cell_strict_outer K.inside
@@ -4894,10 +5011,10 @@ theorem impossible_one_two_beams_C_E
             turn_neg_of_right_of_negative_between_nonneg
               (by
                 rw [openSegment_symm]
-                simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+                simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
               (by
                 have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-                  simpa only [turn_rotate] using K.inside.2.1
+                  simpa [turn_rotate] using K.inside.2.1
                 exact (edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂ hbcd.le (by simp)
                   (Or.inl hbcd)).le)
               hpneg
@@ -4911,7 +5028,7 @@ theorem impossible_one_two_beams_C_E
               (K.skeleton_ne 0 5 (by decide))
               (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
               (K.skeleton_ne 2 5 (by decide))
-              (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+              (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
             exact hfull.1
           rcases K.strict_outer_chord_cases hwOuter (K.skeleton_mem_outer 5) hs with
             hsd | hsu₁ | hsu₂ | hsu₃ | hs₁ | hs₂ | hs₃
@@ -4919,7 +5036,7 @@ theorem impossible_one_two_beams_C_E
           · exact (hu₁Not (by simpa [hsu₁] using hs)).elim
           · rw [hsu₂] at hsneg
             have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-              simpa only [turn_rotate] using K.inside.2.1
+              simpa [turn_rotate] using K.inside.2.1
             have hu₂pos := edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂
               hbcd.le (by simp) (Or.inl hbcd)
             linarith
@@ -4938,7 +5055,7 @@ theorem impossible_one_two_beams_C_E
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 5)
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 4).symm
                 (K.skeleton_ne 4 5 (by decide)) hwv₂
-              exact (hfull.1 (by simpa only [hsp] using hs)).elim
+              exact (hfull.1 (by simpa [hsp] using hs)).elim
             · exact hsq
         have hqw_v₃ : (q : Point) ∈ openSegment ℝ
             (w : Point) (K.skeleton.v₃ : Point) := by simpa [hsCases] using hs
@@ -4953,7 +5070,7 @@ theorem impossible_one_two_beams_C_E
         · have hb_u₂ : b ≠ K.skeleton.u₂ := by
             intro e
             have hm : (b : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-              simpa only [e] using K.skeleton.hu₂
+              simpa [e] using K.skeleton.hu₂
             exact K.hbd (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
           have hb_w : b ≠ w := by
             intro e
@@ -4962,7 +5079,7 @@ theorem impossible_one_two_beams_C_E
           have hd_u₂ : d ≠ K.skeleton.u₂ := by
             intro e
             have hm : (d : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-              simpa only [e] using K.skeleton.hu₂
+              simpa [e] using K.skeleton.hu₂
             exact K.hbd (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
           have hd_w : d ≠ w := by
             intro e
@@ -4970,14 +5087,14 @@ theorem impossible_one_two_beams_C_E
               (congrArg Subtype.val e.symm)
           have hfull := first_pair_points_do_not_block_second K.hfour K.hbd hw_u₂.symm
             hb_u₂ hb_w hd_u₂ hd_w K.skeleton.hu₂
-          exact hfull.2 (by simpa only [htd, openSegment_symm] using ht)
+          exact hfull.2 (by simpa [htd, openSegment_symm] using ht)
         · have hfull := first_pair_points_do_not_block_second K.hfour
             (K.skeleton_ne 0 2 (by decide)) hw_u₂
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
             (K.skeleton_ne 0 1 (by decide))
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
             (K.skeleton_ne 2 1 (by decide))
-            (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+            (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
           exact hfull.1 (by simpa [htu₁] using ht)
         · exact (hw_u₂ (Subtype.ext
             ((right_mem_openSegment_iff (𝕜 := ℝ)).mp (by simpa [htu₂] using ht)))).elim
@@ -4987,7 +5104,7 @@ theorem impossible_one_two_beams_C_E
             (K.skeleton_ne 0 1 (by decide))
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
             (K.skeleton_ne 2 1 (by decide))
-            (by simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
+            (by simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_between)
           exact hfull.2 (by simpa [htu₃] using ht)
         · rw [hempty₁] at ht₁; simp at ht₁
         · have htw := hunique₂ t ht₂
@@ -4995,17 +5112,17 @@ theorem impossible_one_two_beams_C_E
         · rcases hunique₃ t ht₃ with htp | htq
           · have hpOn : (p : Point) ∈ openSegment ℝ
                 (K.skeleton.u₂ : Point) (w : Point) := by
-              simpa only [htp, openSegment_symm] using ht
+              simpa [htp, openSegment_symm] using ht
             have heq := other_endpoint_eq_of_common_blocker K.hfour
               (K.skeleton_ne 1 5 (by decide)) hw_u₂.symm
               (by
                 rw [openSegment_symm]
-                simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+                simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
               hpOn
             exact (hw_v₃ heq.symm).elim
           · have heq := other_endpoint_eq_of_common_blocker K.hfour
               hw_v₃ hw_u₂ hqw_v₃
-              (by simpa only [htq] using ht)
+              (by simpa [htq] using ht)
             exact (K.skeleton_ne 5 1 (by decide) heq).elim
       · have hpw : p ≠ w := by
           intro e
@@ -5019,7 +5136,7 @@ theorem impossible_one_two_beams_C_E
           H₃.hpq.symm hqw
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
-          (by simpa only [K.T₃_side_two] using hsec.2)
+          (by simpa [K.T₃_side_two] using hsec.2)
         obtain ⟨r, hr⟩ := K.proper p w hpw (hpv₁.trans hwv₁.symm)
         rcases K.portal_three_to_two hpI hpneg
             (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -5057,7 +5174,7 @@ theorem impossible_one_two_beams_A_E
         colour (K.T₃.side 2) = colour K.skeleton.u₁ := by simp only [K.T₃_side_two]
         _ = colour K.skeleton.u₂ := h
         _ = colour K.skeleton.v₃ := by
-          simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+          simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
         _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero]
     rcases H₃.secondary with hsec | hsec
     · exact H₃.p_colour_ne_beam (hsec.1.trans hkBeam)
@@ -5069,7 +5186,7 @@ theorem impossible_one_two_beams_A_E
       colour (K.T₂.side 2) = colour K.skeleton.u₃ := by simp only [K.T₂_side_two]
       _ = colour K.skeleton.u₁ := h.symm
       _ = colour K.skeleton.v₂ := by
-        simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
+        simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour.symm
       _ = colour (K.T₂.side 0) := by simp only [K.T₂_side_zero]
   have hu₁v₁ : colour K.skeleton.u₁ = colour K.skeleton.v₁ := by
     have hcases := fin4_eq_one_of_three_of_avoid
@@ -5121,11 +5238,11 @@ theorem impossible_one_two_beams_A_E
             calc
               colour q = colour K.skeleton.u₂ := h
               _ = colour K.skeleton.v₃ := by
-                simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+                simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
               _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero])).elim
         · exact h
       have hqneg := turn_neg_of_between_nonpos
-        (by simpa only [K.T₃_side_two] using hsec.2) hpneg hu₁neg.le
+        (by simpa [K.T₃_side_two] using hsec.2) hpneg hu₁neg.le
       have hq_u₃ : q ≠ K.skeleton.u₃ :=
         K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 2
       have hp_u₃ : p ≠ K.skeleton.u₃ :=
@@ -5135,7 +5252,7 @@ theorem impossible_one_two_beams_A_E
         H₃.hpq hp_u₃
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
         (K.skeleton_ne 0 2 (by decide))
-        (by simpa only [K.T₃_side_two] using hsec.2)
+        (by simpa [K.T₃_side_two] using hsec.2)
       obtain ⟨r, hr⟩ := K.proper q K.skeleton.u₃ hq_u₃ hqu₃
       have hrw : r = w := by
         rcases K.portal_three_to_two hqI hqneg
@@ -5154,7 +5271,7 @@ theorem impossible_one_two_beams_A_E
         calc
           colour w = colour K.skeleton.u₂ := hwu₂
           _ = colour K.skeleton.v₃ := by
-            simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
+            simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
       have hwOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
           (w : Point) := strict_cell_strict_outer K.inside
             (Or.inr (Or.inl (K.mem_I₂.mp hw)))
@@ -5162,10 +5279,10 @@ theorem impossible_one_two_beams_A_E
         turn_neg_of_right_of_negative_between_nonneg
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+            simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
           (by
             have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-              simpa only [turn_rotate] using K.inside.2.1
+              simpa [turn_rotate] using K.inside.2.1
             exact (edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂ hbcd.le (by simp)
               (Or.inl hbcd)).le)
           hpneg
@@ -5179,7 +5296,7 @@ theorem impossible_one_two_beams_A_E
           (K.skeleton_ne 4 5 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
           (K.skeleton_ne 0 5 (by decide))
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
         exact hfull.2
       rcases K.strict_outer_chord_cases hwOuter (K.skeleton_mem_outer 5) hs with
         hsd | hsu₁ | hsu₂ | hsu₃ | hs₁ | hs₂ | hs₃
@@ -5187,7 +5304,7 @@ theorem impossible_one_two_beams_A_E
       · exact hu₁Not (by simpa [hsu₁] using hs)
       · rw [hsu₂] at hsneg
         have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-          simpa only [turn_rotate] using K.inside.2.1
+          simpa [turn_rotate] using K.inside.2.1
         have hu₂pos := edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂
           hbcd.le (by simp) (Or.inl hbcd)
         linarith
@@ -5199,10 +5316,10 @@ theorem impossible_one_two_beams_A_E
       · rcases hunique₃ s hs₃ with hsp | hsq
         · have hpOn : (p : Point) ∈ openSegment ℝ
               (K.skeleton.v₃ : Point) (w : Point) := by
-            simpa only [hsp, openSegment_symm] using hs
+            simpa [hsp, openSegment_symm] using hs
           have heq := other_endpoint_eq_of_common_blocker K.hfour
             (K.skeleton_ne 5 1 (by decide)) hw_v₃.symm
-            (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+            (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
             hpOn
           exact (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1 heq.symm).elim
         · have hqw : q ≠ w := by
@@ -5214,7 +5331,7 @@ theorem impossible_one_two_beams_A_E
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 5)
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 2).symm
             (K.skeleton_ne 2 5 (by decide)) hw_u₃
-          exact hfull.1 (by simpa only [hsq] using hs)
+          exact hfull.1 (by simpa [hsq] using hs)
     · have hpu₃ : colour p = colour K.skeleton.u₃ := by
         have hcases := fin4_eq_one_of_three_of_avoid
           (K.interior_colour_ne_red₃ p H₃.hp)
@@ -5232,7 +5349,7 @@ theorem impossible_one_two_beams_A_E
             calc
               colour p = colour K.skeleton.u₂ := h
               _ = colour K.skeleton.v₃ := by
-                simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
+                simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm
               _ = colour (K.T₃.side 0) := by simp only [K.T₃_side_zero])).elim
         · exact h
       have hp_u₃ : p ≠ K.skeleton.u₃ :=
@@ -5244,7 +5361,7 @@ theorem impossible_one_two_beams_A_E
         H₃.hpq.symm hq_u₃
         (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
         (K.skeleton_ne 0 2 (by decide))
-        (by simpa only [K.T₃_side_two] using hsec.2)
+        (by simpa [K.T₃_side_two] using hsec.2)
       obtain ⟨r, hr⟩ := K.proper p K.skeleton.u₃ hp_u₃ hpu₃
       have hrw : r = w := by
         rcases K.portal_three_to_two hpI hpneg
@@ -5263,7 +5380,7 @@ theorem impossible_one_two_beams_A_E
         calc
           colour w = colour K.skeleton.u₂ := hwu₂
           _ = colour K.skeleton.v₃ := by
-            simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
+            simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour.symm)
       have hwOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
           (w : Point) := strict_cell_strict_outer K.inside
             (Or.inr (Or.inl (K.mem_I₂.mp hw)))
@@ -5271,10 +5388,10 @@ theorem impossible_one_two_beams_A_E
         turn_neg_of_right_of_negative_between_nonneg
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+            simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
           (by
             have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-              simpa only [turn_rotate] using K.inside.2.1
+              simpa [turn_rotate] using K.inside.2.1
             exact (edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂ hbcd.le (by simp)
               (Or.inl hbcd)).le)
           hpneg
@@ -5288,7 +5405,7 @@ theorem impossible_one_two_beams_A_E
           (K.skeleton_ne 4 5 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
           (K.skeleton_ne 0 5 (by decide))
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
         exact hfull.2
       have hsCases : s = q := by
         rcases K.strict_outer_chord_cases hwOuter (K.skeleton_mem_outer 5) hs with
@@ -5297,7 +5414,7 @@ theorem impossible_one_two_beams_A_E
         · exact (hu₁Not (by simpa [hsu₁] using hs)).elim
         · rw [hsu₂] at hsneg
           have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-            simpa only [turn_rotate] using K.inside.2.1
+            simpa [turn_rotate] using K.inside.2.1
           have hu₂pos := edgeTurn_pos_of_mem_openSegment K.skeleton.hu₂
             hbcd.le (by simp) (Or.inl hbcd)
           linarith
@@ -5309,10 +5426,10 @@ theorem impossible_one_two_beams_A_E
         · rcases hunique₃ s hs₃ with hsp | hsq
           · have hpOn : (p : Point) ∈ openSegment ℝ
                 (K.skeleton.v₃ : Point) (w : Point) := by
-              simpa only [hsp, openSegment_symm] using hs
+              simpa [hsp, openSegment_symm] using hs
             have heq := other_endpoint_eq_of_common_blocker K.hfour
               (K.skeleton_ne 5 1 (by decide)) hw_v₃.symm
-              (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+              (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
               hpOn
             exact (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 1 heq.symm).elim
           · exact hsq
@@ -5329,7 +5446,7 @@ theorem impossible_one_two_beams_A_E
       · have hb_u₂ : b ≠ K.skeleton.u₂ := by
           intro e
           have hm : (b : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-            simpa only [e] using K.skeleton.hu₂
+            simpa [e] using K.skeleton.hu₂
           exact K.hbd (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
         have hb_w : b ≠ w := by
           intro e
@@ -5338,7 +5455,7 @@ theorem impossible_one_two_beams_A_E
         have hd_u₂ : d ≠ K.skeleton.u₂ := by
           intro e
           have hm : (d : Point) ∈ openSegment ℝ (b : Point) (d : Point) := by
-            simpa only [e] using K.skeleton.hu₂
+            simpa [e] using K.skeleton.hu₂
           exact K.hbd (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm))
         have hd_w : d ≠ w := by
           intro e
@@ -5346,14 +5463,14 @@ theorem impossible_one_two_beams_A_E
             (congrArg Subtype.val e.symm)
         have hfull := first_pair_points_do_not_block_second K.hfour K.hbd hw_u₂.symm
           hb_u₂ hb_w hd_u₂ hd_w K.skeleton.hu₂
-        exact hfull.2 (by simpa only [htd, openSegment_symm] using ht)
+        exact hfull.2 (by simpa [htd, openSegment_symm] using ht)
       · have hfull := first_pair_points_do_not_block_second K.hfour
           (K.skeleton_ne 4 0 (by decide)) hw_u₂
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 4).symm
           (K.skeleton_ne 4 1 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
           (K.skeleton_ne 0 1 (by decide))
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
         exact hfull.2 (by simpa [htu₁] using ht)
       · exact (hw_u₂ (Subtype.ext
           ((right_mem_openSegment_iff (𝕜 := ℝ)).mp (by simpa [htu₂] using ht)))).elim
@@ -5399,9 +5516,9 @@ theorem impossible_one_two_beams_A_F
   have hpair₁ := K.M₁.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₁ (by simpa [hempty₁]))
   have hu₁u₂ : colour K.skeleton.u₁ = colour K.skeleton.u₂ := by
-    simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour.symm
+    simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour.symm
   have hv₂u₁ : colour K.skeleton.v₂ = colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
+    simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
   have hu₁u₃ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₃ := by
     intro h
     apply hpair₁ (i := 2) (j := 1) (by decide)
@@ -5550,7 +5667,7 @@ theorem impossible_one_two_beams_A_F
             hqw H₃.hpq hpw
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 5).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 5).symm
-            (by simpa only [K.T₃_side_zero] using hsec.2)
+            (by simpa [K.T₃_side_zero] using hsec.2)
           exact hfull.1
         have hu₁Not : (K.skeleton.u₁ : Point) ∉
             openSegment ℝ (q : Point) (w : Point) := by
@@ -5560,8 +5677,8 @@ theorem impossible_one_two_beams_A_F
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 4).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
-            (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
-          simpa only [openSegment_symm] using hfull.2
+            (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          simpa [openSegment_symm] using hfull.2
         obtain ⟨r, hr⟩ := K.proper q w hqw (hqv₁.trans hwv₁.symm)
         rcases K.portal_three_to_two hqI hqneg
             (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -5601,7 +5718,7 @@ theorem impossible_one_two_beams_A_F
                 (K.skeleton_ne 1 2 (by decide))
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
                 (K.skeleton_ne 0 2 (by decide))
-                (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+                (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
             exact (hfull.2 (by simpa [hru₁] using hr)).elim
           · exact hunique₂ r hrI₂
         have hw_u₃ : (w : Point) ∈ openSegment ℝ
@@ -5616,7 +5733,7 @@ theorem impossible_one_two_beams_A_F
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 3)
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 5).symm
             (K.skeleton_ne 5 3 (by decide))
-            (by simpa only [K.T₃_side_zero] using hsec.2)
+            (by simpa [K.T₃_side_zero] using hsec.2)
           exact hfull.1
         obtain ⟨s, hs⟩ := K.proper q K.skeleton.v₁ hq_v₁ hqv₁
         have hsu₂ : s = K.skeleton.u₂ := by
@@ -5649,7 +5766,7 @@ theorem impossible_one_two_beams_A_F
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 4).symm
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
                 (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 0).symm
-                (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+                (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
             exact (hfull.2 (by simpa [htu₁, openSegment_symm] using ht)).elim
           · have heq := other_endpoint_eq_of_common_blocker K.hfour
                 hq_v₁ hqw hu₂_qv₁ (by simpa [htu₂] using ht)
@@ -5669,7 +5786,7 @@ theorem impossible_one_two_beams_A_F
                   hqw H₃.hpq hpw
                   (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 5).symm
                   (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 5).symm
-                  (by simpa only [K.T₃_side_zero] using hsec.2)
+                  (by simpa [K.T₃_side_zero] using hsec.2)
               exact (hfull.1 (by simpa [htp] using ht)).elim
             · exact (hqw (by simpa [htq] using ht)).elim
         have hd_qw : (d : Point) ∈ openSegment ℝ (q : Point) (w : Point) := by
@@ -5683,7 +5800,7 @@ theorem impossible_one_two_beams_A_F
         rcases K.strict_outer_chord_cases hwOuter (K.skeleton_mem_outer 3) hs with
           hsd | hsu₁ | hsu₂ | hsu₃ | hs₁ | hs₂ | hs₃
         · have hd_wq : (d : Point) ∈ openSegment ℝ (w : Point) (q : Point) := by
-            simpa only [openSegment_symm] using hd_qw
+            simpa [openSegment_symm] using hd_qw
           have heq := other_endpoint_eq_of_common_blocker K.hfour hqw.symm hw_v₁
             hd_wq (by simpa [hsd] using hs)
           exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hqI)) 3 heq).elim
@@ -5693,11 +5810,11 @@ theorem impossible_one_two_beams_A_F
               (K.skeleton_ne 4 3 (by decide))
               (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
               (K.skeleton_ne 0 3 (by decide))
-              (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+              (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
           exact hfull.2 (by simpa [hsu₁] using hs)
         · have heq := other_endpoint_eq_of_common_blocker K.hfour
               hq_v₁.symm hw_v₁.symm
-              (by simpa only [openSegment_symm] using hu₂_qv₁)
+              (by simpa [openSegment_symm] using hu₂_qv₁)
               (by simpa [hsu₂, openSegment_symm] using hs)
           exact (hqw heq).elim
         · have hfull := first_pair_points_do_not_block_second K.hfour
@@ -5725,7 +5842,7 @@ theorem impossible_one_two_beams_A_F
                 (K.skeleton_ne 2 3 (by decide)) hw_u₃
             exact (hfull.1 (by simpa [hsp] using hs)).elim
           · have hd_wq : (d : Point) ∈ openSegment ℝ (w : Point) (q : Point) := by
-              simpa only [openSegment_symm] using hd_qw
+              simpa [openSegment_symm] using hd_qw
             have hq_wv₁ : (q : Point) ∈ openSegment ℝ
                 (w : Point) (K.skeleton.v₁ : Point) := by simpa [hsq] using hs
             have hd_wv₁ := openSegment_left_nested hd_wq hq_wv₁
@@ -5764,7 +5881,7 @@ theorem impossible_one_two_beams_A_F
           hpw H₃.hpq.symm hqw
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 5).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 5).symm
-          (by simpa only [K.T₃_side_zero] using hsec.2)
+          (by simpa [K.T₃_side_zero] using hsec.2)
         exact hfull.1
       have hu₁Not : (K.skeleton.u₁ : Point) ∉
           openSegment ℝ (p : Point) (w : Point) := by
@@ -5774,8 +5891,8 @@ theorem impossible_one_two_beams_A_F
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 4).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hw)) 0).symm
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
-        simpa only [openSegment_symm] using hfull.2
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+        simpa [openSegment_symm] using hfull.2
       obtain ⟨r, hr⟩ := K.proper p w hpw (hpv₁.trans hwv₁.symm)
       rcases K.portal_three_to_two hpI hpneg
           (strictlyInsideTriangle_mem_triangleHull (K.mem_I₂.mp hw)) hr with
@@ -5848,13 +5965,13 @@ theorem impossible_three_single_mixed_Y_B_D
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 2 0 1)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 2 0 1) : False := by
   have hu₃u₂ : colour K.skeleton.u₃ = colour K.skeleton.u₂ := by
-    simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
+    simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
   have hu₃v₂ : colour K.skeleton.u₃ = colour K.skeleton.v₂ := by
-    simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour
+    simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour
   have hu₁v₃ : colour K.skeleton.u₁ = colour K.skeleton.v₃ := by
-    simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
+    simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne.symm
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.remaining_colour_ne.symm
   have hu₁w : colour K.skeleton.u₁ ≠ colour w :=
     (H₂.p_colour_ne 1).symm
   have hwu₃ : colour w ≠ colour K.skeleton.u₃ := H₂.p_colour_ne 2
@@ -5902,17 +6019,17 @@ theorem impossible_three_single_mixed_Y_B_D
             (K.skeleton_ne 2 5 (by decide))
             (K.cellPoint_ne_skeleton (Or.inl hrI) 1).symm
             (K.skeleton_ne 1 5 (by decide))
-            (by simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
+            (by simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
         exact hfull.2 (by simpa [hsu₂] using hs)
       · have hsp := hunique₃ s hsI₃
         have hpOn : (p : Point) ∈ openSegment ℝ
             (K.skeleton.v₃ : Point) (r : Point) := by
-          simpa only [hsp, openSegment_symm] using hs
+          simpa [hsp, openSegment_symm] using hs
         have heq := other_endpoint_eq_of_common_blocker K.hfour
           (K.skeleton_ne 5 0 (by decide)) hr_v₃.symm
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+            simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
           hpOn
         exact (K.cellPoint_ne_skeleton (Or.inl hrI) 0 heq.symm).elim
     · have hrp : r ≠ p := by
@@ -5930,7 +6047,7 @@ theorem impossible_three_single_mixed_Y_B_D
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 2).symm
             (K.cellPoint_ne_skeleton (Or.inl hrI) 1).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 1).symm
-            (by simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
+            (by simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
         exact hfull.2 (by simpa [hsu₂] using hs)
       · have hsp := hunique₃ s hsI₃
         exact hrp (by simpa [hsp] using hs)
@@ -5949,7 +6066,7 @@ theorem impossible_three_single_mixed_Y_B_D
             (K.skeleton_ne 2 0 (by decide))
             (K.cellPoint_ne_skeleton (Or.inl hrI) 1).symm
             (K.skeleton_ne 1 0 (by decide))
-            (by simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
+            (by simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
         exact hfull.1 (by simpa [hsu₃] using hs)
       · have hsw := hunique₂ s hsI₂
         have hcenter := K.red_center_strictly_inside_spoke_triangle
@@ -5962,7 +6079,7 @@ theorem impossible_three_single_mixed_Y_B_D
             (r : Point) < 0 := turn_neg_of_between_nonpos
             (by
               rw [openSegment_symm]
-              simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
+              simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
           hu₂neg (by simp)
         have hv₂pos : 0 < turn (K.skeleton.u₁ : Point) (K.skeleton.u₃ : Point)
             (K.skeleton.v₂ : Point) := by
@@ -5972,7 +6089,7 @@ theorem impossible_three_single_mixed_Y_B_D
             (w : Point) := turn_pos_of_between_nonneg
           (by
             rw [openSegment_symm]
-            simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
+            simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_between)
           hv₂pos (by simp)
         have hsline := turn_neg_of_between_nonpos hs hrline (by simp)
         rw [hsw] at hsline
@@ -5992,7 +6109,7 @@ theorem impossible_three_single_mixed_Y_B_D
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 2).symm
             (K.cellPoint_ne_skeleton (Or.inl hrI) 1).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 1).symm
-            (by simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
+            (by simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_between)
         exact hfull.1 (by simpa [hsu₃] using hs)
       · have hsw := hunique₂ s hsI₂
         exact hrwNe (by simpa [hsw] using hs)
@@ -6051,15 +6168,15 @@ theorem impossible_three_single_mixed_X_A_F
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 0 1 2)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 1 2 0) : False := by
   have hv₁u₃ : colour K.skeleton.v₁ = colour K.skeleton.u₃ := by
-    simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour
+    simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour
   have hv₂u₁ : colour K.skeleton.v₂ = colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
+    simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
   have hu₂u₁ : colour K.skeleton.u₂ = colour K.skeleton.u₁ := by
-    simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
+    simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
     intro h
     exact H₂.remaining_colour_ne (by
-      simpa only [K.T₂_side_two, K.T₂_side_zero] using
+      simpa [K.T₂_side_two, K.T₂_side_zero] using
         h.trans hv₂u₁.symm)
   have hu₁w : colour K.skeleton.u₁ ≠ colour w := (H₂.p_colour_ne 1).symm
   have hwu₃ : colour w ≠ colour K.skeleton.u₃ := H₂.p_colour_ne 2
@@ -6073,7 +6190,7 @@ theorem impossible_three_single_mixed_X_A_F
     rcases hcases with h | h | h
     · exact (H₁.p_colour_ne 1 (by simpa using h)).elim
     · exact (H₁.p_colour_ne 2 (by
-          simpa only [K.T₁_side_two] using h.trans hu₂u₁.symm)).elim
+          simpa [K.T₁_side_two] using h.trans hu₂u₁.symm)).elim
     · exact h
   have hpCases : colour p = colour K.skeleton.u₃ ∨ colour p = colour w := by
     have hcases := fin4_eq_one_of_three_of_avoid
@@ -6113,7 +6230,7 @@ theorem impossible_three_single_mixed_X_A_F
             (K.skeleton_ne 1 2 (by decide))
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
             (K.skeleton_ne 0 2 (by decide))
-            (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+            (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
         exact hfull.2 (by simpa [hsu₁] using hs)
       · have hsw := hunique₂ s hsI₂
         have hcenter := K.red_center_strictly_inside_spoke_triangle
@@ -6124,7 +6241,7 @@ theorem impossible_three_single_mixed_X_A_F
           linarith
         have hpLine : turn (K.skeleton.u₁ : Point) (K.skeleton.u₃ : Point)
             (p : Point) < 0 := turn_neg_of_between_nonpos
-          (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+          (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
           hu₂neg (by simp)
         have hv₂pos : 0 < turn (K.skeleton.u₁ : Point) (K.skeleton.u₃ : Point)
             (K.skeleton.v₂ : Point) := by
@@ -6132,7 +6249,7 @@ theorem impossible_three_single_mixed_X_A_F
           linarith [K.v₂_spoke_side_neg]
         have hwLine : 0 < turn (K.skeleton.u₁ : Point) (K.skeleton.u₃ : Point)
             (w : Point) := turn_pos_of_between_nonneg
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
           hv₂pos (by simp)
         have hsLine := turn_neg_of_between_nonpos hs hpLine (by simp)
         rw [hsw] at hsLine
@@ -6153,7 +6270,7 @@ theorem impossible_three_single_mixed_X_A_F
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 1).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 0).symm
             (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 0).symm
-            (by simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+            (by simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
         exact hfull.2 (by simpa [hsu₁] using hs)
       · have hsw := hunique₂ s hsI₂
         exact hpw (by
@@ -6180,22 +6297,22 @@ theorem impossible_three_single_mixed_X_A_F
             (K.skeleton_ne 1 2 (by decide))
             (by
               rw [openSegment_symm]
-              simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+              simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
         exact hfull.2 (by simpa [hsu₂] using hs)
       · have hsr := hunique₁ s hsI₁
         have hcenter := K.red_center_strictly_inside_spoke_triangle
         have hu₁pos : 0 < turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
             (K.skeleton.u₁ : Point) := by
-          simpa only [turn_rotate] using turn_pos_of_strictlyInsideTriangle hcenter
+          simpa [turn_rotate] using turn_pos_of_strictlyInsideTriangle hcenter
         have hpLine : 0 < turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
             (p : Point) := turn_pos_of_between_nonneg
           (by
             rw [openSegment_symm]
-            simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+            simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
           hu₁pos (by simp)
         have hrLine : turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
             (r : Point) < 0 := turn_neg_of_between_nonpos
-          (by simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_between)
+          (by simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_between)
           K.v₁_spoke_side_neg (by simp)
         have hsLine := turn_pos_of_between_nonneg hs hpLine (by simp)
         rw [hsr] at hsLine
@@ -6218,7 +6335,7 @@ theorem impossible_three_single_mixed_X_A_F
             (K.cellPoint_ne_skeleton (Or.inl hrI) 1).symm
             (by
               rw [openSegment_symm]
-              simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
+              simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_between)
         exact hfull.2 (by simpa [hsu₂] using hs)
       · have hsr := hunique₁ s hsI₁
         exact hpr (by
@@ -6285,19 +6402,19 @@ theorem impossible_three_single_path_X_C_F
     (K.skeleton_ne 0 1 (by decide))
     (K.skeleton_mem_outer 3) (K.skeleton_mem_outer 2)
     (K.skeleton_mem_outer 0) (K.skeleton_mem_outer 1)
-  · simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
+  · simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
   · calc
       colour K.skeleton.u₁ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour K.skeleton.v₁ := by
-        simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
+        simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
   · calc
       colour K.skeleton.u₂ = colour K.skeleton.u₁ := by
-        simpa only [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
+        simpa [K.T₃_side_one, K.T₃_side_two] using H₃.beam_colour
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour K.skeleton.v₁ := by
-        simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
+        simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
   · exact K.skeleton.blocker_colour_ne 3
   · exact K.otherColourBound _ (K.skeleton.blocker_colour_ne 3)
 
@@ -6319,19 +6436,19 @@ theorem impossible_three_single_path_X_C_D
     (K.skeleton_ne 0 5 (by decide))
     (K.skeleton_mem_outer 3) (K.skeleton_mem_outer 2)
     (K.skeleton_mem_outer 0) (K.skeleton_mem_outer 5)
-  · simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
+  · simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
   · calc
       colour K.skeleton.u₁ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour K.skeleton.v₁ := by
-        simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
+        simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
   · calc
       colour K.skeleton.v₃ = colour K.skeleton.u₁ := by
-        simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
+        simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour K.skeleton.v₁ := by
-        simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
+        simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour.symm
   · exact K.skeleton.blocker_colour_ne 3
   · exact K.otherColourBound _ (K.skeleton.blocker_colour_ne 3)
 
@@ -6353,19 +6470,19 @@ theorem impossible_three_single_path_Y_C_D
     (K.skeleton_ne 0 5 (by decide))
     (K.skeleton_mem_outer 1) (K.skeleton_mem_outer 2)
     (K.skeleton_mem_outer 0) (K.skeleton_mem_outer 5)
-  · simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
+  · simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
   · calc
       colour K.skeleton.u₁ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour K.skeleton.u₂ := by
-        simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
+        simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
   · calc
       colour K.skeleton.v₃ = colour K.skeleton.u₁ := by
-        simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
+        simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour.symm
       _ = colour K.skeleton.u₃ := by
-        simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+        simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
       _ = colour K.skeleton.u₂ := by
-        simpa only [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
+        simpa [K.T₁_side_one, K.T₁_side_two] using H₁.beam_colour
   · exact K.skeleton.blocker_colour_ne 1
   · exact K.otherColourBound _ (K.skeleton.blocker_colour_ne 1)
 
@@ -6446,9 +6563,9 @@ theorem impossible_three_single_outer_path_A_D
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 0 1 2)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 2 0 1) : False := by
   have hv₂u₁ : colour K.skeleton.v₂ = colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
+    simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
   have hu₁v₃ : colour K.skeleton.u₁ = colour K.skeleton.v₃ := by
-    simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
+    simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
   have hrI : r ∈ K.I₁ := K.mem_I₁.mpr H₁.hp
   have hcover := one_pattern_colour_cover H₁
     (K.skeleton.blocker_colour_ne 4)
@@ -6596,17 +6713,17 @@ theorem impossible_three_single_matching_Z_B_D
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 2 0 1)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 2 0 1) : False := by
   have hu₂v₁ : colour K.skeleton.u₂ = colour K.skeleton.v₁ := by
-    simpa only [K.T₁_side_two, K.T₁_side_zero] using H₁.beam_colour
+    simpa [K.T₁_side_two, K.T₁_side_zero] using H₁.beam_colour
   have hu₃v₂ : colour K.skeleton.u₃ = colour K.skeleton.v₂ := by
-    simpa only [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour
+    simpa [K.T₂_side_two, K.T₂_side_zero] using H₂.beam_colour
   have hu₁v₃ : colour K.skeleton.u₁ = colour K.skeleton.v₃ := by
-    simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
+    simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_colour
   have hu₂u₃ : colour K.skeleton.u₂ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₁_side_two, K.T₁_side_one] using H₁.remaining_colour_ne.symm
+    simpa [K.T₁_side_two, K.T₁_side_one] using H₁.remaining_colour_ne.symm
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_two, K.T₂_side_one] using H₂.remaining_colour_ne.symm
+    simpa [K.T₂_side_two, K.T₂_side_one] using H₂.remaining_colour_ne.symm
   have hu₁u₂ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₂ := by
-    simpa only [K.T₃_side_two, K.T₃_side_one] using H₃.remaining_colour_ne.symm
+    simpa [K.T₃_side_two, K.T₃_side_one] using H₃.remaining_colour_ne.symm
   have hru₁ : colour r = colour K.skeleton.u₁ := by
     have hcases := fin4_eq_one_of_three_of_avoid
       (K.interior_colour_ne_red₁ r (K.mem_I₁.mp hrI))
@@ -6655,12 +6772,12 @@ theorem impossible_three_single_matching_Z_B_D
           (K.skeleton_ne 0 2 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 5).symm
           (K.skeleton_ne 5 2 (by decide))
-          (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+          (by simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
       exact hfull.1 (by simpa [hsu₁] using hs)
     · have hsw := hunique₂ s hsI₂
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 2 4 (by decide)) hp_u₃.symm
-        (by simpa only [K.T₂_side_two, K.T₂_side_zero, openSegment_symm]
+        (by simpa [K.T₂_side_two, K.T₂_side_zero, openSegment_symm]
           using H₂.beam_between)
         (by simpa [hsw, openSegment_symm] using hs)
       exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 4 heq.symm).elim
@@ -6674,13 +6791,13 @@ theorem impossible_three_single_matching_Z_B_D
       exact turn_neg_of_between_nonpos K.skeleton.hu₁ hacd (by simp)
     have hv₃pos : 0 < turn (c : Point) (d : Point) (K.skeleton.v₃ : Point) :=
       turn_pos_of_right_of_positive_between_nonpos
-        (by simpa only [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
+        (by simpa [K.T₃_side_two, K.T₃_side_zero] using H₃.beam_between)
         hu₁neg.le hppos
     have hv₃r : colour K.skeleton.v₃ = colour r := hu₁v₃.symm.trans hru₁.symm
     have hv₃_r : K.skeleton.v₃ ≠ r :=
       (K.cellPoint_ne_skeleton (Or.inl hrI) 5).symm
     obtain ⟨s, hs⟩ := K.proper K.skeleton.v₃ r hv₃_r hv₃r
-    rcases K.portal_one_to_v₃ hrI hv₃pos (by simpa only [openSegment_symm] using hs) with
+    rcases K.portal_one_to_v₃ hrI hv₃pos (by simpa [openSegment_symm] using hs) with
       hsI₁ | hsu₂ | hsI₃
     · have hsr := hunique₁ s hsI₁
       exact hv₃_r (by simpa [hsr] using hs)
@@ -6692,7 +6809,7 @@ theorem impossible_three_single_matching_Z_B_D
           (K.skeleton_ne 3 5 (by decide))
           (K.cellPoint_ne_skeleton (Or.inl hrI) 1).symm
           (K.skeleton_ne 1 5 (by decide))
-          (by simpa only [K.T₁_side_two, K.T₁_side_zero, openSegment_symm]
+          (by simpa [K.T₁_side_two, K.T₁_side_zero, openSegment_symm]
             using H₁.beam_between)
       exact hfull.2 (by simpa [hsu₂, openSegment_symm] using hs)
     · have hsp := hunique₃ s hsI₃
@@ -6700,7 +6817,7 @@ theorem impossible_three_single_matching_Z_B_D
           (K.skeleton.v₃ : Point) (r : Point) := by simpa [hsp] using hs
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 5 0 (by decide)) hv₃_r
-        (by simpa only [K.T₃_side_two, K.T₃_side_zero, openSegment_symm]
+        (by simpa [K.T₃_side_two, K.T₃_side_zero, openSegment_symm]
           using H₃.beam_between)
         hpOn
       exact (K.cellPoint_ne_skeleton (Or.inl hrI) 0).symm heq
@@ -6732,7 +6849,7 @@ theorem portal_two_to_v₃
   · rw [hsd] at hsneg; simp at hsneg
   · exact Or.inr (Or.inl hsu₁)
   · have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-      simpa only [turn_rotate] using K.inside.2.1
+      simpa [turn_rotate] using K.inside.2.1
     have hu₂pos := turn_pos_of_between_nonneg K.skeleton.hu₂ hbcd (by simp)
     rw [hsu₂] at hsneg
     linarith
@@ -6761,23 +6878,23 @@ theorem impossible_three_single_matching_X_A_E
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 0 1 2)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 0 1 2) : False := by
   have hv₁u₃ : colour K.skeleton.v₁ = colour K.skeleton.u₃ := by
-    simpa only [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour
+    simpa [K.T₁_side_zero, K.T₁_side_one] using H₁.beam_colour
   have hv₂u₁ : colour K.skeleton.v₂ = colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
+    simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_colour
   have hv₃u₂ : colour K.skeleton.v₃ = colour K.skeleton.u₂ := by
-    simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour
+    simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_colour
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
     intro h
     exact H₂.remaining_colour_ne (by
-      simpa only [K.T₂_side_two, K.T₂_side_zero] using h.trans hv₂u₁.symm)
+      simpa [K.T₂_side_two, K.T₂_side_zero] using h.trans hv₂u₁.symm)
   have hu₁u₂ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₂ := by
     intro h
     exact H₃.remaining_colour_ne (by
-      simpa only [K.T₃_side_two, K.T₃_side_zero] using h.trans hv₃u₂.symm)
+      simpa [K.T₃_side_two, K.T₃_side_zero] using h.trans hv₃u₂.symm)
   have hu₂u₃ : colour K.skeleton.u₂ ≠ colour K.skeleton.u₃ := by
     intro h
     exact H₁.remaining_colour_ne (by
-      simpa only [K.T₁_side_two, K.T₁_side_zero] using h.trans hv₁u₃.symm)
+      simpa [K.T₁_side_two, K.T₁_side_zero] using h.trans hv₁u₃.symm)
   have hru₁ : colour r = colour K.skeleton.u₁ := by
     have hcases := fin4_eq_one_of_three_of_avoid
       (K.interior_colour_ne_red₁ r (K.mem_I₁.mp hrI))
@@ -6811,20 +6928,20 @@ theorem impossible_three_single_matching_X_A_E
   have hpne := K.turn_cd_ne_zero_of_mem_I₃ hpI
   rcases lt_or_gt_of_ne hpne with hpneg | hppos
   · have hbcd : 0 < turn (c : Point) (d : Point) (b : Point) := by
-      simpa only [turn_rotate] using K.inside.2.1
+      simpa [turn_rotate] using K.inside.2.1
     have hu₂pos : 0 < turn (c : Point) (d : Point) (K.skeleton.u₂ : Point) :=
       turn_pos_of_between_nonneg K.skeleton.hu₂ hbcd (by simp)
     have hv₃neg : turn (c : Point) (d : Point) (K.skeleton.v₃ : Point) < 0 :=
       turn_neg_of_right_of_negative_between_nonneg
         (by
           rw [openSegment_symm]
-          simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+          simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
         hu₂pos.le hpneg
     have hv₃w : colour K.skeleton.v₃ = colour w := hv₃u₂.trans hwu₂.symm
     have hv₃_w : K.skeleton.v₃ ≠ w :=
       (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 5).symm
     obtain ⟨s, hs⟩ := K.proper K.skeleton.v₃ w hv₃_w hv₃w
-    rcases K.portal_two_to_v₃ hwI hv₃neg (by simpa only [openSegment_symm] using hs) with
+    rcases K.portal_two_to_v₃ hwI hv₃neg (by simpa [openSegment_symm] using hs) with
       hsI₂ | hsu₁ | hsI₃
     · have hsw := hunique₂ s hsI₂
       exact hv₃_w (by simpa [hsw] using hs)
@@ -6836,14 +6953,14 @@ theorem impossible_three_single_matching_X_A_E
           (K.skeleton_ne 4 5 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 0).symm
           (K.skeleton_ne 0 5 (by decide))
-          (by simpa only [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
+          (by simpa [K.T₂_side_zero, K.T₂_side_one] using H₂.beam_between)
       exact hfull.2 (by simpa [hsu₁, openSegment_symm] using hs)
     · have hsp := hunique₃ s hsI₃
       have hpOn : (p : Point) ∈ openSegment ℝ
           (K.skeleton.v₃ : Point) (w : Point) := by simpa [hsp] using hs
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 5 1 (by decide)) hv₃_w
-        (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+        (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
         hpOn
       exact (K.cellPoint_ne_skeleton (Or.inr (Or.inl hwI)) 1).symm heq
   · have hp_u₃ : p ≠ K.skeleton.u₃ :=
@@ -6862,12 +6979,12 @@ theorem impossible_three_single_matching_X_A_E
           (K.skeleton_ne 5 2 (by decide))
           (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 1).symm
           (K.skeleton_ne 1 2 (by decide))
-          (by simpa only [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
+          (by simpa [K.T₃_side_zero, K.T₃_side_one] using H₃.beam_between)
       exact hfull.2 (by simpa [hsu₂] using hs)
     · have hsr := hunique₁ s hsI₁
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 2 3 (by decide)) hp_u₃.symm
-        (by simpa only [K.T₁_side_zero, K.T₁_side_one, openSegment_symm]
+        (by simpa [K.T₁_side_zero, K.T₁_side_one, openSegment_symm]
           using H₁.beam_between)
         (by simpa [hsr, openSegment_symm] using hs)
       exact (K.cellPoint_ne_skeleton (Or.inr (Or.inr hpI)) 3 heq.symm).elim
@@ -6917,21 +7034,21 @@ private theorem central_strict_outer_eq_center
     rw [hzr] at hzCentral
     have hz0 : turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
         (r : Point) = 0 := turn_eq_zero_of_between (by
-      simpa only [K.T₁_side_one, K.T₁_side_two, openSegment_symm]
+      simpa [K.T₁_side_one, K.T₁_side_two, openSegment_symm]
         using H₁.beam_between)
     linarith [hzCentral.2.1, hz0]
   · have hzw := hunique₂ z (K.mem_I₂.mpr hz₂)
     rw [hzw] at hzCentral
     have hz0 : turn (K.skeleton.u₃ : Point) (K.skeleton.u₁ : Point)
         (w : Point) = 0 := turn_eq_zero_of_between (by
-      simpa only [K.T₂_side_one, K.T₂_side_two, openSegment_symm]
+      simpa [K.T₂_side_one, K.T₂_side_two, openSegment_symm]
         using H₂.beam_between)
     linarith [hzCentral.2.2, hz0]
   · have hzp := hunique₃ z (K.mem_I₃.mpr hz₃)
     rw [hzp] at hzCentral
     have hz0 : turn (K.skeleton.u₁ : Point) (K.skeleton.u₂ : Point)
         (p : Point) = 0 := turn_eq_zero_of_between (by
-      simpa only [K.T₃_side_one, K.T₃_side_two, openSegment_symm]
+      simpa [K.T₃_side_one, K.T₃_side_two, openSegment_symm]
         using H₃.beam_between)
     linarith [hzCentral.1, hz0]
 
@@ -6950,15 +7067,15 @@ private theorem impossible_three_single_central_of_first_second
     (hrwColour : colour r = colour w) : False := by
   have hrBeam : (r : Point) ∈ openSegment ℝ
       (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point) := by
-    simpa only [K.T₁_side_one, K.T₁_side_two, openSegment_symm]
+    simpa [K.T₁_side_one, K.T₁_side_two, openSegment_symm]
       using H₁.beam_between
   have hwBeam : (w : Point) ∈ openSegment ℝ
       (K.skeleton.u₃ : Point) (K.skeleton.u₁ : Point) := by
-    simpa only [K.T₂_side_one, K.T₂_side_two, openSegment_symm]
+    simpa [K.T₂_side_one, K.T₂_side_two, openSegment_symm]
       using H₂.beam_between
   have hpBeam : (p : Point) ∈ openSegment ℝ
       (K.skeleton.u₁ : Point) (K.skeleton.u₂ : Point) := by
-    simpa only [K.T₃_side_one, K.T₃_side_two, openSegment_symm]
+    simpa [K.T₃_side_one, K.T₃_side_two, openSegment_symm]
       using H₃.beam_between
   have hrOuter : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
       (r : Point) := strict_cell_strict_outer K.inside
@@ -6982,7 +7099,7 @@ private theorem impossible_three_single_central_of_first_second
   have hcenterPos := turn_pos_of_strictlyInsideTriangle hcenter
   have hcenterRot : 0 < turn (K.skeleton.u₂ : Point)
       (K.skeleton.u₃ : Point) (K.skeleton.u₁ : Point) := by
-    simpa only [turn_rotate] using hcenterPos
+    simpa [turn_rotate] using hcenterPos
 
   obtain ⟨s₀, hs₀⟩ := K.proper r w hrw hrwColour
   have hs₀Rot : StrictlyInsideTriangle
@@ -6997,18 +7114,18 @@ private theorem impossible_three_single_central_of_first_second
   have hs₀d := K.central_strict_outer_eq_center hrI hwI hpI
     hunique₁ hunique₂ hunique₃ H₁ H₂ H₃ hs₀Central hs₀Outer
   have hdRW : (d : Point) ∈ openSegment ℝ (r : Point) (w : Point) := by
-    simpa only [hs₀d] using hs₀
+    simpa [hs₀d] using hs₀
 
   have hprColour : colour p ≠ colour r := by
     intro hprc
     obtain ⟨t₀, ht₀⟩ := K.proper r p hrp hprc.symm
     have ht₀Central := strictlyInside_between_adjacent_sides hcenterPos hpBeam hrBeam
-      (by simpa only [openSegment_symm] using ht₀)
+      (by simpa [openSegment_symm] using ht₀)
     have ht₀Outer := strictlyInside_between_inside_points hrOuter hpOuter ht₀
     have ht₀d := K.central_strict_outer_eq_center hrI hwI hpI
       hunique₁ hunique₂ hunique₃ H₁ H₂ H₃ ht₀Central ht₀Outer
     have hdRP : (d : Point) ∈ openSegment ℝ (r : Point) (p : Point) := by
-      simpa only [ht₀d] using ht₀
+      simpa [ht₀d] using ht₀
     have heq := other_endpoint_eq_of_common_blocker K.hfour hrw hrp hdRW hdRP
     exact hwp heq
 
@@ -7018,8 +7135,8 @@ private theorem impossible_three_single_central_of_first_second
       (K.interior_colour_ne_red₃ p (K.mem_I₃.mp hpI))
     rcases hcover with hru₂ | hrv₃ | hrpColour
     · exact (H₁.p_colour_ne 2 (by
-        simpa only [K.T₁_side_two, K.T₃_side_one] using hru₂)).elim
-    · simpa only [K.T₃_side_zero] using hrv₃.symm
+        simpa [K.T₁_side_two, K.T₃_side_one] using hru₂)).elim
+    · simpa [K.T₃_side_zero] using hrv₃.symm
     · exact (hprColour hrpColour.symm).elim
 
   have hr_v₃ : r ≠ K.skeleton.v₃ :=
@@ -7064,19 +7181,19 @@ private theorem impossible_three_single_central_of_first_second
     rcases K.strict_outer_chord_cases hrOuter (K.skeleton_mem_outer 5) hs with
       hsd | hsu₁ | hsu₂ | hsu₃ | hsI₁ | hsI₂ | hsI₃
     · have hdRV : (d : Point) ∈ openSegment ℝ
-          (r : Point) (K.skeleton.v₃ : Point) := by simpa only [hsd] using hs
+          (r : Point) (K.skeleton.v₃ : Point) := by simpa [hsd] using hs
       have heq := other_endpoint_eq_of_common_blocker K.hfour hrw hr_v₃ hdRW hdRV
       exact (hw_v₃ heq).elim
     · exact Or.inl hsu₁
-    · exact (hRLine.1 (by simpa only [hsu₂] using hs)).elim
-    · exact (hRLine.2 (by simpa only [hsu₃] using hs)).elim
+    · exact (hRLine.1 (by simpa [hsu₂] using hs)).elim
+    · exact (hRLine.2 (by simpa [hsu₃] using hs)).elim
     · have hsr := hunique₁ s hsI₁
       subst s
       have hm := (left_mem_openSegment_iff (𝕜 := ℝ)).mp hs
       exact (Subtype.val_injective.ne hr_v₃ hm).elim
     · have hsw := hunique₂ s hsI₂
       have hwOn : (w : Point) ∈ openSegment ℝ
-          (r : Point) (K.skeleton.v₃ : Point) := by simpa only [hsw] using hs
+          (r : Point) (K.skeleton.v₃ : Point) := by simpa [hsw] using hs
       have hvZero : turn (r : Point) (w : Point)
           (K.skeleton.v₃ : Point) = 0 := by
         have hz := turn_eq_zero_of_between hwOn
@@ -7095,16 +7212,16 @@ private theorem impossible_three_single_central_of_first_second
     rcases K.strict_outer_chord_cases hwOuter (K.skeleton_mem_outer 5) ht with
       htd | htu₁ | htu₂ | htu₃ | htI₁ | htI₂ | htI₃
     · have hdWV : (d : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₃ : Point) := by simpa only [htd] using ht
+          (w : Point) (K.skeleton.v₃ : Point) := by simpa [htd] using ht
       have heq := other_endpoint_eq_of_common_blocker K.hfour hrw.symm hw_v₃
-        (by simpa only [openSegment_symm] using hdRW) hdWV
+        (by simpa [openSegment_symm] using hdRW) hdWV
       exact (hr_v₃ heq).elim
-    · exact (hWLine.2 (by simpa only [htu₁] using ht)).elim
+    · exact (hWLine.2 (by simpa [htu₁] using ht)).elim
     · exact Or.inl htu₂
-    · exact (hWLine.1 (by simpa only [htu₃] using ht)).elim
+    · exact (hWLine.1 (by simpa [htu₃] using ht)).elim
     · have htr := hunique₁ t htI₁
       have hrOn : (r : Point) ∈ openSegment ℝ
-          (w : Point) (K.skeleton.v₃ : Point) := by simpa only [htr] using ht
+          (w : Point) (K.skeleton.v₃ : Point) := by simpa [htr] using ht
       have hvZero : turn (r : Point) (w : Point)
           (K.skeleton.v₃ : Point) = 0 := by
         have hz := turn_eq_zero_of_between hrOn
@@ -7123,13 +7240,13 @@ private theorem impossible_three_single_central_of_first_second
 
   have hL₃₁u₂ : 0 < turn (K.skeleton.u₃ : Point)
       (K.skeleton.u₁ : Point) (K.skeleton.u₂ : Point) := by
-    simpa only [turn_rotate, turn_rotate] using hcenterPos
+    simpa [turn_rotate, turn_rotate] using hcenterPos
   have hL₃₁r : 0 < turn (K.skeleton.u₃ : Point)
       (K.skeleton.u₁ : Point) (r : Point) :=
     turn_pos_of_between_nonneg hrBeam hL₃₁u₂ (by simp)
   have hL₃₁p : 0 < turn (K.skeleton.u₃ : Point)
       (K.skeleton.u₁ : Point) (p : Point) :=
-    turn_pos_of_between_nonneg (by simpa only [openSegment_symm] using hpBeam)
+    turn_pos_of_between_nonneg (by simpa [openSegment_symm] using hpBeam)
       hL₃₁u₂ (by simp)
   have hL₂₃u₁ : 0 < turn (K.skeleton.u₂ : Point)
       (K.skeleton.u₃ : Point) (K.skeleton.u₁ : Point) := hcenterRot
@@ -7146,36 +7263,36 @@ private theorem impossible_three_single_central_of_first_second
 
   rcases hsCases with hsu₁ | hsp <;> rcases htCases with htu₂ | htp
   · have hsu₁' : (K.skeleton.u₁ : Point) ∈ openSegment ℝ
-        (r : Point) (K.skeleton.v₃ : Point) := by simpa only [hsu₁] using hs
+        (r : Point) (K.skeleton.v₃ : Point) := by simpa [hsu₁] using hs
     have htu₂' : (K.skeleton.u₂ : Point) ∈ openSegment ℝ
-        (w : Point) (K.skeleton.v₃ : Point) := by simpa only [htu₂] using ht
+        (w : Point) (K.skeleton.v₃ : Point) := by simpa [htu₂] using ht
     have hvNeg := turn_neg_beyond_zero_from_pos hsu₁' hL₃₁r (by simp)
     have hvPos := turn_pos_of_right_of_positive_between_nonpos htu₂'
       (turn_eq_zero_of_between hwBeam).le hL₃₁u₂
     linarith
   · have hsu₁' : (K.skeleton.u₁ : Point) ∈ openSegment ℝ
-        (r : Point) (K.skeleton.v₃ : Point) := by simpa only [hsu₁] using hs
+        (r : Point) (K.skeleton.v₃ : Point) := by simpa [hsu₁] using hs
     have htp' : (p : Point) ∈ openSegment ℝ
-        (w : Point) (K.skeleton.v₃ : Point) := by simpa only [htp] using ht
+        (w : Point) (K.skeleton.v₃ : Point) := by simpa [htp] using ht
     have hvNeg := turn_neg_beyond_zero_from_pos hsu₁' hL₃₁r (by simp)
     have hvPos := turn_pos_of_right_of_positive_between_nonpos htp'
       (turn_eq_zero_of_between hwBeam).le hL₃₁p
     linarith
   · have hsp' : (p : Point) ∈ openSegment ℝ
-        (r : Point) (K.skeleton.v₃ : Point) := by simpa only [hsp] using hs
+        (r : Point) (K.skeleton.v₃ : Point) := by simpa [hsp] using hs
     have htu₂' : (K.skeleton.u₂ : Point) ∈ openSegment ℝ
-        (w : Point) (K.skeleton.v₃ : Point) := by simpa only [htu₂] using ht
+        (w : Point) (K.skeleton.v₃ : Point) := by simpa [htu₂] using ht
     have hvPos := turn_pos_of_right_of_positive_between_nonpos hsp'
       (turn_eq_zero_of_between hrBeam).le hL₂₃p
     have hvNeg := turn_neg_beyond_zero_from_pos htu₂' hL₂₃w (by simp)
     linarith
   · have hsp' : (p : Point) ∈ openSegment ℝ
-        (r : Point) (K.skeleton.v₃ : Point) := by simpa only [hsp] using hs
+        (r : Point) (K.skeleton.v₃ : Point) := by simpa [hsp] using hs
     have htp' : (p : Point) ∈ openSegment ℝ
-        (w : Point) (K.skeleton.v₃ : Point) := by simpa only [htp] using ht
+        (w : Point) (K.skeleton.v₃ : Point) := by simpa [htp] using ht
     have heq := other_endpoint_eq_of_common_blocker K.hfour hr_v₃.symm hw_v₃.symm
-      (by simpa only [openSegment_symm] using hsp')
-      (by simpa only [openSegment_symm] using htp')
+      (by simpa [openSegment_symm] using hsp')
+      (by simpa [openSegment_symm] using htp')
     exact hrw heq
 
 /-- The last of the twenty-seven one-point-per-cell beam arrangements:
@@ -7189,15 +7306,15 @@ theorem impossible_three_single_central_Y_C_F
     (H₂ : OneInteriorPatternAt colour (colour a) K.T₂ w 1 2 0)
     (H₃ : OneInteriorPatternAt colour (colour a) K.T₃ p 1 2 0) : False := by
   have hu₁u₃ : colour K.skeleton.u₁ = colour K.skeleton.u₃ := by
-    simpa only [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
+    simpa [K.T₂_side_one, K.T₂_side_two] using H₂.beam_colour
   have hrα : colour r ≠ colour K.skeleton.u₁ := by
     intro h
     exact H₁.p_colour_ne 1 (by
-      simpa only [K.T₁_side_one] using h.trans hu₁u₃)
+      simpa [K.T₁_side_one] using h.trans hu₁u₃)
   have hwα : colour w ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_one] using H₂.p_colour_ne 1
+    simpa [K.T₂_side_one] using H₂.p_colour_ne 1
   have hpα : colour p ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₃_side_two] using H₃.p_colour_ne 2
+    simpa [K.T₃_side_two] using H₃.p_colour_ne 2
   have hrred := K.interior_colour_ne_red₁ r (K.mem_I₁.mp hrI)
   have hwred := K.interior_colour_ne_red₂ w (K.mem_I₂.mp hwI)
   have hpred := K.interior_colour_ne_red₃ p (K.mem_I₃.mp hpI)
@@ -7211,35 +7328,35 @@ theorem impossible_three_single_central_Y_C_F
       hunique₁ hunique₂ hunique₃ H₁ H₂ H₃ hrw
   · apply K.rotate.impossible_three_single_central_of_first_second
       (r := w) (w := p) (p := r)
-    · simpa only [K.rotate_I₁] using hwI
-    · simpa only [K.rotate_I₂] using hpI
-    · simpa only [K.rotate_I₃] using hrI
+    · simpa [K.rotate_I₁] using hwI
+    · simpa [K.rotate_I₂] using hpI
+    · simpa [K.rotate_I₃] using hrI
     · intro z hz
-      exact hunique₂ z (by simpa only [K.rotate_I₁] using hz)
+      exact hunique₂ z (by simpa [K.rotate_I₁] using hz)
     · intro z hz
-      exact hunique₃ z (by simpa only [K.rotate_I₂] using hz)
+      exact hunique₃ z (by simpa [K.rotate_I₂] using hz)
     · intro z hz
-      exact hunique₁ z (by simpa only [K.rotate_I₃] using hz)
+      exact hunique₁ z (by simpa [K.rotate_I₃] using hz)
     · exact K.rotateOne₂₁ H₂
     · exact K.rotateOne₃₂ H₃
     · exact K.rotateOne₁₃ H₁
     · exact hwp
   · apply K.rotate.rotate.impossible_three_single_central_of_first_second
       (r := p) (w := r) (p := w)
-    · simpa only [ConcaveConfiguration.rotate_I₁,
+    · simpa [ConcaveConfiguration.rotate_I₁,
         ConcaveConfiguration.rotate_I₂] using hpI
-    · simpa only [ConcaveConfiguration.rotate_I₁,
+    · simpa [ConcaveConfiguration.rotate_I₁,
         ConcaveConfiguration.rotate_I₃] using hrI
-    · simpa only [ConcaveConfiguration.rotate_I₂,
+    · simpa [ConcaveConfiguration.rotate_I₂,
         ConcaveConfiguration.rotate_I₃] using hwI
     · intro z hz
-      exact hunique₃ z (by simpa only [ConcaveConfiguration.rotate_I₁,
+      exact hunique₃ z (by simpa [ConcaveConfiguration.rotate_I₁,
         ConcaveConfiguration.rotate_I₂] using hz)
     · intro z hz
-      exact hunique₁ z (by simpa only [ConcaveConfiguration.rotate_I₁,
+      exact hunique₁ z (by simpa [ConcaveConfiguration.rotate_I₁,
         ConcaveConfiguration.rotate_I₃] using hz)
     · intro z hz
-      exact hunique₂ z (by simpa only [ConcaveConfiguration.rotate_I₂,
+      exact hunique₂ z (by simpa [ConcaveConfiguration.rotate_I₂,
         ConcaveConfiguration.rotate_I₃] using hz)
     · exact K.rotate.rotateOne₂₁ (K.rotateOne₃₂ H₃)
     · exact K.rotate.rotateOne₃₂ (K.rotateOne₁₃ H₁)
@@ -7351,35 +7468,35 @@ theorem empty_cells_incidence_cycles
   have hp₃ := K.M₃.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₃ (by simpa [h₃]))
   have hu₂u₃ : colour K.skeleton.u₂ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₁_side_two, K.T₁_side_one] using
+    simpa [K.T₁_side_two, K.T₁_side_one] using
       hp₁ (i := 2) (j := 1) (by decide)
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_two, K.T₂_side_one] using
+    simpa [K.T₂_side_two, K.T₂_side_one] using
       hp₂ (i := 2) (j := 1) (by decide)
   have hu₁u₂ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₂ := by
-    simpa only [K.T₃_side_two, K.T₃_side_one] using
+    simpa [K.T₃_side_two, K.T₃_side_one] using
       hp₃ (i := 2) (j := 1) (by decide)
   have hu₁v₁ : colour K.skeleton.u₁ = colour K.skeleton.v₁ := by
     obtain ⟨i, hi⟩ := colour_eq_some_side K.T₁ hp₁ K.skeleton.u₁
       (K.skeleton.blocker_colour_ne 0)
     fin_cases i
-    · simpa only [K.T₁_side_zero] using hi
-    · exact (hu₃u₁ (by simpa only [K.T₁_side_one] using hi.symm)).elim
-    · exact (hu₁u₂ (by simpa only [K.T₁_side_two] using hi)).elim
+    · simpa [K.T₁_side_zero] using hi
+    · exact (hu₃u₁ (by simpa [K.T₁_side_one] using hi.symm)).elim
+    · exact (hu₁u₂ (by simpa [K.T₁_side_two] using hi)).elim
   have hu₂v₂ : colour K.skeleton.u₂ = colour K.skeleton.v₂ := by
     obtain ⟨i, hi⟩ := colour_eq_some_side K.T₂ hp₂ K.skeleton.u₂
       (K.skeleton.blocker_colour_ne 1)
     fin_cases i
-    · simpa only [K.T₂_side_zero] using hi
-    · exact (hu₁u₂ (by simpa only [K.T₂_side_one] using hi.symm)).elim
-    · exact (hu₂u₃ (by simpa only [K.T₂_side_two] using hi)).elim
+    · simpa [K.T₂_side_zero] using hi
+    · exact (hu₁u₂ (by simpa [K.T₂_side_one] using hi.symm)).elim
+    · exact (hu₂u₃ (by simpa [K.T₂_side_two] using hi)).elim
   have hu₃v₃ : colour K.skeleton.u₃ = colour K.skeleton.v₃ := by
     obtain ⟨i, hi⟩ := colour_eq_some_side K.T₃ hp₃ K.skeleton.u₃
       (K.skeleton.blocker_colour_ne 2)
     fin_cases i
-    · simpa only [K.T₃_side_zero] using hi
-    · exact (hu₂u₃ (by simpa only [K.T₃_side_one] using hi.symm)).elim
-    · exact (hu₃u₁ (by simpa only [K.T₃_side_two] using hi)).elim
+    · simpa [K.T₃_side_zero] using hi
+    · exact (hu₂u₃ (by simpa [K.T₃_side_one] using hi.symm)).elim
+    · exact (hu₃u₁ (by simpa [K.T₃_side_two] using hi)).elim
 
   have habc := turn_pos_of_strictlyInsideTriangle K.inside
   have haHull : (a : Point) ∈ triangleHull (a : Point) (b : Point) (c : Point) :=
@@ -7391,15 +7508,15 @@ theorem empty_cells_incidence_cycles
   have hu₁Outer : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
       (K.skeleton.u₁ : Point) :=
     strict_outer_of_between_strict_hull habc K.inside haHull
-      (by simpa only [openSegment_symm] using K.skeleton.hu₁)
+      (by simpa [openSegment_symm] using K.skeleton.hu₁)
   have hu₂Outer : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
       (K.skeleton.u₂ : Point) :=
     strict_outer_of_between_strict_hull habc K.inside hbHull
-      (by simpa only [openSegment_symm] using K.skeleton.hu₂)
+      (by simpa [openSegment_symm] using K.skeleton.hu₂)
   have hu₃Outer : StrictlyInsideTriangle (a : Point) (b : Point) (c : Point)
       (K.skeleton.u₃ : Point) :=
     strict_outer_of_between_strict_hull habc K.inside hcHull
-      (by simpa only [openSegment_symm] using K.skeleton.hu₃)
+      (by simpa [openSegment_symm] using K.skeleton.hu₃)
   have hv₁red : colour K.skeleton.v₁ ≠ colour a := by
     simpa using K.skeleton.blocker_colour_ne 3
   have hv₂red : colour K.skeleton.v₂ ≠ colour a := by
@@ -7428,7 +7545,7 @@ theorem empty_cells_incidence_cycles
       hsd | hsu₁ | hsu₂ | hsu₃ | hsI₁ | hsI₂ | hsI₃
     · have hdOn : (d : Point) ∈ openSegment ℝ
           (K.skeleton.u₁ : Point) (K.skeleton.v₁ : Point) := by
-        simpa only [hsd] using hs₁
+        simpa [hsd] using hs₁
       exact (not_nested_openSegments K.hfour ha_v₁ K.had
         (K.skeleton_ne 0 3 (by decide)) K.skeleton.hu₁ hdOn).elim
     · subst s₁
@@ -7436,11 +7553,11 @@ theorem empty_cells_incidence_cycles
       exact ((Subtype.val_injective.ne (K.skeleton_ne 0 3 (by decide))) hm).elim
     · exact Or.inl hsu₂
     · exact Or.inr hsu₃
-    · have hm : s₁ ∈ (∅ : Finset P) := by simpa only [h₁] using hsI₁
+    · have hm : s₁ ∈ (∅ : Finset P) := by simpa [h₁] using hsI₁
       simp at hm
-    · have hm : s₁ ∈ (∅ : Finset P) := by simpa only [h₂] using hsI₂
+    · have hm : s₁ ∈ (∅ : Finset P) := by simpa [h₂] using hsI₂
       simp at hm
-    · have hm : s₁ ∈ (∅ : Finset P) := by simpa only [h₃] using hsI₃
+    · have hm : s₁ ∈ (∅ : Finset P) := by simpa [h₃] using hsI₃
       simp at hm
 
   obtain ⟨s₂, hs₂⟩ := K.proper K.skeleton.u₂ K.skeleton.v₂
@@ -7450,7 +7567,7 @@ theorem empty_cells_incidence_cycles
       hsd | hsu₁ | hsu₂ | hsu₃ | hsI₁ | hsI₂ | hsI₃
     · have hdOn : (d : Point) ∈ openSegment ℝ
           (K.skeleton.u₂ : Point) (K.skeleton.v₂ : Point) := by
-        simpa only [hsd] using hs₂
+        simpa [hsd] using hs₂
       exact (not_nested_openSegments K.hfour hb_v₂ K.hbd
         (K.skeleton_ne 1 4 (by decide)) K.skeleton.hu₂ hdOn).elim
     · exact Or.inl hsu₁
@@ -7458,11 +7575,11 @@ theorem empty_cells_incidence_cycles
       have hm := (left_mem_openSegment_iff (𝕜 := ℝ)).mp hs₂
       exact ((Subtype.val_injective.ne (K.skeleton_ne 1 4 (by decide))) hm).elim
     · exact Or.inr hsu₃
-    · have hm : s₂ ∈ (∅ : Finset P) := by simpa only [h₁] using hsI₁
+    · have hm : s₂ ∈ (∅ : Finset P) := by simpa [h₁] using hsI₁
       simp at hm
-    · have hm : s₂ ∈ (∅ : Finset P) := by simpa only [h₂] using hsI₂
+    · have hm : s₂ ∈ (∅ : Finset P) := by simpa [h₂] using hsI₂
       simp at hm
-    · have hm : s₂ ∈ (∅ : Finset P) := by simpa only [h₃] using hsI₃
+    · have hm : s₂ ∈ (∅ : Finset P) := by simpa [h₃] using hsI₃
       simp at hm
 
   obtain ⟨s₃, hs₃⟩ := K.proper K.skeleton.u₃ K.skeleton.v₃
@@ -7472,7 +7589,7 @@ theorem empty_cells_incidence_cycles
       hsd | hsu₁ | hsu₂ | hsu₃ | hsI₁ | hsI₂ | hsI₃
     · have hdOn : (d : Point) ∈ openSegment ℝ
           (K.skeleton.u₃ : Point) (K.skeleton.v₃ : Point) := by
-        simpa only [hsd] using hs₃
+        simpa [hsd] using hs₃
       exact (not_nested_openSegments K.hfour hc_v₃ K.hcd
         (K.skeleton_ne 2 5 (by decide)) K.skeleton.hu₃ hdOn).elim
     · exact Or.inl hsu₁
@@ -7480,11 +7597,11 @@ theorem empty_cells_incidence_cycles
     · subst s₃
       have hm := (left_mem_openSegment_iff (𝕜 := ℝ)).mp hs₃
       exact ((Subtype.val_injective.ne (K.skeleton_ne 2 5 (by decide))) hm).elim
-    · have hm : s₃ ∈ (∅ : Finset P) := by simpa only [h₁] using hsI₁
+    · have hm : s₃ ∈ (∅ : Finset P) := by simpa [h₁] using hsI₁
       simp at hm
-    · have hm : s₃ ∈ (∅ : Finset P) := by simpa only [h₂] using hsI₂
+    · have hm : s₃ ∈ (∅ : Finset P) := by simpa [h₂] using hsI₂
       simp at hm
-    · have hm : s₃ ∈ (∅ : Finset P) := by simpa only [h₃] using hsI₃
+    · have hm : s₃ ∈ (∅ : Finset P) := by simpa [h₃] using hsI₃
       simp at hm
 
   rcases hs₁Cases with hs₁u₂ | hs₁u₃ <;>
@@ -7494,44 +7611,44 @@ theorem empty_cells_incidence_cycles
       (K.skeleton_ne 0 3 (by decide)) (K.skeleton_ne 1 4 (by decide))
       (K.skeleton_ne 0 1 (by decide)) (K.skeleton_ne 0 4 (by decide))
       (K.skeleton_ne 3 1 (by decide)) (K.skeleton_ne 3 4 (by decide))
-      (by simpa only [hs₁u₂] using hs₁)
-    exact (hline.1 (by simpa only [hs₂u₁] using hs₂)).elim
+      (by simpa [hs₁u₂] using hs₁)
+    exact (hline.1 (by simpa [hs₂u₁] using hs₂)).elim
   · have hline := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 0 3 (by decide)) (K.skeleton_ne 1 4 (by decide))
       (K.skeleton_ne 0 1 (by decide)) (K.skeleton_ne 0 4 (by decide))
       (K.skeleton_ne 3 1 (by decide)) (K.skeleton_ne 3 4 (by decide))
-      (by simpa only [hs₁u₂] using hs₁)
-    exact (hline.1 (by simpa only [hs₂u₁] using hs₂)).elim
-  · exact Or.inl ⟨by simpa only [hs₁u₂] using hs₁,
-      by simpa only [hs₂u₃] using hs₂,
-      by simpa only [hs₃u₁] using hs₃⟩
+      (by simpa [hs₁u₂] using hs₁)
+    exact (hline.1 (by simpa [hs₂u₁] using hs₂)).elim
+  · exact Or.inl ⟨by simpa [hs₁u₂] using hs₁,
+      by simpa [hs₂u₃] using hs₂,
+      by simpa [hs₃u₁] using hs₃⟩
   · have hline := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 1 4 (by decide)) (K.skeleton_ne 2 5 (by decide))
       (K.skeleton_ne 1 2 (by decide)) (K.skeleton_ne 1 5 (by decide))
       (K.skeleton_ne 4 2 (by decide)) (K.skeleton_ne 4 5 (by decide))
-      (by simpa only [hs₂u₃] using hs₂)
-    exact (hline.1 (by simpa only [hs₃u₂] using hs₃)).elim
+      (by simpa [hs₂u₃] using hs₂)
+    exact (hline.1 (by simpa [hs₃u₂] using hs₃)).elim
   · have hline := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 0 3 (by decide)) (K.skeleton_ne 2 5 (by decide))
       (K.skeleton_ne 0 2 (by decide)) (K.skeleton_ne 0 5 (by decide))
       (K.skeleton_ne 3 2 (by decide)) (K.skeleton_ne 3 5 (by decide))
-      (by simpa only [hs₁u₃] using hs₁)
-    exact (hline.1 (by simpa only [hs₃u₁] using hs₃)).elim
-  · exact Or.inr ⟨by simpa only [hs₁u₃] using hs₁,
-      by simpa only [hs₂u₁] using hs₂,
-      by simpa only [hs₃u₂] using hs₃⟩
+      (by simpa [hs₁u₃] using hs₁)
+    exact (hline.1 (by simpa [hs₃u₁] using hs₃)).elim
+  · exact Or.inr ⟨by simpa [hs₁u₃] using hs₁,
+      by simpa [hs₂u₁] using hs₂,
+      by simpa [hs₃u₂] using hs₃⟩
   · have hline := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 0 3 (by decide)) (K.skeleton_ne 2 5 (by decide))
       (K.skeleton_ne 0 2 (by decide)) (K.skeleton_ne 0 5 (by decide))
       (K.skeleton_ne 3 2 (by decide)) (K.skeleton_ne 3 5 (by decide))
-      (by simpa only [hs₁u₃] using hs₁)
-    exact (hline.1 (by simpa only [hs₃u₁] using hs₃)).elim
+      (by simpa [hs₁u₃] using hs₁)
+    exact (hline.1 (by simpa [hs₃u₁] using hs₃)).elim
   · have hline := first_pair_points_do_not_block_second K.hfour
       (K.skeleton_ne 1 4 (by decide)) (K.skeleton_ne 2 5 (by decide))
       (K.skeleton_ne 1 2 (by decide)) (K.skeleton_ne 1 5 (by decide))
       (K.skeleton_ne 4 2 (by decide)) (K.skeleton_ne 4 5 (by decide))
-      (by simpa only [hs₂u₃] using hs₂)
-    exact (hline.1 (by simpa only [hs₃u₂] using hs₃)).elim
+      (by simpa [hs₂u₃] using hs₂)
+    exact (hline.1 (by simpa [hs₃u₂] using hs₃)).elim
 
 /-- The colour information used by both maximality orientations of the
 empty-cell configuration. -/
@@ -7553,35 +7670,35 @@ private theorem empty_cells_colour_facts
   have hp₃ := K.M₃.side_colours_pairwise_of_interior_empty
     (K.interiorPoints_empty₃ (by simpa [h₃]))
   have hu₂u₃ : colour K.skeleton.u₂ ≠ colour K.skeleton.u₃ := by
-    simpa only [K.T₁_side_two, K.T₁_side_one] using
+    simpa [K.T₁_side_two, K.T₁_side_one] using
       hp₁ (i := 2) (j := 1) (by decide)
   have hu₃u₁ : colour K.skeleton.u₃ ≠ colour K.skeleton.u₁ := by
-    simpa only [K.T₂_side_two, K.T₂_side_one] using
+    simpa [K.T₂_side_two, K.T₂_side_one] using
       hp₂ (i := 2) (j := 1) (by decide)
   have hu₁u₂ : colour K.skeleton.u₁ ≠ colour K.skeleton.u₂ := by
-    simpa only [K.T₃_side_two, K.T₃_side_one] using
+    simpa [K.T₃_side_two, K.T₃_side_one] using
       hp₃ (i := 2) (j := 1) (by decide)
   have hu₁v₁ : colour K.skeleton.u₁ = colour K.skeleton.v₁ := by
     obtain ⟨i, hi⟩ := colour_eq_some_side K.T₁ hp₁ K.skeleton.u₁
       (K.skeleton.blocker_colour_ne 0)
     fin_cases i
-    · simpa only [K.T₁_side_zero] using hi
-    · exact (hu₃u₁ (by simpa only [K.T₁_side_one] using hi.symm)).elim
-    · exact (hu₁u₂ (by simpa only [K.T₁_side_two] using hi)).elim
+    · simpa [K.T₁_side_zero] using hi
+    · exact (hu₃u₁ (by simpa [K.T₁_side_one] using hi.symm)).elim
+    · exact (hu₁u₂ (by simpa [K.T₁_side_two] using hi)).elim
   have hu₂v₂ : colour K.skeleton.u₂ = colour K.skeleton.v₂ := by
     obtain ⟨i, hi⟩ := colour_eq_some_side K.T₂ hp₂ K.skeleton.u₂
       (K.skeleton.blocker_colour_ne 1)
     fin_cases i
-    · simpa only [K.T₂_side_zero] using hi
-    · exact (hu₁u₂ (by simpa only [K.T₂_side_one] using hi.symm)).elim
-    · exact (hu₂u₃ (by simpa only [K.T₂_side_two] using hi)).elim
+    · simpa [K.T₂_side_zero] using hi
+    · exact (hu₁u₂ (by simpa [K.T₂_side_one] using hi.symm)).elim
+    · exact (hu₂u₃ (by simpa [K.T₂_side_two] using hi)).elim
   have hu₃v₃ : colour K.skeleton.u₃ = colour K.skeleton.v₃ := by
     obtain ⟨i, hi⟩ := colour_eq_some_side K.T₃ hp₃ K.skeleton.u₃
       (K.skeleton.blocker_colour_ne 2)
     fin_cases i
-    · simpa only [K.T₃_side_zero] using hi
-    · exact (hu₂u₃ (by simpa only [K.T₃_side_one] using hi.symm)).elim
-    · exact (hu₃u₁ (by simpa only [K.T₃_side_two] using hi)).elim
+    · simpa [K.T₃_side_zero] using hi
+    · exact (hu₂u₃ (by simpa [K.T₃_side_one] using hi.symm)).elim
+    · exact (hu₃u₁ (by simpa [K.T₃_side_two] using hi)).elim
   exact ⟨⟨K.skeleton.blocker_colour_ne 0,
       K.skeleton.blocker_colour_ne 1, K.skeleton.blocker_colour_ne 2⟩,
     ⟨hu₁u₂, hu₂u₃, hu₃u₁⟩, ⟨hu₁v₁, hu₂v₂, hu₃v₃⟩⟩
@@ -7613,11 +7730,11 @@ theorem empty_hull_point_cases
       (Or.inr (Or.inr (Or.inl hxv₂))))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
       (Or.inr (Or.inr (Or.inr hxv₃))))))))
-  · have hm : x ∈ (∅ : Finset P) := by simpa only [h₁] using (K.mem_I₁.mpr hx₁)
+  · have hm : x ∈ (∅ : Finset P) := by simpa [h₁] using (K.mem_I₁.mpr hx₁)
     simp at hm
-  · have hm : x ∈ (∅ : Finset P) := by simpa only [h₂] using (K.mem_I₂.mpr hx₂)
+  · have hm : x ∈ (∅ : Finset P) := by simpa [h₂] using (K.mem_I₂.mpr hx₂)
     simp at hm
-  · have hm : x ∈ (∅ : Finset P) := by simpa only [h₃] using (K.mem_I₃.mpr hx₃)
+  · have hm : x ∈ (∅ : Finset P) := by simpa [h₃] using (K.mem_I₃.mpr hx₃)
     simp at hm
 
 /-- Maximality of the positive directed empty-cell cycle, for an exterior
@@ -7707,43 +7824,43 @@ private theorem impossible_minimal_exterior_positive_cycle_colour_u₁
   have hu₁bc : 0 < turn (b : Point) (c : Point)
       (K.skeleton.u₁ : Point) := by
     have hbca : 0 < turn (b : Point) (c : Point) (a : Point) := by
-      simpa only [turn_rotate] using turn_pos_of_strictlyInsideTriangle K.inside
+      simpa [turn_rotate] using turn_pos_of_strictlyInsideTriangle K.inside
     exact turn_pos_of_between_nonneg K.skeleton.hu₁ hbca K.inside.2.1.le
   have hADLine := first_pair_points_do_not_block_second K.hfour K.had hq_u₁.symm
     (by
       intro e
       have hm : (a : Point) ∈ openSegment ℝ (a : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₁
+        simpa [e] using K.skeleton.hu₁
       exact K.had (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_a.symm
     (by
       intro e
       have hm : (d : Point) ∈ openSegment ℝ (a : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₁
+        simpa [e] using K.skeleton.hu₁
       exact K.had (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_d.symm K.skeleton.hu₁
   have hsEq : s = K.skeleton.v₂ := by
     rcases K.empty_hull_point_cases h₁ h₂ h₃ hsHull with
       hsa | hsb | hsc | hsd | hsu₁ | hsu₂ | hsu₃ | hsv₁ | hsv₂ | hsv₃
-    · exact (hADLine.1 (by simpa only [hsa, openSegment_symm] using hs)).elim
+    · exact (hADLine.1 (by simpa [hsa, openSegment_symm] using hs)).elim
     · have hbpos := turn_pos_of_between_nonneg
-        (by simpa only [hsb, openSegment_symm] using hs) hu₁bc hqbc
+        (by simpa [hsb, openSegment_symm] using hs) hu₁bc hqbc
       simp at hbpos
     · have hcpos := turn_pos_of_between_nonneg
-        (by simpa only [hsc, openSegment_symm] using hs) hu₁bc hqbc
+        (by simpa [hsc, openSegment_symm] using hs) hu₁bc hqbc
       simp at hcpos
-    · exact (hADLine.2 (by simpa only [hsd, openSegment_symm] using hs)).elim
+    · exact (hADLine.2 (by simpa [hsd, openSegment_symm] using hs)).elim
     · subst s
       have hm := (right_mem_openSegment_iff (𝕜 := ℝ)).mp hs
       exact (Subtype.val_injective.ne hq_u₁ hm).elim
     · have hu₂On : (K.skeleton.u₂ : Point) ∈ openSegment ℝ
           (K.skeleton.u₁ : Point) (q : Point) := by
-        simpa only [hsu₂, openSegment_symm] using hs
+        simpa [hsu₂, openSegment_symm] using hs
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 0 3 (by decide)) hq_u₁.symm hcycle₁ hu₂On
       exact (hq_v₁ heq.symm).elim
     · have hu₃On : (K.skeleton.u₃ : Point) ∈ openSegment ℝ
-          (q : Point) (K.skeleton.u₁ : Point) := by simpa only [hsu₃] using hs
+          (q : Point) (K.skeleton.u₁ : Point) := by simpa [hsu₃] using hs
       exact (not_nested_openSegments (p := q) (r := K.skeleton.u₃)
         (z := K.skeleton.u₁) (s := K.skeleton.v₃) K.hfour
         hq_v₃ hq_u₁ (K.skeleton_ne 2 5 (by decide)) hu₃On hcycle₃).elim
@@ -7752,18 +7869,18 @@ private theorem impossible_minimal_exterior_positive_cycle_colour_u₁
     · exact hsv₂
     · have hv₃On : (K.skeleton.v₃ : Point) ∈ openSegment ℝ
           (K.skeleton.u₁ : Point) (q : Point) := by
-        simpa only [hsv₃, openSegment_symm] using hs
+        simpa [hsv₃, openSegment_symm] using hs
       exact (not_nested_openSegments (p := K.skeleton.u₃)
         (r := K.skeleton.u₁) (z := K.skeleton.v₃) (s := q) K.hfour
         hq_u₃.symm (K.skeleton_ne 2 5 (by decide)) hq_u₁.symm
         hcycle₃ hv₃On).elim
   have hv₂Between : (K.skeleton.v₂ : Point) ∈ openSegment ℝ
       (K.skeleton.u₁ : Point) (q : Point) := by
-    simpa only [hsEq, openSegment_symm] using hs
+    simpa [hsEq, openSegment_symm] using hs
 
   have hLpos : 0 < turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
       (K.skeleton.u₁ : Point) := by
-    simpa only [turn_rotate] using
+    simpa [turn_rotate] using
       turn_pos_of_strictlyInsideTriangle K.red_center_strictly_inside_spoke_triangle
   have hv₂zero : turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
       (K.skeleton.v₂ : Point) = 0 := by
@@ -7800,7 +7917,7 @@ private theorem impossible_minimal_exterior_positive_cycle_colour_u₁
       · exact hbneg.le
       · exact hcneg.le
     have hdnonpos := turn_nonpos_of_mem_convexHull hgen
-      (by simpa only [triangleHull] using
+      (by simpa [triangleHull] using
         strictlyInsideTriangle_mem_triangleHull K.inside)
     linarith
   have hv₃pos : 0 < turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
@@ -7815,20 +7932,20 @@ private theorem impossible_minimal_exterior_positive_cycle_colour_u₁
     (by
       intro e
       have hm : (b : Point) ∈ openSegment ℝ (b : Point) (c : Point) := by
-        simpa only [e] using K.skeleton.hv₁
+        simpa [e] using K.skeleton.hv₁
       exact K.hbc (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_b.symm
     (by
       intro e
       have hm : (c : Point) ∈ openSegment ℝ (b : Point) (c : Point) := by
-        simpa only [e] using K.skeleton.hv₁
+        simpa [e] using K.skeleton.hv₁
       exact K.hbc (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_c.symm K.skeleton.hv₁
   rcases K.empty_hull_point_cases h₁ h₂ h₃ htHull with
     hta | htb | htc | htd | htu₁ | htu₂ | htu₃ | htv₁ | htv₂ | htv₃
   · rw [hta] at htneg; linarith
-  · exact (hBCLine.1 (by simpa only [htb, openSegment_symm] using ht)).elim
-  · exact (hBCLine.2 (by simpa only [htc, openSegment_symm] using ht)).elim
+  · exact (hBCLine.1 (by simpa [htb, openSegment_symm] using ht)).elim
+  · exact (hBCLine.2 (by simpa [htc, openSegment_symm] using ht)).elim
   · rw [htd] at htneg; linarith
   · rw [htu₁] at htneg; linarith
   · rw [htu₂] at htneg; simp at htneg
@@ -7932,43 +8049,43 @@ private theorem impossible_minimal_exterior_negative_cycle_colour_u₁
   have hu₁bc : 0 < turn (b : Point) (c : Point)
       (K.skeleton.u₁ : Point) := by
     have hbca : 0 < turn (b : Point) (c : Point) (a : Point) := by
-      simpa only [turn_rotate] using turn_pos_of_strictlyInsideTriangle K.inside
+      simpa [turn_rotate] using turn_pos_of_strictlyInsideTriangle K.inside
     exact turn_pos_of_between_nonneg K.skeleton.hu₁ hbca K.inside.2.1.le
   have hADLine := first_pair_points_do_not_block_second K.hfour K.had hq_u₁.symm
     (by
       intro e
       have hm : (a : Point) ∈ openSegment ℝ (a : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₁
+        simpa [e] using K.skeleton.hu₁
       exact K.had (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_a.symm
     (by
       intro e
       have hm : (d : Point) ∈ openSegment ℝ (a : Point) (d : Point) := by
-        simpa only [e] using K.skeleton.hu₁
+        simpa [e] using K.skeleton.hu₁
       exact K.had (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_d.symm K.skeleton.hu₁
   have hsEq : s = K.skeleton.v₃ := by
     rcases K.empty_hull_point_cases h₁ h₂ h₃ hsHull with
       hsa | hsb | hsc | hsd | hsu₁ | hsu₂ | hsu₃ | hsv₁ | hsv₂ | hsv₃
-    · exact (hADLine.1 (by simpa only [hsa, openSegment_symm] using hs)).elim
+    · exact (hADLine.1 (by simpa [hsa, openSegment_symm] using hs)).elim
     · have hbpos := turn_pos_of_between_nonneg
-        (by simpa only [hsb, openSegment_symm] using hs) hu₁bc hqbc
+        (by simpa [hsb, openSegment_symm] using hs) hu₁bc hqbc
       simp at hbpos
     · have hcpos := turn_pos_of_between_nonneg
-        (by simpa only [hsc, openSegment_symm] using hs) hu₁bc hqbc
+        (by simpa [hsc, openSegment_symm] using hs) hu₁bc hqbc
       simp at hcpos
-    · exact (hADLine.2 (by simpa only [hsd, openSegment_symm] using hs)).elim
+    · exact (hADLine.2 (by simpa [hsd, openSegment_symm] using hs)).elim
     · subst s
       have hm := (right_mem_openSegment_iff (𝕜 := ℝ)).mp hs
       exact (Subtype.val_injective.ne hq_u₁ hm).elim
     · have hu₂On : (K.skeleton.u₂ : Point) ∈ openSegment ℝ
-          (q : Point) (K.skeleton.u₁ : Point) := by simpa only [hsu₂] using hs
+          (q : Point) (K.skeleton.u₁ : Point) := by simpa [hsu₂] using hs
       exact (not_nested_openSegments (p := q) (r := K.skeleton.u₂)
         (z := K.skeleton.u₁) (s := K.skeleton.v₂) K.hfour
         hq_v₂ hq_u₁ (K.skeleton_ne 1 4 (by decide)) hu₂On hcycle₂).elim
     · have hu₃On : (K.skeleton.u₃ : Point) ∈ openSegment ℝ
           (K.skeleton.u₁ : Point) (q : Point) := by
-        simpa only [hsu₃, openSegment_symm] using hs
+        simpa [hsu₃, openSegment_symm] using hs
       have heq := other_endpoint_eq_of_common_blocker K.hfour
         (K.skeleton_ne 0 3 (by decide)) hq_u₁.symm hcycle₁ hu₃On
       exact (hq_v₁ heq.symm).elim
@@ -7976,7 +8093,7 @@ private theorem impossible_minimal_exterior_negative_cycle_colour_u₁
       exact (hsColour (hqColour.trans hu₁v₁).symm).elim
     · have hv₂On : (K.skeleton.v₂ : Point) ∈ openSegment ℝ
           (K.skeleton.u₁ : Point) (q : Point) := by
-        simpa only [hsv₂, openSegment_symm] using hs
+        simpa [hsv₂, openSegment_symm] using hs
       exact (not_nested_openSegments (p := K.skeleton.u₂)
         (r := K.skeleton.u₁) (z := K.skeleton.v₂) (s := q) K.hfour
         hq_u₂.symm (K.skeleton_ne 1 4 (by decide)) hq_u₁.symm
@@ -7984,11 +8101,11 @@ private theorem impossible_minimal_exterior_negative_cycle_colour_u₁
     · exact hsv₃
   have hv₃Between : (K.skeleton.v₃ : Point) ∈ openSegment ℝ
       (K.skeleton.u₁ : Point) (q : Point) := by
-    simpa only [hsEq, openSegment_symm] using hs
+    simpa [hsEq, openSegment_symm] using hs
 
   have hLpos : 0 < turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
       (K.skeleton.u₁ : Point) := by
-    simpa only [turn_rotate] using
+    simpa [turn_rotate] using
       turn_pos_of_strictlyInsideTriangle K.red_center_strictly_inside_spoke_triangle
   have hv₃zero : turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
       (K.skeleton.v₃ : Point) = 0 := by
@@ -8030,7 +8147,7 @@ private theorem impossible_minimal_exterior_negative_cycle_colour_u₁
       · exact hbneg.le
       · exact hcneg.le
     have hdnonpos := turn_nonpos_of_mem_convexHull hgen
-      (by simpa only [triangleHull] using
+      (by simpa [triangleHull] using
         strictlyInsideTriangle_mem_triangleHull K.inside)
     linarith
   have hv₂pos : 0 < turn (K.skeleton.u₂ : Point) (K.skeleton.u₃ : Point)
@@ -8045,20 +8162,20 @@ private theorem impossible_minimal_exterior_negative_cycle_colour_u₁
     (by
       intro e
       have hm : (b : Point) ∈ openSegment ℝ (b : Point) (c : Point) := by
-        simpa only [e] using K.skeleton.hv₁
+        simpa [e] using K.skeleton.hv₁
       exact K.hbc (Subtype.ext ((left_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_b.symm
     (by
       intro e
       have hm : (c : Point) ∈ openSegment ℝ (b : Point) (c : Point) := by
-        simpa only [e] using K.skeleton.hv₁
+        simpa [e] using K.skeleton.hv₁
       exact K.hbc (Subtype.ext ((right_mem_openSegment_iff (𝕜 := ℝ)).mp hm)))
     hq_c.symm K.skeleton.hv₁
   rcases K.empty_hull_point_cases h₁ h₂ h₃ htHull with
     hta | htb | htc | htd | htu₁ | htu₂ | htu₃ | htv₁ | htv₂ | htv₃
   · rw [hta] at htneg; linarith
-  · exact (hBCLine.1 (by simpa only [htb, openSegment_symm] using ht)).elim
-  · exact (hBCLine.2 (by simpa only [htc, openSegment_symm] using ht)).elim
+  · exact (hBCLine.1 (by simpa [htb, openSegment_symm] using ht)).elim
+  · exact (hBCLine.2 (by simpa [htc, openSegment_symm] using ht)).elim
   · rw [htd] at htneg; linarith
   · rw [htu₁] at htneg; linarith
   · rw [htu₂] at htneg; simp at htneg
@@ -8169,65 +8286,65 @@ theorem empty_cells_all_points_mem_hull
     · exact K.impossible_minimal_exterior_positive_cycle_colour_u₁
         h₁ h₂ h₃ hpos.1 hpos.2.1 hpos.2.2 hqOut hqmin hqu₁ hu₁v₁
     · apply K.rotate.impossible_minimal_exterior_positive_cycle_colour_u₁
-        (by simpa only [K.rotate_I₁] using h₂)
-        (by simpa only [K.rotate_I₂] using h₃)
-        (by simpa only [K.rotate_I₃] using h₁)
+        (by simpa [K.rotate_I₁] using h₂)
+        (by simpa [K.rotate_I₂] using h₃)
+        (by simpa [K.rotate_I₃] using h₁)
         hpos.2.1 hpos.2.2 hpos.1
-        (by simpa only [triangleHull_rotate] using hqOut)
+        (by simpa [triangleHull_rotate] using hqOut)
         (by
           intro y hy
           have hy' : (y : Point) ∉
               triangleHull (a : Point) (b : Point) (c : Point) := by
-            simpa only [triangleHull_rotate] using hy
-          simpa only [triangleHull_rotate] using hqmin y hy')
+            simpa [triangleHull_rotate] using hy
+          simpa [triangleHull_rotate] using hqmin y hy')
         hqu₂ hu₂v₂
     · apply K.rotate.rotate.impossible_minimal_exterior_positive_cycle_colour_u₁
-        (by simpa only [ConcaveConfiguration.rotate_I₁,
+        (by simpa [ConcaveConfiguration.rotate_I₁,
           ConcaveConfiguration.rotate_I₂] using h₃)
-        (by simpa only [ConcaveConfiguration.rotate_I₂,
+        (by simpa [ConcaveConfiguration.rotate_I₂,
           ConcaveConfiguration.rotate_I₃] using h₁)
-        (by simpa only [ConcaveConfiguration.rotate_I₃,
+        (by simpa [ConcaveConfiguration.rotate_I₃,
           ConcaveConfiguration.rotate_I₁] using h₂)
         hpos.2.2 hpos.1 hpos.2.1
-        (by simpa only [hQ₂] using hqOut)
+        (by simpa [hQ₂] using hqOut)
         (by
           intro y hy
           have hy' : (y : Point) ∉
               triangleHull (a : Point) (b : Point) (c : Point) := by
-            simpa only [hQ₂] using hy
-          simpa only [hQ₂] using hqmin y hy')
+            simpa [hQ₂] using hy
+          simpa [hQ₂] using hqmin y hy')
         hqu₃ hu₃v₃
   · rcases hqCases with hqu₁ | hqu₂ | hqu₃
     · exact K.impossible_minimal_exterior_negative_cycle_colour_u₁
         h₁ h₂ h₃ hneg.1 hneg.2.1 hneg.2.2 hqOut hqmin hqu₁ hu₁v₁
     · apply K.rotate.impossible_minimal_exterior_negative_cycle_colour_u₁
-        (by simpa only [K.rotate_I₁] using h₂)
-        (by simpa only [K.rotate_I₂] using h₃)
-        (by simpa only [K.rotate_I₃] using h₁)
+        (by simpa [K.rotate_I₁] using h₂)
+        (by simpa [K.rotate_I₂] using h₃)
+        (by simpa [K.rotate_I₃] using h₁)
         hneg.2.1 hneg.2.2 hneg.1
-        (by simpa only [triangleHull_rotate] using hqOut)
+        (by simpa [triangleHull_rotate] using hqOut)
         (by
           intro y hy
           have hy' : (y : Point) ∉
               triangleHull (a : Point) (b : Point) (c : Point) := by
-            simpa only [triangleHull_rotate] using hy
-          simpa only [triangleHull_rotate] using hqmin y hy')
+            simpa [triangleHull_rotate] using hy
+          simpa [triangleHull_rotate] using hqmin y hy')
         hqu₂ hu₂v₂
     · apply K.rotate.rotate.impossible_minimal_exterior_negative_cycle_colour_u₁
-        (by simpa only [ConcaveConfiguration.rotate_I₁,
+        (by simpa [ConcaveConfiguration.rotate_I₁,
           ConcaveConfiguration.rotate_I₂] using h₃)
-        (by simpa only [ConcaveConfiguration.rotate_I₂,
+        (by simpa [ConcaveConfiguration.rotate_I₂,
           ConcaveConfiguration.rotate_I₃] using h₁)
-        (by simpa only [ConcaveConfiguration.rotate_I₃,
+        (by simpa [ConcaveConfiguration.rotate_I₃,
           ConcaveConfiguration.rotate_I₁] using h₂)
         hneg.2.2 hneg.1 hneg.2.1
-        (by simpa only [hQ₂] using hqOut)
+        (by simpa [hQ₂] using hqOut)
         (by
           intro y hy
           have hy' : (y : Point) ∉
               triangleHull (a : Point) (b : Point) (c : Point) := by
-            simpa only [hQ₂] using hy
-          simpa only [hQ₂] using hqmin y hy')
+            simpa [hQ₂] using hy
+          simpa [hQ₂] using hqmin y hy')
         hqu₃ hu₃v₃
 
 end ConcaveConfiguration

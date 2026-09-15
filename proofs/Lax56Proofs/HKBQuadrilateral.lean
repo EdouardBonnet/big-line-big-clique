@@ -75,13 +75,18 @@ theorem mem_quadrilateralHull_of_edgeTurns_nonneg
   · apply htri₀₂₃
     apply weaklyInsideTriangle_mem_triangleHull
     · have h := hq.2 2 0 (by decide) (by decide)
-      simpa only [turn_rotate] using h
-    · refine ⟨hdiag, hp 2, ?_⟩
-      simpa using hp 3
+      rw [show (2 : Fin 4) + 1 = 3 by decide, turn_rotate] at h
+      exact h
+    · refine ⟨hdiag, ?_, ?_⟩
+      · simpa only [show (2 : Fin 4) + 1 = 3 by decide] using hp 2
+      · simpa only [show (3 : Fin 4) + 1 = 0 by decide] using hp 3
   · apply htri₀₁₂
     apply weaklyInsideTriangle_mem_triangleHull
-    · exact hq.2 0 2 (by decide) (by decide)
-    · refine ⟨hp 0, hp 1, ?_⟩
+    · simpa only [show (0 : Fin 4) + 1 = 1 by decide] using
+        hq.2 0 2 (by decide) (by decide)
+    · refine ⟨?_, ?_, ?_⟩
+      · simpa only [show (0 : Fin 4) + 1 = 1 by decide] using hp 0
+      · simpa only [show (1 : Fin 4) + 1 = 2 by decide] using hp 1
       rw [turn_swap_first]
       have := lt_of_not_ge hdiag
       linarith

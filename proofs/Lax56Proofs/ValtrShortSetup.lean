@@ -75,8 +75,9 @@ theorem fiveSectorConfig_of_apex_data {S : Finset Point} (hgen : ¬HasThreeColli
     rw [hrange, convexHull_extremeLayer]
     exact subset_convexHull ℝ _ hp
   · intro i j k hij hjk hk
-    convert neg_neg_of_pos (hctri (4 - k) (4 - j) (4 - i) (by omega) (by omega) (by omega))
-      using 1 <;> unfold fiveApices turn <;> ring
+    rw [fiveApices, fiveApices, fiveApices, turn_reverse]
+    exact neg_neg_of_pos
+      (hctri (4 - k) (4 - j) (4 - i) (by omega) (by omega) (by omega))
   · intro i hi
     rw [fiveBase_current v start hi, fiveBase_next]
     exact (hdata _).strict_triangle

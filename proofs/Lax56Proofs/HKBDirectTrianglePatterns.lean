@@ -469,6 +469,14 @@ def CellSkeleton.interiorLocal
       (p : Point)) :
     T.toAmbient (T.interiorLocal p hp) = p := rfl
 
+@[simp] theorem CellSkeleton.coe_interiorLocal
+    {P : Finset Point} {colour : P → Fin 4} {red : Fin 4}
+    {A B C : P} (T : CellSkeleton P colour red A B C)
+    (p : P)
+    (hp : StrictlyInsideTriangle (A : Point) (B : Point) (C : Point)
+      (p : Point)) :
+    (T.interiorLocal p hp : Point) = (p : Point) := rfl
+
 theorem CellSkeleton.sideLocals_pairwise
     {P : Finset Point} {colour : P → Fin 4} {red : Fin 4}
     {A B C : P} (T : CellSkeleton P colour red A B C) :
@@ -777,7 +785,8 @@ theorem CellModel.interior_colour_ne_side_of_unique
   have hne : pL ≠ T.sideLocal i := by
     intro h
     exact T.side_ne_strictInterior i hp
-      (by simpa only [T.coe_sideLocal] using congrArg Subtype.val h.symm)
+      (by simpa only [pL, T.coe_sideLocal, T.coe_interiorLocal] using
+        congrArg Subtype.val h.symm)
   obtain ⟨z, hz⟩ := M.exists_blocker hne (by simpa [pL] using hc)
   have hzStrict := T.strict_of_between_side_and_inside i hp
     (by simpa [pL, openSegment_symm] using hz)

@@ -144,11 +144,9 @@ theorem not_minimal_of_supported_splice_clockwise {S R : Finset Point}
   apply not_minimal_of_supported_splice hgen hR (fun i ↦ v i.rev)
     (hinj.comp Fin.rev_injective) (fun i ↦ hmem i.rev) _ _ hremoved
   · intro i j
-    dsimp only
     rw [Fin.rev_castSucc, Fin.rev_succ, turn_swap_first]
     exact neg_nonneg.mpr (hchain i.rev j.rev)
   · intro i p hp
-    dsimp only
     rw [Fin.rev_castSucc, Fin.rev_succ, turn_swap_first]
     exact neg_nonneg.mpr (hcross i.rev p hp)
 

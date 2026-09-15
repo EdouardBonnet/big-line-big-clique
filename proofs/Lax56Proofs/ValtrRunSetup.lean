@@ -151,8 +151,9 @@ theorem runGeometry_of_apex_data {S : Finset Point} (hgen : ¬HasThreeCollinear 
     exact subset_convexHull ℝ _ hp
   · intro i j k hi hij hjk hkt
     rw [hapex i hi (by omega), hapex j (by omega) (by omega), hapex k (by omega) hkt]
-    convert neg_neg_of_pos (hctri (t - k) (t - j) (t - i) (by omega) (by omega) (by omega))
-      using 1 <;> unfold turn <;> ring
+    rw [turn_reverse]
+    exact neg_neg_of_pos
+      (hctri (t - k) (t - j) (t - i) (by omega) (by omega) (by omega))
   · intro k hk hkt
     rw [hbCurrent k hk hkt, hbNext k hk hkt, hapex k hk hkt]
     exact (hdatum (t - k) (by omega)).strict_triangle

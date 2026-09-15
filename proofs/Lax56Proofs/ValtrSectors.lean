@@ -36,7 +36,7 @@ theorem turn_pos_on_triangle_except_vertex {u v a b c p : Point}
     · exact hb.le
     · exact hc.le
   have hpHull : p ∈ convexHull ℝ (({a, b, c} : Finset Point) : Set Point) := by
-    simpa only [Finset.coe_insert, Finset.coe_singleton] using hp
+    simpa only [triangleHull, Finset.coe_insert, Finset.coe_singleton] using hp
   apply lt_of_le_of_ne (turn_nonneg_of_mem_convexHull hnonneg hpHull)
   intro hz
   apply hpa
@@ -144,7 +144,8 @@ theorem two_sector_chain_clockwise {a c b e f : Point}
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp
       rcases hp with rfl | rfl | rfl
       · have h := hc.2.2
-        convert h.le using 1 <;> unfold turn <;> ring
+        rw [turn_rotate]
+        exact h.le
       · simp
       · exact le_of_not_gt h
     exact hace.not_ge (turn_nonneg_of_mem_convexHull hnonneg
@@ -155,13 +156,17 @@ theorem two_sector_chain_clockwise {a c b e f : Point}
       intro p hp
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hp
       rcases hp with rfl | rfl | rfl
-      · convert le_of_not_gt h using 1 <;> unfold turn <;> ring
+      · rw [turn_rotate]
+        exact le_of_not_gt h
       · simp
       · have h := he.2.2
-        convert h.le using 1 <;> unfold turn <;> ring
+        rw [← turn_rotate]
+        exact h.le
     have hce := turn_nonneg_of_mem_convexHull hnonneg
       (strictlyInsideTriangle_mem_triangleHull hc)
-    have hce' : 0 ≤ turn c e f := by convert hce using 1 <;> unfold turn <;> ring
+    have hce' : 0 ≤ turn c e f := by
+      rw [← turn_rotate c e f]
+      exact hce
     exact hcef.not_ge hce'
   intro i j k hij hjk
   fin_cases i <;> fin_cases j <;> fin_cases k <;> simp_all

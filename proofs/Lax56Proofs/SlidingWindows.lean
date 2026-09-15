@@ -98,6 +98,8 @@ theorem blockNonedgeToCaptured_injective (P : Finset Point) {s m : ℕ}
 theorem block_nonedge_le_captured (P : Finset Point) {s m : ℕ}
     (hs : s + m ≤ P.card) :
     edgeCount (blockGraph P hs)ᶜ ≤ Nat.card (Captured P s m) := by
+  classical
+  letI := (blockGraph P hs)ᶜ.fintypeEdgeSet
   simpa only [edgeCount, Nat.card_eq_fintype_card] using
     Fintype.card_le_of_injective (blockNonedgeToCaptured P hs)
       (blockNonedgeToCaptured_injective P hs)

@@ -35,7 +35,8 @@ theorem radial_sides_of_outer_triple {S : Finset Point} {c q w r : Point}
     refine ⟨?_, ?_, ?_⟩
     · rw [turn_swap_last]; exact neg_nonneg.mpr hh
     · rw [turn_rotate]; exact hcycle.le
-    · convert hqr.le using 1 <;> unfold turn <;> ring
+    · rw [turn_rotate, turn_rotate]
+      exact hqr.le
   refine ⟨hfirst, ?_⟩
   by_contra hh
   have hh := le_of_not_gt hh

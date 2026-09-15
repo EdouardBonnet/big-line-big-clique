@@ -174,11 +174,11 @@ theorem internal_local_hull (hgen : ¬HasThreeCollinear S)
   have hnext := cfg.intermediate_left k (by omega) hkm
   apply mem_neighbor_hull_of_four_clockwise_turns
   · rw [turn_swap_first]; exact neg_neg_of_pos hprev
-  · convert neg_neg_of_pos (cfg.fan k (by omega) (by omega)).2.1 using 1 <;>
-      unfold turn <;> ring
+  · rw [turn_reverse]
+    exact neg_neg_of_pos (cfg.fan k (by omega) (by omega)).2.1
   · rw [turn_swap_last]; exact neg_neg_of_pos hnext
-  · convert cfg.apex_triples (k - 1) k (k + 1) (by omega) (by omega) (by omega) (by omega)
-      using 1 <;> unfold turn <;> ring
+  · simpa only [turn_rotate] using
+      cfg.apex_triples (k - 1) k (k + 1) (by omega) (by omega) (by omega) (by omega)
   · exact turn_ne_zero_of_generalPosition hgen
       (inner_subset S (cfg.chain_inner k (by omega)))
       (inner_subset S (cfg.chain_inner (k - 1) (by omega)))
@@ -238,7 +238,8 @@ theorem first_support (hgen : ¬HasThreeCollinear S) :
     · exact hne0 _ (by omega) (by omega)
   have hdesc : turn (h 1) (h 2) (h 0) < 0 := by
     rw [cfg.first]
-    convert neg_neg_of_pos cfg.first_interior.1 using 1 <;> unfold turn <;> ring
+    rw [turn_reverse]
+    exact neg_neg_of_pos cfg.first_interior.1
   have hout (k) (hk : 2 ≤ k) (hkm : k ≤ m) :
       h 0 ∉ sector ![b k, h k, b (k + 1)] := by
     intro hs
@@ -275,7 +276,8 @@ theorem last_support (hgen : ¬HasThreeCollinear S) :
     · exact hnem _ (by omega)
   have hdesc : turn (h (m - 1)) (h m) (h (m + 1)) < 0 := by
     rw [cfg.last]
-    convert neg_neg_of_pos cfg.last_interior.2.1 using 1 <;> unfold turn <;> ring
+    rw [turn_swap_last]
+    exact neg_neg_of_pos cfg.last_interior.2.1
   have hout (k) (hk : 1 ≤ k) (hkm : k < m) :
       h (m + 1) ∉ sector ![b k, h k, b (k + 1)] := by
     intro hs
@@ -299,8 +301,8 @@ theorem apex_edge_support (i j : ℕ) (hi : 1 ≤ i) (him : i < m)
   by_cases hjnext : j = i + 1
   · subst j; simp
   by_cases hjlt : j < i
-  · convert (cfg.apex_triples j i (i + 1) hj hjlt (by omega) (by omega)).le using 1 <;>
-      unfold turn <;> ring
+  · rw [turn_rotate (h j) (h i) (h (i + 1))]
+    exact (cfg.apex_triples j i (i + 1) hj hjlt (by omega) (by omega)).le
   · exact (cfg.apex_triples i (i + 1) j hi (by omega) (by omega) hjm).le
 
 /-- Every chain vertex lies on the right of every open chain edge. The

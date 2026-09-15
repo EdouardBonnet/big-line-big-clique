@@ -155,7 +155,9 @@ theorem empty_pentagon_extend_of_hexagon {P : Finset Point}
       hhex.2.2 i.castSucc j.castSucc k.castSucc hij hjk
   have hinj : Function.Injective v := (Fin.snoc_injective_iff.mp hhex.1).1
   have hqpos : 0 < turn (v 0) (v 4) q := by
-    simpa using hhex.2.2 0 4 5 (by decide) (by decide)
+    simpa only [Fin.snoc_castSucc, Fin.snoc_last] using
+      hhex.2.2 (0 : Fin 5).castSucc (4 : Fin 5).castSucc (Fin.last 5)
+        (by decide) (Fin.castSucc_lt_last 4)
   obtain ⟨r, hrP, hrT, hrpos, hrempty⟩ :=
     exists_empty_triangle_on_base hgen hq (hmem 0) (hmem 4) hqpos
   have hbase : ∀ i, turn (v 0) (v 4) (v i) ≤ 0 := by
@@ -202,8 +204,9 @@ theorem empty_pentagon_extend_of_hexagon {P : Finset Point}
   have hHmem : H ⊆ P := by
     intro p hp
     obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hp
-    exact Fin.lastCases (by simpa [w] using hrP)
-      (fun i ↦ by simpa only [w, Fin.snoc_castSucc] using hmem i) i
+    cases i using Fin.lastCases with
+    | last => simpa only [w, Fin.snoc_last] using hrP
+    | cast i => simpa only [w, Fin.snoc_castSucc] using hmem i
   refine ⟨H, hHmem, ?_, ?_, ?_⟩
   · simp [H, Finset.card_image_of_injective _ hw.1]
   · have hconv := (convexIndependent_hexagon hw).range

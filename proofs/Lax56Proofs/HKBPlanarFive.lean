@@ -296,11 +296,16 @@ theorem allQuadsOK_of_real
       true_and]
   intro q
   fin_cases q
-  · simpa [fiveQuadTriples, sign] using hquad 1 2 3 4 (by decide) (by decide) (by decide)
-  · simpa [fiveQuadTriples, sign] using hquad 0 2 3 4 (by decide) (by decide) (by decide)
-  · simpa [fiveQuadTriples, sign] using hquad 0 1 3 4 (by decide) (by decide) (by decide)
-  · simpa [fiveQuadTriples, sign] using hquad 0 1 2 4 (by decide) (by decide) (by decide)
-  · simpa [fiveQuadTriples, sign] using hquad 0 1 2 3 (by decide) (by decide) (by decide)
+  · convert hquad 1 2 3 4 (by decide) (by decide) (by decide) using 1 <;>
+      simp [fiveQuadTriples, fiveTripleEnds] <;> congr
+  · convert hquad 0 2 3 4 (by decide) (by decide) (by decide) using 1 <;>
+      simp [fiveQuadTriples, fiveTripleEnds] <;> congr
+  · convert hquad 0 1 3 4 (by decide) (by decide) (by decide) using 1 <;>
+      simp [fiveQuadTriples, fiveTripleEnds] <;> congr
+  · convert hquad 0 1 2 4 (by decide) (by decide) (by decide) using 1 <;>
+      simp [fiveQuadTriples, fiveTripleEnds] <;> congr
+  · convert hquad 0 1 2 3 (by decide) (by decide) (by decide) using 1 <;>
+      simp [fiveQuadTriples, fiveTripleEnds] <;> congr
 
 -- Exhaustive check of the `2^10` nonzero order types.  This is the finite
 -- core of Lemma 6.1.

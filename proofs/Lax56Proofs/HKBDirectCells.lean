@@ -603,10 +603,14 @@ theorem allCellPoints_card_le_three
         · rw [← hi]
           have h := openSegment_subset_triangleHull_left
             (c := (a : Point)) S.hv₁
+          change (S.v₁ : Point) ∈
+            triangleHull (a : Point) (b : Point) (c : Point)
           simpa only [triangleHull_rotate] using h
         · rw [← hi]
           have h := openSegment_subset_triangleHull_left
             (c := (b : Point)) S.hv₂
+          change (S.v₂ : Point) ∈
+            triangleHull (a : Point) (b : Point) (c : Point)
           simpa only [triangleHull_swap_last] using h
         · rw [← hi]
           exact openSegment_subset_triangleHull_left S.hv₃

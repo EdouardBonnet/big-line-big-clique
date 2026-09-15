@@ -30,10 +30,10 @@ def Visible (P : Finset Point) (p q : Point) : Prop :=
 /-- The point-visibility graph of `P`; its vertices retain their membership proofs. -/
 def visibilityGraph (P : Finset Point) : SimpleGraph P where
   Adj p q := Visible P p q
-  symm := by
+  symm := ⟨by
     intro p q hpq
     refine ⟨hpq.1.symm, ?_⟩
-    simpa only [openSegment_symm] using hpq.2
+    simpa only [openSegment_symm] using hpq.2⟩
   loopless := ⟨fun p hp => hp.1 rfl⟩
 
 /-- The finite point set contains four distinct collinear points. -/
