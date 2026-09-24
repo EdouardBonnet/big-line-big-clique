@@ -6,6 +6,7 @@ title: "Large Finite Point Sets Have 4 Collinear Points or a 6-Clique"
 authors:
   - name: "Édouard Bonnet"
     github: "EdouardBonnet"
+  - name: "Codex 6"
 bibEntries:
   - '@incollection{Valtr2008, author = {Pavel Valtr}, title = {On Empty
     Hexagons}, booktitle = {Surveys on Discrete and Computational Geometry:
