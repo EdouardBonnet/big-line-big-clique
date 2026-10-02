@@ -12,7 +12,8 @@ bibEntries:
   - '@incollection{Valtr2008, author = {Pavel Valtr}, title = {On Empty
     Hexagons}, booktitle = {Surveys on Discrete and Computational Geometry:
     Twenty Years Later}, series = {Contemporary Mathematics}, volume = {453},
-    pages = {433--441}, publisher = {American Mathematical Society}, year = {2008}}'
+    pages = {433--441}, publisher = {American Mathematical Society}, year =
+    {2008}}'
   - '@misc{Bonnet2026, author = {\''Edouard Bonnet}, title = {Large Finite Point
     Sets Have 4 Collinear Points or a 6-Clique}, year = {2026}}'
   - '@misc{HujterKisfaludiBak2014, author = {B\''alint Hujter and S\''andor
@@ -23,3 +24,6 @@ bibEntries:
     Julian Sahasrabudhe and Richard Snyder}, title = {A Stability Theorem for
     Maximal K_{r+1}-free Graphs}, journal = {Journal of Combinatorial Theory,
     Series B}, volume = {132}, pages = {236--257}, year = {2018}}'
+issue:
+  repositoryId: 1320232165
+  number: 155
