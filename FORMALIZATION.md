@@ -6,7 +6,7 @@ leaves only Lean's standard logical axioms, `propext`, `Classical.choice`, and
 `Quot.sound`.
 
 The previously external geometric input is proved as
-`Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers`:
+`Lax570090Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers`:
 
 > A finite general-position set with a minimal outer layer of at least sixteen
 > vertices and a nonempty fourth layer contains an empty convex hexagon.
@@ -176,16 +176,16 @@ outer power of ten is kept symbolic in the numerical proof.
 
 ## Verification
 
-From `proofs/`, build with `lake build Lax56Proofs`. From the submission root,
+From `proofs/`, build with `lake build Lax570090Proofs`. From the submission root,
 `lax build --profile --replay` additionally checks packaging and kernel replay.
 The modular dependency audit is:
 
 ```lean
-import Lax56Proofs
-#print axioms Lax56Proofs.MainTheorem.large_point_set_four_collinear_or_visible_six
-#print axioms Lax56Proofs.EmptyHexagon.exists_emptyConvexHexagon
-#print axioms Lax56Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers
-#print axioms Lax56Proofs.VertexRemovalStability.exists_fiveColorable_delete
+import Lax570090Proofs
+#print axioms Lax570090Proofs.MainTheorem.large_point_set_four_collinear_or_visible_six
+#print axioms Lax570090Proofs.EmptyHexagon.exists_emptyConvexHexagon
+#print axioms Lax570090Proofs.ValtrFourLayer.exists_emptyHexagon_of_four_layers
+#print axioms Lax570090Proofs.VertexRemovalStability.exists_fiveColorable_delete
 ```
 
 Besides the three standard logical axioms, these report precisely the Lax
@@ -193,7 +193,7 @@ interfaces described above. After submission, compose and audit the complete
 archive proof tree with:
 
 ```sh
-lax generate-prooftree lax-56 --output /tmp/lax56-proof-tree
+lax generate-prooftree lax-570090 --output /tmp/lax56-proof-tree
 ```
 
 The composer replaces each interface by its proof, checks the generated
