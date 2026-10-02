@@ -1,5 +1,6 @@
 specVersion: "1"
-id: lax-56
+id: lax-570090
+supersedes: lax-56
 leanVersion: "v4.33.0"
 mathlibVersion: "db584cd6d46c92f209a44c0f1c829460d327499d"
 title: "Large Finite Point Sets Have 4 Collinear Points or a 6-Clique"
@@ -22,6 +23,3 @@ bibEntries:
     Julian Sahasrabudhe and Richard Snyder}, title = {A Stability Theorem for
     Maximal K_{r+1}-free Graphs}, journal = {Journal of Combinatorial Theory,
     Series B}, volume = {132}, pages = {236--257}, year = {2018}}'
-issue:
-  repositoryId: 1320232165
-  number: 56
